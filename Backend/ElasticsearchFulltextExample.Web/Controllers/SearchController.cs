@@ -66,7 +66,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 {
                     Identifier = x.Source.Id,
                     Title = x.Source.Title,
-                    Text = ,
+                    Text = GetSummaryText(x),
                     Type = "Article",
                     Url = $"http://fake.local/{x.Source.Id}"
                 })
