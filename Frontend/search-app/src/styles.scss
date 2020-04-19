@@ -1,0 +1,19 @@
+@import '~@angular/material/theming';
+
+$custom-typography: mat-typography-config(
+  $font-family: 'arial, sans-serif',
+);
+
+@include mat-card-typography($custom-typography);
+
+html, body 
+{ 
+    box-sizing: border-box; 
+    height: 100%; 
+}
+
+body 
+{ 
+    margin: 0; 
+    font-family: arial,sans-serif; 
+}
