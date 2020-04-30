@@ -3,27 +3,27 @@
 
 using ElasticsearchFulltextExample.Web.Contracts;
 using ElasticsearchFulltextExample.Web.Elasticsearch;
-using ElasticsearchFulltextExample.Web.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Nest;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ElasticsearchFulltextExample.Web.Controllers
 {
     public class SearchController : Controller
     {
-        private readonly IElasticsearchClient elasticsearchClient;
+        private readonly ElasticsearchClient elasticsearchClient;
 
-        public SearchController(IElasticsearchClient elasticsearchClient)
+        public SearchController(ElasticsearchClient elasticsearchClient)
         {
             this.elasticsearchClient = elasticsearchClient;
         }
 
         [HttpGet]
         [Route("/api/search")]
-        public IActionResult Query([FromQuery(Name = "q")] string query)
+        public async Task<IActionResult> Query([FromQuery(Name = "q")] string query)
         {
-            var searchResponse = elasticsearchClient.Search(query);
+            var searchResponse = await elasticsearchClient.SearchAsync(query);
             var searchResult = ConvertToSearchResults(query, searchResponse);
 
             return Ok(searchResult);
@@ -31,9 +31,9 @@ namespace ElasticsearchFulltextExample.Web.Controllers
 
         [HttpGet]
         [Route("/api/suggest")]
-        public IActionResult Suggest([FromQuery(Name = "q")] string query)
+        public async Task<IActionResult> Suggest([FromQuery(Name = "q")] string query)
         {
-            var searchResponse = elasticsearchClient.Search(query);
+            var searchResponse = await elasticsearchClient.SearchAsync(query);
             var searchSuggestions = ConvertToSearchSuggestions(query, searchResponse);
            
             return Ok(searchSuggestions);
@@ -66,7 +66,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 {
                     Identifier = x.Source.Id,
                     Title = x.Source.Title,
-                    Text = GetSummaryText(x),
+                    Text = "TODO",
                     Type = "Article",
                     Url = $"http://fake.local/{x.Source.Id}"
                 })
@@ -80,12 +80,6 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             };
         }
 
-        private string GetSummaryText(IHit<Elasticsearch.Model.Document> hit)
-        {
-            var words = StringUtils.GetWords(hit.Source.Content, 50);
-
-            return $"{words} ...";
-        }
         
     }
 }

@@ -6,19 +6,11 @@ using ElasticsearchFulltextExample.Web.Elasticsearch.Model;
 using Nest;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ElasticsearchFulltextExample.Web.Elasticsearch
 {
-    public interface IElasticsearchClient
-    {
-        CreateIndexResponse CreateIndex();
-
-        BulkResponse BulkIndex(IEnumerable<Document> articles);
-
-        ISearchResponse<Document> Search(string query);
-    }
-
-    public class ElasticsearchClient : IElasticsearchClient
+    public class ElasticsearchClient
     {
         public readonly IElasticClient Client;
         public readonly string IndexName;
@@ -34,7 +26,7 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
         {
         }
 
-        public CreateIndexResponse CreateIndex()
+        public Task<CreateIndexResponse> CreateIndexAsync()
         {
             var response = Client.Indices.Exists(IndexName);
 
@@ -43,7 +35,7 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                 return null;
             }
 
-            return Client.Indices.Create(IndexName, descriptor =>
+            return Client.Indices.CreateAsync(IndexName, descriptor =>
             {
                 return descriptor.Map<Document>(mapping => ConfigureDocumentMapping(mapping));
             });
@@ -58,6 +50,7 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
         {
             return properties
                 .Text(textField => textField.Name(document => document.Id))
+                .Text(textField => textField.Name(document => document.Title))
                 .Text(textField => textField.Name(document => document.Content))
                 .Object<Attachment>(attachment => attachment
                     .Name(document => document.Attachment)
@@ -72,9 +65,9 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                             .Text(t => t.Name(n => n.Keywords))));
         }
 
-        public PutPipelineResponse CreatePipeline()
+        public Task<PutPipelineResponse> CreatePipelineAsync()
         {
-            return Client.Ingest.PutPipeline("attachments", p => p
+            return Client.Ingest.PutPipelineAsync("attachments", p => p
                 .Description("Document attachment pipeline")
                 .Processors(pr => pr
                 .Attachment<Document>(a => a
@@ -82,7 +75,7 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                     .TargetField(f => f.Attachment))));
         }
 
-        public BulkResponse BulkIndex(IEnumerable<Document> documents)
+        public Task<BulkResponse> BulkIndexAsync(IEnumerable<Document> documents)
         {
             var request = new BulkDescriptor();
 
@@ -95,12 +88,20 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                     .Pipeline("attachments"));
             }
 
-            return Client.Bulk(request);
+            return Client.BulkAsync(request);
         }
 
-        public ISearchResponse<Document> Search(string query)
+        public Task<IndexResponse> IndexAsync(Document document)
         {
-            return Client.Search<Document>(document => document
+            return Client.IndexAsync(document, x => x
+                .Id(document.Id)
+                .Index(IndexName)
+                .Pipeline("attachments"));
+        }
+
+        public Task<ISearchResponse<Document>> SearchAsync(string query)
+        {
+            return Client.SearchAsync<Document>(document => document
                 // Query this Index:
                 .Index(IndexName)
                 // Highlight Text Content:
@@ -110,9 +111,9 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                 .Query(q => BuildQueryContainer(query)));
         }
 
-        public ISearchResponse<Document> Suggest(string query)
+        public Task<ISearchResponse<Document>> SuggestAsync(string query)
         {
-            return Client.Search<Document>(x => x
+            return Client.SearchAsync<Document>(x => x
                 // Query this Index:
                 .Index(IndexName)
                 // Suggest Titles:

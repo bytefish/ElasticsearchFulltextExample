@@ -7,6 +7,8 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch.Model
     {
         public string Id { get; set; }
 
+        public string Title { get; set; }
+
         public string Content { get; set; }
 
         public Attachment Attachment { get; set; }

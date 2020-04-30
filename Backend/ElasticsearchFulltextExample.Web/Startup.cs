@@ -11,6 +11,7 @@ using System.IO;
 using ElsevierFulltextApi;
 using ElasticsearchFulltextExample.Web.Elasticsearch;
 using System;
+using System.Threading.Tasks;
 
 namespace ElasticsearchFulltextExample.Web
 {
@@ -83,8 +84,10 @@ namespace ElasticsearchFulltextExample.Web
 
         private void RegisterApplicationServices(IServiceCollection services)
         {
-            services.AddSingleton(GetElsevierApiClient());
-            services.AddSingleton(GetElasticsearchClient());
+            // Build & Initialize the Client:
+            var elasticSearchClient = GetElasticsearchClient().ConfigureAwait(false).GetAwaiter().GetResult();
+
+            services.AddSingleton(elasticSearchClient);
         }
 
         private IElsevierFulltextApiClient GetElsevierApiClient()
@@ -96,13 +99,13 @@ namespace ElasticsearchFulltextExample.Web
             return new ElsevierFulltextApiClient(apiKey);
         }
 
-        private IElasticsearchClient GetElasticsearchClient()
+        private async Task<ElasticsearchClient> GetElasticsearchClient()
         {
             var client = new ElasticsearchClient(new Uri("http://localhost:9200"), "documents");
 
             // Prepare Elasticsearch Database:
-            client.CreateIndex();
-            client.CreatePipeline();
+            await client.CreateIndexAsync();
+            await client.CreatePipelineAsync();
 
             return client;
         }

@@ -1,67 +1,66 @@
 ﻿// Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using ElasticsearchFulltextExample.Web.Contracts;
 using ElasticsearchFulltextExample.Web.Elasticsearch;
-using ElasticsearchFulltextExample.Web.Utils;
-using ElsevierFulltextApi;
+using ElasticsearchFulltextExample.Web.Elasticsearch.Model;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace ElasticsearchFulltextExample.Web.Controllers
 {
     public class IndexController : Controller
     {
-        private readonly IElasticsearchClient elasticsearchClient;
-        private readonly IElsevierFulltextApiClient elsevierClient;
+        private readonly ElasticsearchClient elasticsearchClient;
 
-        public IndexController(IElsevierFulltextApiClient elsevierClient, IElasticsearchClient elasticsearchClient)
+        public IndexController(ElasticsearchClient elasticsearchClient)
         {
-            this.elsevierClient = elsevierClient;
             this.elasticsearchClient = elasticsearchClient;
         }
 
         [HttpPut]
         [Route("/api/index")]
-        public async Task<IActionResult> Query([FromQuery(Name = "doi")] string[] identifiers)
+        public async Task<IActionResult> IndexDocument([FromForm] DocumentDto document)
         {
-            var articles = await GetArticles(identifiers);
+            var contentAsBase64 = await GetBase64Async(document.File);
 
-            elasticsearchClient.BulkIndex(articles);
-
-            return NoContent();
-        }
-
-        private async Task<List<Elasticsearch.Model.Document>> GetArticles(string[] identifiers)
-        {
-            var articles = new List<Elasticsearch.Model.Document>();
-            
-            foreach(var identifier in identifiers)
+            var indexResponse = await elasticsearchClient.IndexAsync(new Document
             {
-                var fulltext = await elsevierClient.GetArticleByDOI(identifier);
-                var article = ConvertToArticle(fulltext);
-                
-                articles.Add(article);
+                Id = document.Id,
+                Content = contentAsBase64
+            });
+
+            if(indexResponse.IsValid)
+            {
+                return Ok();
             }
 
-            return articles;
+            return BadRequest();
         }
 
-        private Elasticsearch.Model.Document ConvertToArticle(ElsevierFulltextApi.Model.FullText fulltext)
+        private async Task<string> GetBase64Async(IFormFile file)
         {
-            // Well this is how the Structure of the Elsevier XML looks... nothing to refactor here:
-            var doi = fulltext?.OriginalText?.Doc?.SerialItem?.Article.Info?.DOI;
-            var title = fulltext?.OriginalText?.Doc?.SerialItem?.Article?.Head?.Title;
-            var sections = fulltext?.OriginalText?.Doc?.SerialItem?.Article?.Body?.Sections;
-            var content = ElsevierClientUtils.GetContent(sections);
-
-            return new Elasticsearch.Model.Document
+            if(file == null)
             {
-                Id = doi,
-                Title = title,
-                Content = content
-            };
+                return null;
+            }
+
+            var bytes = await GetBytes(file);
+
+            return Convert.ToBase64String(bytes);
         }
 
+        private async Task<byte[]> GetBytes(IFormFile formFile)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await formFile.CopyToAsync(memoryStream);
+
+                return memoryStream.ToArray();
+            }
+        }
     }
 }
