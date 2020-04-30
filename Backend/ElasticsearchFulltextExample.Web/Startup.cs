@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.DataProtection;
 using System.IO;
-using ElsevierFulltextApi;
 using ElasticsearchFulltextExample.Web.Elasticsearch;
 using System;
 using System.Threading.Tasks;
@@ -88,15 +87,6 @@ namespace ElasticsearchFulltextExample.Web
             var elasticSearchClient = GetElasticsearchClient().ConfigureAwait(false).GetAwaiter().GetResult();
 
             services.AddSingleton(elasticSearchClient);
-        }
-
-        private IElsevierFulltextApiClient GetElsevierApiClient()
-        {
-            // Read the Elsevier API Key from a File, so it isn't hardcoded here:
-            var apiKey = File.ReadAllText(@"D:\elsevier_api_key.txt");
-
-            // ... then create the API client using the API Key:
-            return new ElsevierFulltextApiClient(apiKey);
         }
 
         private async Task<ElasticsearchClient> GetElasticsearchClient()
