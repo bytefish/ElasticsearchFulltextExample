@@ -98,9 +98,11 @@ namespace ElasticsearchFulltextExample.Web
 
         private IElasticsearchClient GetElasticsearchClient()
         {
-            var client = new ElasticsearchClient(new Uri("http://localhost:9200"), "articles");
+            var client = new ElasticsearchClient(new Uri("http://localhost:9200"), "documents");
 
+            // Prepare Elasticsearch Database:
             client.CreateIndex();
+            client.CreatePipeline();
 
             return client;
         }

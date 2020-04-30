@@ -32,9 +32,9 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             return NoContent();
         }
 
-        private async Task<List<Elasticsearch.Model.Article>> GetArticles(string[] identifiers)
+        private async Task<List<Elasticsearch.Model.Document>> GetArticles(string[] identifiers)
         {
-            var articles = new List<Elasticsearch.Model.Article>();
+            var articles = new List<Elasticsearch.Model.Document>();
             
             foreach(var identifier in identifiers)
             {
@@ -47,7 +47,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             return articles;
         }
 
-        private Elasticsearch.Model.Article ConvertToArticle(ElsevierFulltextApi.Model.FullText fulltext)
+        private Elasticsearch.Model.Document ConvertToArticle(ElsevierFulltextApi.Model.FullText fulltext)
         {
             // Well this is how the Structure of the Elsevier XML looks... nothing to refactor here:
             var doi = fulltext?.OriginalText?.Doc?.SerialItem?.Article.Info?.DOI;
@@ -55,7 +55,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             var sections = fulltext?.OriginalText?.Doc?.SerialItem?.Article?.Body?.Sections;
             var content = ElsevierClientUtils.GetContent(sections);
 
-            return new Elasticsearch.Model.Article
+            return new Elasticsearch.Model.Document
             {
                 Id = doi,
                 Title = title,

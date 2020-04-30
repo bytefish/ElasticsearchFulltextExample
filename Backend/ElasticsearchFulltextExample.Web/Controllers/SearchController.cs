@@ -39,7 +39,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             return Ok(searchSuggestions);
         }
 
-        private SearchSuggestionDto ConvertToSearchSuggestions(string query, ISearchResponse<Elasticsearch.Model.Article> searchResponse)
+        private SearchSuggestionDto ConvertToSearchSuggestions(string query, ISearchResponse<Elasticsearch.Model.Document> searchResponse)
         {
             var suggestions = searchResponse
                 // Get the Hits:
@@ -56,7 +56,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             };
         }
 
-        private SearchResultsDto ConvertToSearchResults(string query, ISearchResponse<Elasticsearch.Model.Article> searchResponse)
+        private SearchResultsDto ConvertToSearchResults(string query, ISearchResponse<Elasticsearch.Model.Document> searchResponse)
         {
             var searchResults = searchResponse
                 // Get the Hits:
@@ -80,7 +80,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             };
         }
 
-        private string GetSummaryText(IHit<Elasticsearch.Model.Article> hit)
+        private string GetSummaryText(IHit<Elasticsearch.Model.Document> hit)
         {
             var words = StringUtils.GetWords(hit.Source.Content, 50);
 

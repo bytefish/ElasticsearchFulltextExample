@@ -3,16 +3,12 @@ using Nest;
 
 namespace ElasticsearchFulltextExample.Web.Elasticsearch.Model
 {
-
-    public class Article
+    public class Document
     {
-        [Text]
         public string Id { get; set; }
 
-        [Text]
-        public string Title { get; set; }
-
-        [Text]
         public string Content { get; set; }
+
+        public Attachment Attachment { get; set; }
     }
 }
