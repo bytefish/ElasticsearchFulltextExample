@@ -15,12 +15,14 @@ import { MatDialogRef } from '@angular/material/dialog';
 })
 export class FileUploadComponent {
     file: File;
-    
+
+    isFileUploading: boolean = false;
+
     fileUploadForm = new FormGroup({
         id: new FormControl('', Validators.required),
         title: new FormControl('', Validators.required),
         file: new FormControl('', Validators.required),
-    }, );
+    });
 
     constructor(public dialogRef: MatDialogRef<FileUploadComponent>, private httpClient: HttpClient) {
 
@@ -33,8 +35,23 @@ export class FileUploadComponent {
     }
 
     onSubmit() {
-        console.log(this.fileUploadForm.value);
-        
-        this.dialogRef.close();
+
+        if (this.fileUploadForm.invalid) {
+            return;
+        }
+
+        this.isFileUploading = true;
+
+        const formData = new FormData();
+
+        formData.append('id', this.fileUploadForm.controls['id'].value);
+        formData.append('title', this.fileUploadForm.controls['id'].value);
+        formData.append('file', this.file);
+
+        this.httpClient
+            .put<any>(`${environment.apiUrl}/index`, formData)
+            .subscribe(x => {
+                this.dialogRef.close();
+            })
     }
 }
