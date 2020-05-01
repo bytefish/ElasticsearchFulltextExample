@@ -1,0 +1,30 @@
+<h2>Add a Document to the Search Index</h2>
+
+<form [formGroup]="fileUploadForm" (ngSubmit)="onSubmit()">
+    <div fxLayout="column" class="file-input-container">
+        <div fxLayout="column">
+            <mat-form-field fxFlex>
+                <input matInput formControlName="id" type="text" placeholder="Document Identifier">
+            </mat-form-field>
+        </div>
+
+        <div fxLayout="column">
+            <mat-form-field fxFlex>
+                <input matInput formControlName="title" type="text" placeholder="Document Title">
+            </mat-form-field>
+        </div>
+        <!-- Upload Item -->
+        <div fxLayout="row">
+            <input #fileInput id="fileInput" type="file" [hidden]="true" (change)="onFileInputChange($event)">
+            <mat-form-field fxFlex [floatLabel]="'never'">
+                <input matInput type="text" formControlName="file" (click)="fileInput.click()" placeholder="Please Select a File ..." readonly>
+            </mat-form-field>
+            <button mat-mini-fab aria-label="Upload Button with Attachment Icon" (click)="fileInput.click()">
+                <mat-icon>attach_file</mat-icon>
+            </button>
+        </div>
+
+        <button type="submit" mat-raised-button color="accent">Index Document</button>
+
+    </div>
+</form>

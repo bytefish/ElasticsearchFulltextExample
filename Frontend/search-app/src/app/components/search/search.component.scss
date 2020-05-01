@@ -1,10 +1,14 @@
+@import '~@angular/material/theming';
+
+$accent:  mat-palette($mat-amber);
+
 .search-container {
-  height: 100%;
+  height: auto;
 }
 
 .search-bar {
   height: 60px;
-  background-color: rgba(218, 218, 218, 0.582);
+  background-color: mat-color($accent, A200);
   box-shadow: 0 2px 4px -1px rgba(0,0,0,0.25);
 }
 
@@ -19,8 +23,7 @@
 }
 
 input {
-  border: solid 1px rgba(0, 0, 0, 0.5);
-
+  border: solid 1px black;
   outline: none;
   margin: 10px;
   padding: 6px 16px;
@@ -53,11 +56,18 @@ cite {
 }
 
 .search-results {
-  background-color: rgba(0,0,0,0.05);
+  background-color: white;
   height: 100%;
   padding: 25px;
 }
 
 .search-result {
   width: 500px;
+}
+
+.add-button {
+  right: 30px;
+  bottom: 30px;
+  left: auto;
+  position: absolute;
 }
