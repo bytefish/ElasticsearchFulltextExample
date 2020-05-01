@@ -26,15 +26,13 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
         {
         }
 
+        public Task<ExistsResponse> ExistsAsync()
+        {
+            return Client.Indices.ExistsAsync(IndexName);
+        }
+
         public Task<CreateIndexResponse> CreateIndexAsync()
         {
-            var response = Client.Indices.Exists(IndexName);
-
-            if (response.Exists)
-            {
-                return null;
-            }
-
             return Client.Indices.CreateAsync(IndexName, descriptor =>
             {
                 return descriptor.Map<Document>(mapping => ConfigureDocumentMapping(mapping));

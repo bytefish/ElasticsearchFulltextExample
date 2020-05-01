@@ -94,8 +94,14 @@ namespace ElasticsearchFulltextExample.Web
             var client = new ElasticsearchClient(new Uri("http://localhost:9200"), "documents");
 
             // Prepare Elasticsearch Database:
-            await client.CreateIndexAsync();
-            await client.CreatePipelineAsync();
+
+            var response = await client.ExistsAsync();
+
+            if (!response.Exists)
+            {
+                await client.CreateIndexAsync();
+                await client.CreatePipelineAsync();
+            }
 
             return client;
         }
