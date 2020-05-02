@@ -31,8 +31,14 @@ export class FileUploadComponent {
     onFileInputChange(fileInputEvent: any) {
         this.file = fileInputEvent.target.files[0];
 
-        this.fileUploadForm.controls['file'].setValue(this.file ? this.file.name : '');
+        this.fileUploadForm.controls['file'].setValue(this.file?.name);
+
+        // Set ID as Filename, if empty:
+        if (this.isNullOrWhitespace(this.fileUploadForm.controls['id'].value)) {
+            this.fileUploadForm.controls['id'].setValue(this.file?.name);
+        }
     }
+
 
     onSubmit() {
 
@@ -45,7 +51,7 @@ export class FileUploadComponent {
         const formData = new FormData();
 
         formData.append('id', this.fileUploadForm.controls['id'].value);
-        formData.append('title', this.fileUploadForm.controls['id'].value);
+        formData.append('title', this.fileUploadForm.controls['title'].value);
         formData.append('file', this.file);
 
         this.httpClient
@@ -54,4 +60,8 @@ export class FileUploadComponent {
                 this.dialogRef.close();
             })
     }
+
+    isNullOrWhitespace(input: string) : boolean{
+        return !input || !input.trim();
+      }
 }
