@@ -14,9 +14,6 @@
       <mat-card class="search-result" *ngFor="let result of results?.results">
         <mat-card-content>
           <div class="search-result-header" fxLayout="column">
-            <div fxLayout="row">
-              <p class="small">{{result.identifier}}</p>
-            </div>
             <h3><a class="search-link" href="{{result.url}}">{{result.title}}</a></h3>
           </div>
           <div>

@@ -8,8 +8,7 @@ $accent:  mat-palette($mat-amber);
 
 .search-bar {
   height: 60px;
-  background-color: mat-color($accent, A200);
-  box-shadow: 0 2px 4px -1px rgba(0,0,0,0.25);
+  background-color: mat-color($accent, 200);
 }
 
 .search-link {

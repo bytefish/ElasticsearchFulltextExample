@@ -17,14 +17,16 @@
         <div fxLayout="row">
             <input #fileInput id="fileInput" type="file" [hidden]="true" (change)="onFileInputChange($event)">
             <mat-form-field fxFlex [floatLabel]="'never'">
-                <input matInput type="text" formControlName="file" (click)="fileInput.click()" placeholder="Please Select a File ..." readonly>
+                <input matInput type="text" formControlName="file" (click)="fileInput.click()"
+                    placeholder="Please Select a File ..." readonly>
             </mat-form-field>
             <button mat-mini-fab aria-label="Upload Button with Attachment Icon" (click)="fileInput.click()">
                 <mat-icon>attach_file</mat-icon>
             </button>
         </div>
 
-        <button type="submit" mat-raised-button color="accent" [disabled]="isFileUploading">Index Document</button>
-
+        <div fxLayout="column">
+            <button type="submit" mat-raised-button color="accent" [disabled]="isFileUploading">Index Document</button>
+        </div>
     </div>
 </form>

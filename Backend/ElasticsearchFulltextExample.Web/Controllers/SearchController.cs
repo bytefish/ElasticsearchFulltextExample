@@ -3,8 +3,11 @@
 
 using ElasticsearchFulltextExample.Web.Contracts;
 using ElasticsearchFulltextExample.Web.Elasticsearch;
+using ElasticsearchFulltextExample.Web.Options;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Nest;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,10 +15,12 @@ namespace ElasticsearchFulltextExample.Web.Controllers
 {
     public class SearchController : Controller
     {
+        private readonly ApplicationOptions applicationOptions;
         private readonly ElasticsearchClient elasticsearchClient;
 
-        public SearchController(ElasticsearchClient elasticsearchClient)
+        public SearchController(IOptions<ApplicationOptions> applicationOptions, ElasticsearchClient elasticsearchClient)
         {
+            this.applicationOptions = applicationOptions.Value;
             this.elasticsearchClient = elasticsearchClient;
         }
 
@@ -66,9 +71,8 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 {
                     Identifier = x.Source.Id,
                     Title = x.Source.Title,
-                    Text = "TODO",
-                    Type = "Article",
-                    Url = $"http://fake.local/{x.Source.Id}"
+                    Text = GetSearchBoxText(x.Highlight),
+                    Url = $"{applicationOptions.BaseUri}/api/files/{x.Source.Id}"
                 })
                 // And convert to array:
                 .ToArray();
@@ -78,6 +82,21 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 Query = query,
                 Results = searchResults
             };
+        }
+
+        private string GetSearchBoxText(IReadOnlyDictionary<string, IReadOnlyCollection<string>> highlight)
+        {
+            if(highlight == null)
+            {
+                return null;
+            }
+
+            if(highlight.TryGetValue("attachment.content", out var matches))
+            {
+                return matches.FirstOrDefault();
+            }
+
+            return null;
         }
 
         

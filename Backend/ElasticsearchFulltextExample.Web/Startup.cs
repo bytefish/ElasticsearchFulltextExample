@@ -11,6 +11,7 @@ using System.IO;
 using ElasticsearchFulltextExample.Web.Elasticsearch;
 using System;
 using System.Threading.Tasks;
+using ElasticsearchFulltextExample.Web.Options;
 
 namespace ElasticsearchFulltextExample.Web
 {
@@ -42,6 +43,9 @@ namespace ElasticsearchFulltextExample.Web
 
             // Use the Options Module:
             services.AddOptions();
+
+            // Configure all Options Here:
+            ConfigureOptions(services);
 
             // Register Application Specific Services here ...
             RegisterApplicationServices(services);
@@ -79,6 +83,11 @@ namespace ElasticsearchFulltextExample.Web
                 endpoints.MapFallbackToController("Index", "Home");
             });
 
+        }
+
+        private void ConfigureOptions(IServiceCollection services)
+        {
+            services.Configure<ApplicationOptions>(Configuration.GetSection("Application"));
         }
 
         private void RegisterApplicationServices(IServiceCollection services)

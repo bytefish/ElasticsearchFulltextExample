@@ -39,9 +39,15 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
             });
         }
 
+        public Task<GetResponse<Document>> GetDocumentByIdAsync(string documentId)
+        {
+            return Client.GetAsync<Document>(documentId, x => x.Index(IndexName));
+        }
+
         private ITypeMapping ConfigureDocumentMapping(TypeMappingDescriptor<Document> mapping)
         {
-            return mapping.Properties(properties => ConfigureDocumentProperties(properties));
+            return mapping
+                .Properties(properties => ConfigureDocumentProperties(properties));
         }
 
         private IPromise<IProperties> ConfigureDocumentProperties(PropertiesDescriptor<Document> properties)
@@ -49,6 +55,8 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
             return properties
                 .Text(textField => textField.Name(document => document.Id))
                 .Text(textField => textField.Name(document => document.Title))
+                .Date(dateField => dateField.Name(document => document.IndexedOn))
+                .Text(textField => textField.Name(document => document.Filename))
                 .Text(textField => textField.Name(document => document.Content))
                 .Object<Attachment>(attachment => attachment
                     .Name(document => document.Attachment)
@@ -104,7 +112,14 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                 .Index(IndexName)
                 // Highlight Text Content:
                 .Highlight(highlight => highlight
-                    .Fields(fields => fields.Field(x => x.Attachment.Content)))
+                    .Fields(fields => fields
+                        .Fragmenter(HighlighterFragmenter.Span)
+                        .PreTags("<strong>")
+                        .PostTags("</strong>")
+                        .FragmentSize(150)
+                        .NoMatchSize(150)
+                        .NumberOfFragments(1)
+                        .Field(x => x.Attachment.Content)))
                 // Now kick off the query:
                 .Query(q => BuildQueryContainer(query)));
         }
@@ -116,7 +131,7 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                 .Index(IndexName)
                 // Suggest Titles:
                 .Suggest(s => s.Term("suggestion", t => t
-                    .Field(x => x.Attachment.Content)
+                    .Field(x => x.Title)
                     .Size(5)
                     .Text(query))));
         }
@@ -126,8 +141,8 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
             return Query<Document>.MultiMatch(x => x.Query(query)
                 .Type(TextQueryType.BestFields)
                 .Fields(f => f
-                    .Field(x => x.Attachment.Title, 2)
-                    .Field(x => x.Attachment.Content, 1)));
+                    .Field(x => x.Attachment.Title, 1)
+                    .Field(x => x.Attachment.Content, 2)));
         }
 
         private static IElasticClient CreateClient(Uri uri)

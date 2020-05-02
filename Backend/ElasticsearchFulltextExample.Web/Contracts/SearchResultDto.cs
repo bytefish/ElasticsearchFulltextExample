@@ -18,8 +18,5 @@ namespace ElasticsearchFulltextExample.Web.Contracts
 
         [JsonPropertyName("url")]
         public string Url { get; set; }
-
-        [JsonPropertyName("type")]
-        public string Type { get; set; }
     }
 }

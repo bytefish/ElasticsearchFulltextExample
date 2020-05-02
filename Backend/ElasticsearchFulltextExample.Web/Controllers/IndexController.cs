@@ -4,8 +4,10 @@
 using ElasticsearchFulltextExample.Web.Contracts;
 using ElasticsearchFulltextExample.Web.Elasticsearch;
 using ElasticsearchFulltextExample.Web.Elasticsearch.Model;
+using ElasticsearchFulltextExample.Web.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -30,6 +32,9 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             var indexResponse = await elasticsearchClient.IndexAsync(new Document
             {
                 Id = document.Id,
+                Title = document.Title,
+                Filename = document.File.FileName,
+                IndexedOn = DateTime.UtcNow,
                 Content = contentAsBase64
             });
 
