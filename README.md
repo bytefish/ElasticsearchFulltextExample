@@ -1,8 +1,6 @@
 # Elasticsearch Fulltext Search Example #
 
-Every project grows to a point it needs to support a Fulltext Search. In this repository I will explore how to use the Elasticsearch 
-Fulltext Search capabilities to index files and provide useful auto-completes. Please regard this repository as a work in progress and 
-it is not finished work in any way.
+Every project grows to a point it needs to support a Fulltext Search. In this repository I will explore how to use the Elasticsearch to index files, provide a Fulltext Search on file contents and provide useful auto-completes. Please regard this repository as a work in progress and it is not finished work in any way.
 
 ## What we are going to build ##
 
