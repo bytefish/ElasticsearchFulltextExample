@@ -1,20 +1,28 @@
 # Elasticsearch Fulltext Search Example #
 
-Every project grows to a point it needs to support a Fulltext Search. In this repository 
-I will explore how to use the Elasticsearch Fulltext Search capabilities to index and 
-search through academic papers.
+Every project grows to a point it needs to support a Fulltext Search. In this repository I will explore how to use the Elasticsearch 
+Fulltext Search capabilities to index files and provide useful auto-completes. Please regard this repository as a work in progress and 
+it is not finished work in any way.
 
-It is a work in progress and not finished in any way.
+## What we are going to build ##
 
-## Queries ##
+### Document Indexing ###
 
-Here are some queries for the API.
+<a href="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Index_Document_Dialog.jpg">
+    <img src="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Index_Document_Dialog.jpg" alt="Document Indexing Dialog" width="50%" />
+</a>
 
-### Index a Paper by DOI ###
+### Auto-Complete Search Box ###
 
-```batch
-curl -X PUT -d "Content-Length: 0" http://localhost:9000/api/index?doi=10.1016/j.adro.2019.05.007
-```
+<a href="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Search_Box_Auto_Complete.jpg">
+    <img src="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Search_Box_Auto_Complete.jpg" alt="Search Box with Auto Complete" width="50%" />
+</a>
+
+### Full-Text Search Results ###
+
+<a href="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Search_Results.jpg">
+    <img src="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Search_Results.jpg" alt="Search Box with Auto Complete" width="50%" />
+</a>
 
 ## License ##
 
