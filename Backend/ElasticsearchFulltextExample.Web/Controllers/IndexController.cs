@@ -4,23 +4,25 @@
 using ElasticsearchFulltextExample.Web.Contracts;
 using ElasticsearchFulltextExample.Web.Elasticsearch;
 using ElasticsearchFulltextExample.Web.Elasticsearch.Model;
-using ElasticsearchFulltextExample.Web.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using TinyCsvParser.Tokenizer;
 
 namespace ElasticsearchFulltextExample.Web.Controllers
 {
     public class IndexController : Controller
     {
+        private readonly ITokenizer suggestionsTokenizer;
         private readonly ElasticsearchClient elasticsearchClient;
 
         public IndexController(ElasticsearchClient elasticsearchClient)
         {
             this.elasticsearchClient = elasticsearchClient;
+            this.suggestionsTokenizer = new QuotedStringTokenizer(',');
         }
 
         [HttpPut]
@@ -35,7 +37,8 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 Title = document.Title,
                 Filename = document.File.FileName,
                 IndexedOn = DateTime.UtcNow,
-                Content = contentAsBase64
+                Suggestions = GetSuggestions(document.Suggestions),
+                Data = contentAsBase64
             });
 
             if(indexResponse.IsValid)
@@ -44,6 +47,19 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             }
 
             return BadRequest();
+        }
+
+        private string[] GetSuggestions(string suggestions)
+        {
+            if(suggestions == null)
+            {
+                return null;
+            }
+
+            return suggestionsTokenizer
+                .Tokenize(suggestions)
+                .Select(x => x.Trim())
+                .ToArray();
         }
 
         private async Task<string> GetBase64Async(IFormFile file)

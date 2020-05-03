@@ -55,9 +55,9 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
             return properties
                 .Text(textField => textField.Name(document => document.Id))
                 .Text(textField => textField.Name(document => document.Title))
-                .Date(dateField => dateField.Name(document => document.IndexedOn))
                 .Text(textField => textField.Name(document => document.Filename))
-                .Text(textField => textField.Name(document => document.Content))
+                .Date(dateField => dateField.Name(document => document.IndexedOn))
+                .Completion(completionField => completionField.Name(document => document.Suggestions))
                 .Object<Attachment>(attachment => attachment
                     .Name(document => document.Attachment)
                         .Properties(attachmentProperties => attachmentProperties
@@ -77,7 +77,7 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                 .Description("Document attachment pipeline")
                 .Processors(pr => pr
                 .Attachment<Document>(a => a
-                    .Field(f => f.Content)
+                    .Field(f => f.Data)
                     .TargetField(f => f.Attachment))));
         }
 
@@ -130,10 +130,11 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                 // Query this Index:
                 .Index(IndexName)
                 // Suggest Titles:
-                .Suggest(s => s.Term("suggestion", t => t
-                    .Field(x => x.Title)
-                    .Size(5)
-                    .Text(query))));
+                .Suggest(s => s
+                    .Completion("suggest", x => x
+                        .Prefix(query)
+                        .SkipDuplicates(true)
+                        .Field(x => x.Suggestions))));
         }
 
         private QueryContainer BuildQueryContainer(string query)

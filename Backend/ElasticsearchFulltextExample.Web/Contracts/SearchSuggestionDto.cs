@@ -4,10 +4,11 @@ namespace ElasticsearchFulltextExample.Web.Contracts
 {
     public class SearchSuggestionDto
     {
-        [JsonPropertyName("query")]
-        public string Query { get; set; }
+        [JsonPropertyName("text")]
+        public string Text { get; set; }
 
-        [JsonPropertyName("results")]
-        public string[] Results { get; set; }
+
+        [JsonPropertyName("highlight")]
+        public string Highlight { get; set; }
     }
 }

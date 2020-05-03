@@ -36,7 +36,6 @@ export class SearchComponent implements OnInit {
 
     this.suggestions$ = this.control.valueChanges
       .pipe(
-        filter(value => !!value), // Prevent undefined values ...
         debounceTime(300), // Debounce time to not send every keystroke ...
         switchMap(value => this.getSuggestions(value))
       );
@@ -61,7 +60,10 @@ export class SearchComponent implements OnInit {
 
   getSuggestions(query: string): Observable<SearchSuggestions> {
     
-    // We will start calling the Service with more than 2 characters:
+    if(!query) {
+      return of(null);
+    }
+    
     if(query.length < 2) {
       return of(null);
     }

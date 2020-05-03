@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="NEST" Version="7.6.1" />
+    <PackageReference Include="TinyCsvParser" Version="2.5.2" />
   </ItemGroup>
 
 </Project>

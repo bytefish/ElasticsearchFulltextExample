@@ -13,5 +13,10 @@ export interface SearchResult {
 
 export interface SearchSuggestions {
   query: string;
-  results: string[];
+  results: SearchSuggestion[];
+}
+
+export interface SearchSuggestion {
+  text: string;
+  highlight: string;
 }

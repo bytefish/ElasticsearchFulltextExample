@@ -3,8 +3,8 @@
     <input #search type="search" (keyup.enter)="onKeyupEnter(search.value)" [formControl]="control" [matAutocomplete]="auto">
     <mat-autocomplete #auto="matAutocomplete">
       <ng-container *ngIf="suggestions$ | async as suggestions">
-        <mat-option *ngFor="let suggestion of suggestions?.results" [value]="suggestion">
-          {{suggestion}}
+        <mat-option *ngFor="let suggestion of suggestions?.results" [value]="suggestion.text">
+          <span [innerHtml]="suggestion.highlight"></span>
         </mat-option>
       </ng-container>
     </mat-autocomplete>

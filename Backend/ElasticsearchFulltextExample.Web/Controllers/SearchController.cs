@@ -7,6 +7,7 @@ using ElasticsearchFulltextExample.Web.Options;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Nest;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,27 +39,67 @@ namespace ElasticsearchFulltextExample.Web.Controllers
         [Route("/api/suggest")]
         public async Task<IActionResult> Suggest([FromQuery(Name = "q")] string query)
         {
-            var searchResponse = await elasticsearchClient.SearchAsync(query);
+            var searchResponse = await elasticsearchClient.SuggestAsync(query);
             var searchSuggestions = ConvertToSearchSuggestions(query, searchResponse);
            
             return Ok(searchSuggestions);
         }
 
-        private SearchSuggestionDto ConvertToSearchSuggestions(string query, ISearchResponse<Elasticsearch.Model.Document> searchResponse)
+        private SearchSuggestionsDto ConvertToSearchSuggestions(string query, ISearchResponse<Elasticsearch.Model.Document> searchResponse)
         {
-            var suggestions = searchResponse
-                // Get the Hits:
-                .Hits
-                // Convert the Hit into a SearchResultDto:
-                .Select(x => x.Source.Title)
-                // And convert to array:
-                .ToArray();
-
-            return new SearchSuggestionDto
+            return new SearchSuggestionsDto
             {
                 Query = query,
-                Results = suggestions
+                Results = GetSuggestions(searchResponse)
             };
+        }
+
+        private SearchSuggestionDto[] GetSuggestions(ISearchResponse<Elasticsearch.Model.Document> searchResponse)
+        {
+            if (searchResponse == null)
+            {
+                return null;
+            }
+
+            var suggest = searchResponse.Suggest;
+
+            if (suggest == null)
+            {
+                return null;
+            }
+
+            var suggestions = suggest["suggest"];
+
+            if (suggestions == null)
+            {
+                return null;
+            }
+
+            var result = new List<SearchSuggestionDto>();
+
+            foreach (var suggestion in suggestions)
+            {
+                var offset = suggestion.Offset;
+                var length = suggestion.Length;
+
+                foreach (var option in suggestion.Options)
+                {
+                    var text = option.Text;
+                    var prefix = option.Text?.Substring(offset, length); 
+                    var highlight = ReplaceAt(option.Text, offset, length, $"<strong>{prefix}</strong>");
+
+                    result.Add(new SearchSuggestionDto { Text = text, Highlight = highlight });
+                }
+            }
+
+            return result.ToArray();
+        }
+
+        public static string ReplaceAt(string str, int index, int length, string replace)
+        {
+            return str
+                .Remove(index, Math.Min(length, str.Length - index))
+                .Insert(index, replace);
         }
 
         private SearchResultsDto ConvertToSearchResults(string query, ISearchResponse<Elasticsearch.Model.Document> searchResponse)

@@ -21,6 +21,7 @@ export class FileUploadComponent {
     fileUploadForm = new FormGroup({
         id: new FormControl('', Validators.required),
         title: new FormControl('', Validators.required),
+        suggestions: new FormControl('', Validators.required),
         file: new FormControl('', Validators.required),
     });
 
@@ -52,6 +53,7 @@ export class FileUploadComponent {
 
         formData.append('id', this.fileUploadForm.controls['id'].value);
         formData.append('title', this.fileUploadForm.controls['title'].value);
+        formData.append('suggestions', this.fileUploadForm.controls['suggestions'].value);
         formData.append('file', this.file);
 
         this.httpClient

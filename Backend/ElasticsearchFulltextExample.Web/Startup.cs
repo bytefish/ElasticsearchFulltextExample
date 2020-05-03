@@ -103,7 +103,6 @@ namespace ElasticsearchFulltextExample.Web
             var client = new ElasticsearchClient(new Uri("http://localhost:9200"), "documents");
 
             // Prepare Elasticsearch Database:
-
             var response = await client.ExistsAsync();
 
             if (!response.Exists)

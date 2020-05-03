@@ -26,7 +26,12 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch.Model
         /// <summary>
         /// The Base64 Content of the Document.
         /// </summary>
-        public string Content { get; set; }
+        public string Data { get; set; }
+
+        /// <summary>
+        /// Suggestions for the Autocomplete Field.
+        /// </summary>
+        public string[] Suggestions { get; set; }
 
         /// <summary>
         /// The Date the document was indexed on.
