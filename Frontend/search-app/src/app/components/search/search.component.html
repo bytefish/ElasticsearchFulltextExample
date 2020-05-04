@@ -17,8 +17,16 @@
             <h3><a class="search-link" href="{{result.url}}">{{result.title}}</a></h3>
           </div>
           <div>
-            <p [innerHtml]="result.text">
-            </p>
+            <br/>
+            <p><strong>Matches in Content:</strong></p>
+            <ul>
+              <li *ngFor="let match of result?.matches" ><span [innerHtml]="match"></span></li>
+            </ul>
+          </div>
+          <div>
+            <mat-chip-list aria-label="Keywords">
+              <mat-chip *ngFor="let keyword of result?.keywords" color="accent">{{keyword}}</mat-chip>
+            </mat-chip-list>
           </div>
         </mat-card-content>
         <mat-card-actions>

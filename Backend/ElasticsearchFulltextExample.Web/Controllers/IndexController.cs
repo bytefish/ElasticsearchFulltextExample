@@ -30,7 +30,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
         public async Task<IActionResult> IndexDocument([FromForm] DocumentDto document)
         {
             var contentAsBase64 = await GetBase64Async(document.File);
-
+            
             var indexResponse = await elasticsearchClient.IndexAsync(new Document
             {
                 Id = document.Id,
@@ -38,6 +38,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 Filename = document.File.FileName,
                 IndexedOn = DateTime.UtcNow,
                 Suggestions = GetSuggestions(document.Suggestions),
+                Keywords = GetSuggestions(document.Suggestions),
                 Data = contentAsBase64
             });
 

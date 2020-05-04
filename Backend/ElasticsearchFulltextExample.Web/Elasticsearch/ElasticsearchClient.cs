@@ -57,6 +57,7 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                 .Text(textField => textField.Name(document => document.Title))
                 .Text(textField => textField.Name(document => document.Filename))
                 .Date(dateField => dateField.Name(document => document.IndexedOn))
+                .Keyword(keywordField => keywordField.Name(document => document.Keywords))
                 .Completion(completionField => completionField.Name(document => document.Suggestions))
                 .Object<Attachment>(attachment => attachment
                     .Name(document => document.Attachment)
@@ -118,7 +119,7 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                         .PostTags("</strong>")
                         .FragmentSize(150)
                         .NoMatchSize(150)
-                        .NumberOfFragments(1)
+                        .NumberOfFragments(5)
                         .Field(x => x.Attachment.Content)))
                 // Now kick off the query:
                 .Query(q => BuildQueryContainer(query)));
@@ -142,10 +143,8 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
             return Query<Document>.MultiMatch(x => x.Query(query)
                 .Type(TextQueryType.BoolPrefix)
                 .Fields(f => f
-                    .Field(x => x.Suggestions)
-                    .Field(x => x.Attachment.Title)
-                    .Field(x => x.Attachment.Content)
-                    ));
+                    .Field(x => x.Keywords)
+                    .Field(x => x.Attachment.Content)));
         }
 
         private static IElasticClient CreateClient(Uri uri)

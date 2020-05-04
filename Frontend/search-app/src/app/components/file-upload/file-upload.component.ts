@@ -6,6 +6,7 @@ import { environment } from '@environments/environment';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import {MatChipInputEvent} from '@angular/material/chips';
+import { StringUtils } from '@app/utils/string-utils';
 
 @Component({
     selector: 'app-fileupload',
@@ -33,11 +34,10 @@ export class FileUploadComponent {
     onFileInputChange(fileInputEvent: any) {
         this.file = fileInputEvent.target.files[0];
 
-        this.fileUploadForm.controls['file'].setValue(this.file?.name);
+        this.fileControl.setValue(this.file?.name);
 
-        // Set ID as Filename, if empty:
-        if (this.isNullOrWhitespace(this.fileUploadForm.controls['id'].value)) {
-            this.fileUploadForm.controls['id'].setValue(this.file?.name);
+        if (StringUtils.isNullOrWhitespace(this.idControl.value)) {
+            this.idControl.setValue(this.file?.name);
         }
     }
 
@@ -45,8 +45,8 @@ export class FileUploadComponent {
         const input = event.input;
         const value = event.value;
     
-        if ((value || '').trim()) {
-          this.fileUploadForm.controls['suggestions'].setErrors(null);
+        if (!StringUtils.isNullOrWhitespace(value)) {
+          this.suggestionsControl.setErrors(null);
           this.suggestionsControl.value.push(value.trim());
         }
     
@@ -76,6 +76,15 @@ export class FileUploadComponent {
 
         this.isFileUploading = true;
 
+        this.httpClient
+            .put<any>(`${environment.apiUrl}/index`, this.buildRequestFormData())
+            .subscribe(x => {
+                this.isFileUploading = false;
+                this.dialogRef.close();
+            })
+    }
+
+    buildRequestFormData(): FormData {
         const formData = new FormData();
 
         formData.append('id', this.idControl.value);
@@ -83,12 +92,7 @@ export class FileUploadComponent {
         formData.append('suggestions', this.getCommaSeparatedSuggestions(this.suggestionsControl.value));
         formData.append('file', this.file);
 
-        this.httpClient
-            .put<any>(`${environment.apiUrl}/index`, formData)
-            .subscribe(x => {
-                this.isFileUploading = false;
-                this.dialogRef.close();
-            })
+        return formData;
     }
 
     getCommaSeparatedSuggestions(values: string[]): string {
@@ -96,11 +100,6 @@ export class FileUploadComponent {
             .map(x => `"${x}"`)
             .join(",");
     }
-
-    isNullOrWhitespace(input: string): boolean {
-        return !input || !input.trim();
-    }
-
 
     get idControl() { 
         return this.fileUploadForm.get('id');

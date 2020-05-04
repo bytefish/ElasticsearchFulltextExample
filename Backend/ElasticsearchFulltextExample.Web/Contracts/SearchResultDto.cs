@@ -13,8 +13,11 @@ namespace ElasticsearchFulltextExample.Web.Contracts
         [JsonPropertyName("title")]
         public string Title { get; set; }
 
-        [JsonPropertyName("text")]
-        public string Text { get; set; }
+        [JsonPropertyName("matches")]
+        public string[] Matches { get; set; }
+
+        [JsonPropertyName("keywords")]
+        public string[] Keywords { get; set; }
 
         [JsonPropertyName("url")]
         public string Url { get; set; }

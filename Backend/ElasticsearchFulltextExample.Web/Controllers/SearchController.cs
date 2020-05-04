@@ -75,6 +75,9 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 return null;
             }
 
+            // What we are doing here...? The Complete Field Type has no simple 
+            // way to highlight the matched Prefix / Infix. We are instead replacing 
+            // the matched completions:
             var result = new List<SearchSuggestionDto>();
 
             foreach (var suggestion in suggestions)
@@ -112,7 +115,8 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 {
                     Identifier = x.Source.Id,
                     Title = x.Source.Title,
-                    Text = GetSearchBoxText(x.Highlight),
+                    Keywords = x.Source.Keywords,
+                    Matches = GetSearchBoxMatches(x.Highlight),
                     Url = $"{applicationOptions.BaseUri}/api/files/{x.Source.Id}"
                 })
                 // And convert to array:
@@ -125,7 +129,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             };
         }
 
-        private string GetSearchBoxText(IReadOnlyDictionary<string, IReadOnlyCollection<string>> highlight)
+        private string[] GetSearchBoxMatches(IReadOnlyDictionary<string, IReadOnlyCollection<string>> highlight)
         {
             if(highlight == null)
             {
@@ -134,12 +138,10 @@ namespace ElasticsearchFulltextExample.Web.Controllers
 
             if(highlight.TryGetValue("attachment.content", out var matches))
             {
-                return matches.FirstOrDefault();
+                return matches.ToArray();
             }
 
             return null;
         }
-
-        
     }
 }

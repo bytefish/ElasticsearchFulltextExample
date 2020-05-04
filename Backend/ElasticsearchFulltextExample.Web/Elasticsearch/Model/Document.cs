@@ -29,6 +29,11 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch.Model
         public string Data { get; set; }
 
         /// <summary>
+        /// Keywords to filter for.
+        /// </summary>
+        public string[] Keywords { get; set; }
+
+        /// <summary>
         /// Suggestions for the Autocomplete Field.
         /// </summary>
         public string[] Suggestions { get; set; }
