@@ -3,9 +3,9 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import {MatChipInputEvent} from '@angular/material/chips';
+import { MatChipInputEvent } from '@angular/material/chips';
 import { StringUtils } from '@app/utils/string-utils';
 
 @Component({
@@ -17,7 +17,7 @@ export class FileUploadComponent {
     file: File;
 
     separatorKeysCodes: number[] = [ENTER, COMMA];
-    
+
     fileUploadForm = new FormGroup({
         id: new FormControl('', Validators.required),
         title: new FormControl('', Validators.required),
@@ -31,7 +31,7 @@ export class FileUploadComponent {
 
     }
 
-    onFileInputChange(fileInputEvent: any) {
+    onFileInputChange(fileInputEvent: any): void {
         this.file = fileInputEvent.target.files[0];
 
         this.fileControl.setValue(this.file?.name);
@@ -44,31 +44,31 @@ export class FileUploadComponent {
     onAddSuggestion(event: MatChipInputEvent): void {
         const input = event.input;
         const value = event.value;
-    
+
         if (!StringUtils.isNullOrWhitespace(value)) {
-          this.suggestionsControl.setErrors(null);
-          this.suggestionsControl.value.push(value.trim());
+            this.suggestionsControl.setErrors(null);
+            this.suggestionsControl.value.push(value.trim());
         }
-    
+
         if (input) {
-          input.value = '';
+            input.value = '';
         }
 
         this.suggestionsControl.updateValueAndValidity();
-      }
+    }
 
-      onRemoveSuggestion(suggestion: string): void {
+    onRemoveSuggestion(suggestion: string): void {
         const index = this.suggestionsControl.value.indexOf(suggestion);
-    
+
         if (index >= 0) {
             this.suggestionsControl.value.splice(index, 1);
         }
 
         this.suggestionsControl.updateValueAndValidity();
-      }
+    }
 
 
-    onSubmit() {
+    onSubmit(): void {
 
         if (this.fileUploadForm.invalid) {
             return;
@@ -101,19 +101,19 @@ export class FileUploadComponent {
             .join(",");
     }
 
-    get idControl() { 
+    get idControl(): AbstractControl {
         return this.fileUploadForm.get('id');
     }
 
-    get titleControl() { 
+    get titleControl(): AbstractControl {
         return this.fileUploadForm.get('title');
     }
 
-    get suggestionsControl() { 
+    get suggestionsControl(): AbstractControl {
         return this.fileUploadForm.get('suggestions');
     }
 
-    get fileControl() { 
+    get fileControl(): AbstractControl {
         return this.fileUploadForm.get('file');
     }
 }
