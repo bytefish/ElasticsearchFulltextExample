@@ -14,8 +14,18 @@
         </div>
         <div fxLayout="column">
             <mat-form-field fxFlex>
-                <input matInput formControlName="suggestions" type="text" placeholder="Suggestions">
-            </mat-form-field>
+                <mat-chip-list #chipList aria-label="Suggestions" formControlName="suggestions">
+                  <mat-chip *ngFor="let suggestion of fileUploadForm.get('suggestions').value" [selectable]="true" [removable]="true" (removed)="onRemoveSuggestion(suggestion)">
+                    {{suggestion}}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                  </mat-chip>
+                  <input placeholder="Suggestions"
+                         [matChipInputFor]="chipList"
+                         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                         [matChipInputAddOnBlur]="true"
+                         (matChipInputTokenEnd)="onAddSuggestion($event)">
+                </mat-chip-list>
+              </mat-form-field>
         </div>
         <!-- Upload Item -->
         <div fxLayout="row">

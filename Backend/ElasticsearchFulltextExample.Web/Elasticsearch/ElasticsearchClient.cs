@@ -140,10 +140,12 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
         private QueryContainer BuildQueryContainer(string query)
         {
             return Query<Document>.MultiMatch(x => x.Query(query)
-                .Type(TextQueryType.BestFields)
+                .Type(TextQueryType.BoolPrefix)
                 .Fields(f => f
-                    .Field(x => x.Attachment.Title, 1)
-                    .Field(x => x.Attachment.Content, 2)));
+                    .Field(x => x.Suggestions)
+                    .Field(x => x.Attachment.Title)
+                    .Field(x => x.Attachment.Content)
+                    ));
         }
 
         private static IElasticClient CreateClient(Uri uri)

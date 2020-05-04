@@ -1,12 +1,11 @@
-import { Component, ViewChildren, ElementRef, QueryList, ViewChild, OnInit, HostListener } from '@angular/core';
-import { SearchResults, SearchSuggestions } from '@app/app.model';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+
+import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, empty, timer, zip, range, of } from 'rxjs';
-import { map, retryWhen, mergeMap, switchMap, debounceTime, filter } from 'rxjs/operators';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import {MatChipInputEvent} from '@angular/material/chips';
 
 @Component({
     selector: 'app-fileupload',
@@ -16,14 +15,16 @@ import { MatDialogRef } from '@angular/material/dialog';
 export class FileUploadComponent {
     file: File;
 
-    isFileUploading: boolean = false;
-
+    separatorKeysCodes: number[] = [ENTER, COMMA];
+    
     fileUploadForm = new FormGroup({
         id: new FormControl('', Validators.required),
         title: new FormControl('', Validators.required),
-        suggestions: new FormControl('', Validators.required),
+        suggestions: new FormControl([], Validators.required),
         file: new FormControl('', Validators.required),
     });
+
+    isFileUploading: boolean = false;
 
     constructor(public dialogRef: MatDialogRef<FileUploadComponent>, private httpClient: HttpClient) {
 
@@ -40,6 +41,32 @@ export class FileUploadComponent {
         }
     }
 
+    onAddSuggestion(event: MatChipInputEvent): void {
+        const input = event.input;
+        const value = event.value;
+    
+        if ((value || '').trim()) {
+          this.fileUploadForm.controls['suggestions'].setErrors(null);
+          this.suggestionsControl.value.push(value.trim());
+        }
+    
+        if (input) {
+          input.value = '';
+        }
+
+        this.suggestionsControl.updateValueAndValidity();
+      }
+
+      onRemoveSuggestion(suggestion: string): void {
+        const index = this.suggestionsControl.value.indexOf(suggestion);
+    
+        if (index >= 0) {
+            this.suggestionsControl.value.splice(index, 1);
+        }
+
+        this.suggestionsControl.updateValueAndValidity();
+      }
+
 
     onSubmit() {
 
@@ -51,19 +78,43 @@ export class FileUploadComponent {
 
         const formData = new FormData();
 
-        formData.append('id', this.fileUploadForm.controls['id'].value);
-        formData.append('title', this.fileUploadForm.controls['title'].value);
-        formData.append('suggestions', this.fileUploadForm.controls['suggestions'].value);
+        formData.append('id', this.idControl.value);
+        formData.append('title', this.titleControl.value);
+        formData.append('suggestions', this.getCommaSeparatedSuggestions(this.suggestionsControl.value));
         formData.append('file', this.file);
 
         this.httpClient
             .put<any>(`${environment.apiUrl}/index`, formData)
             .subscribe(x => {
+                this.isFileUploading = false;
                 this.dialogRef.close();
             })
     }
 
-    isNullOrWhitespace(input: string) : boolean{
+    getCommaSeparatedSuggestions(values: string[]): string {
+        return values
+            .map(x => `"${x}"`)
+            .join(",");
+    }
+
+    isNullOrWhitespace(input: string): boolean {
         return !input || !input.trim();
-      }
+    }
+
+
+    get idControl() { 
+        return this.fileUploadForm.get('id');
+    }
+
+    get titleControl() { 
+        return this.fileUploadForm.get('title');
+    }
+
+    get suggestionsControl() { 
+        return this.fileUploadForm.get('suggestions');
+    }
+
+    get fileControl() { 
+        return this.fileUploadForm.get('file');
+    }
 }
