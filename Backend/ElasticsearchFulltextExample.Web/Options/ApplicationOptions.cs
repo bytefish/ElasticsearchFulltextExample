@@ -6,5 +6,9 @@ namespace ElasticsearchFulltextExample.Web.Options
     public class ApplicationOptions
     {
         public string BaseUri { get; set; }
+
+        public string Tesseract { get; set; }
+
+        public string TempDirectory { get; set; }
     }
 }

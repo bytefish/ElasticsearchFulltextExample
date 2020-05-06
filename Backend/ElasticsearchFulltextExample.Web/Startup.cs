@@ -12,6 +12,7 @@ using ElasticsearchFulltextExample.Web.Elasticsearch;
 using System;
 using System.Threading.Tasks;
 using ElasticsearchFulltextExample.Web.Options;
+using ElasticsearchFulltextExample.Web.Services;
 
 namespace ElasticsearchFulltextExample.Web
 {
@@ -92,6 +93,8 @@ namespace ElasticsearchFulltextExample.Web
 
         private void RegisterApplicationServices(IServiceCollection services)
         {
+            services.AddSingleton<TesseractService>();
+
             // Build & Initialize the Client:
             var elasticSearchClient = GetElasticsearchClient().ConfigureAwait(false).GetAwaiter().GetResult();
 

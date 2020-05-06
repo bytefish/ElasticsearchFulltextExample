@@ -23,6 +23,7 @@ export class FileUploadComponent {
         title: new FormControl('', Validators.required),
         suggestions: new FormControl([], Validators.required),
         file: new FormControl('', Validators.required),
+        ocr: new FormControl(false)
     });
 
     isFileUploading: boolean = false;
@@ -91,6 +92,7 @@ export class FileUploadComponent {
         formData.append('title', this.titleControl.value);
         formData.append('suggestions', this.getCommaSeparatedSuggestions(this.suggestionsControl.value));
         formData.append('file', this.file);
+        formData.append('ocr', this.ocrControl.value);
 
         return formData;
     }
@@ -115,5 +117,9 @@ export class FileUploadComponent {
 
     get fileControl(): AbstractControl {
         return this.fileUploadForm.get('file');
+    }
+
+    get ocrControl(): AbstractControl {
+        return this.fileUploadForm.get('ocr');
     }
 }

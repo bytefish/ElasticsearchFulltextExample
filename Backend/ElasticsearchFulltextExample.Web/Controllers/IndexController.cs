@@ -4,24 +4,29 @@
 using ElasticsearchFulltextExample.Web.Contracts;
 using ElasticsearchFulltextExample.Web.Elasticsearch;
 using ElasticsearchFulltextExample.Web.Elasticsearch.Model;
+using ElasticsearchFulltextExample.Web.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Nest;
 using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using TinyCsvParser.Tokenizer;
+using ITokenizer = TinyCsvParser.Tokenizer.ITokenizer;
 
 namespace ElasticsearchFulltextExample.Web.Controllers
 {
     public class IndexController : Controller
     {
         private readonly ITokenizer suggestionsTokenizer;
+        private readonly TesseractService tesseractService;
         private readonly ElasticsearchClient elasticsearchClient;
 
-        public IndexController(ElasticsearchClient elasticsearchClient)
+        public IndexController(ElasticsearchClient elasticsearchClient, TesseractService tesseractService)
         {
             this.elasticsearchClient = elasticsearchClient;
+            this.tesseractService = tesseractService;
             this.suggestionsTokenizer = new QuotedStringTokenizer(',');
         }
 
@@ -29,8 +34,6 @@ namespace ElasticsearchFulltextExample.Web.Controllers
         [Route("/api/index")]
         public async Task<IActionResult> IndexDocument([FromForm] DocumentDto document)
         {
-            var contentAsBase64 = await GetBase64Async(document.File);
-            
             var indexResponse = await elasticsearchClient.IndexAsync(new Document
             {
                 Id = document.Id,
@@ -39,15 +42,28 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 IndexedOn = DateTime.UtcNow,
                 Suggestions = GetSuggestions(document.Suggestions),
                 Keywords = GetSuggestions(document.Suggestions),
-                Data = contentAsBase64
+                OCR = await GetOcrDataAsync(document),
+                Data = await GetBase64Async(document.File)
             });
 
-            if(indexResponse.IsValid)
+            if (indexResponse.IsValid)
             {
                 return Ok();
             }
 
             return BadRequest();
+        }
+
+
+        private async Task<string> GetOcrDataAsync(DocumentDto document)
+        {
+            if(!document.OCR)
+            {
+                return string.Empty;
+            }
+
+            return await tesseractService.ProcessDocument(document, "eng")
+                .ConfigureAwait(false);
         }
 
         private string[] GetSuggestions(string suggestions)

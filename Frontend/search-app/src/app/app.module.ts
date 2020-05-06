@@ -13,9 +13,9 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FileUploadComponent } from '@app/components/file-upload/file-upload.component';
 import { SearchComponent } from '@app/components/search/search.component';
 
@@ -41,7 +41,8 @@ import { SearchComponent } from '@app/components/search/search.component';
     MatProgressSpinnerModule,
     MatButtonModule,
     MatIconModule,
-    MatChipsModule
+    MatChipsModule,
+    MatCheckboxModule
   ],
   providers: [],
   bootstrap: [AppComponent]

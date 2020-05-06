@@ -56,6 +56,7 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                 .Text(textField => textField.Name(document => document.Id))
                 .Text(textField => textField.Name(document => document.Title))
                 .Text(textField => textField.Name(document => document.Filename))
+                .Text(textField => textField.Name(document => document.OCR))
                 .Date(dateField => dateField.Name(document => document.IndexedOn))
                 .Keyword(keywordField => keywordField.Name(document => document.Keywords))
                 .Completion(completionField => completionField.Name(document => document.Suggestions))

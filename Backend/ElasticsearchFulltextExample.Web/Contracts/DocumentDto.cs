@@ -17,6 +17,9 @@ namespace ElasticsearchFulltextExample.Web.Contracts
         [FromForm(Name = "suggestions")]
         public string Suggestions { get; set; }
 
+        [FromForm(Name = "ocr")]
+        public bool OCR { get; set; }
+
         [FromForm(Name = "file")]
         public IFormFile File { get; set; }
     }

@@ -44,6 +44,11 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch.Model
         public DateTime IndexedOn { get; set; }
 
         /// <summary>
+        /// The OCR Content extracted from the Document.
+        /// </summary>
+        public string OCR { get; set; }
+
+        /// <summary>
         /// The Attachment.
         /// </summary>
         public Attachment Attachment { get; set; }
