@@ -3,10 +3,10 @@
 
 namespace ElasticsearchFulltextExample.Web.Options
 {
-    public class ApplicationOptions
+    public class ElasticsearchOptions
     {
-        public string BaseUri { get; set; }
+        public string Uri { get; set; }
 
-        public TesseractOptions Tesseract { get; set; }
+        public string IndexName { get; set; }
     }
 }

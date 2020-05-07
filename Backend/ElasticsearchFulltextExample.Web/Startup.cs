@@ -13,6 +13,7 @@ using System;
 using System.Threading.Tasks;
 using ElasticsearchFulltextExample.Web.Options;
 using ElasticsearchFulltextExample.Web.Services;
+using ElasticsearchFulltextExample.Web.Hosting;
 
 namespace ElasticsearchFulltextExample.Web
 {
@@ -48,6 +49,9 @@ namespace ElasticsearchFulltextExample.Web
             // Configure all Options Here:
             ConfigureOptions(services);
 
+            // Register Hosted Services:
+            RegisterHostedServices(services);
+
             // Register Application Specific Services here ...
             RegisterApplicationServices(services);
 
@@ -62,6 +66,8 @@ namespace ElasticsearchFulltextExample.Web
             // We need this for Antiforgery to work:
             services.AddMvc();
         }
+
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -89,33 +95,19 @@ namespace ElasticsearchFulltextExample.Web
         private void ConfigureOptions(IServiceCollection services)
         {
             services.Configure<ApplicationOptions>(Configuration.GetSection("Application"));
+            services.Configure<TesseractOptions>(Configuration.GetSection("Application:Tesseract"));
+            services.Configure<ElasticsearchOptions>(Configuration.GetSection("Application:Elasticsearch"));
         }
 
         private void RegisterApplicationServices(IServiceCollection services)
         {
             services.AddSingleton<TesseractService>();
-
-            // Build & Initialize the Client:
-            var elasticSearchClient = GetElasticsearchClient().ConfigureAwait(false).GetAwaiter().GetResult();
-
-            services.AddSingleton(elasticSearchClient);
+            services.AddSingleton<ElasticsearchClient>();
         }
 
-        private async Task<ElasticsearchClient> GetElasticsearchClient()
+        private void RegisterHostedServices(IServiceCollection services)
         {
-            var client = new ElasticsearchClient(new Uri("http://localhost:9200"), "documents");
-
-            // Prepare Elasticsearch Database:
-            var response = await client.ExistsAsync();
-
-
-            if (!response.Exists)
-            {
-                await client.CreateIndexAsync();
-                await client.CreatePipelineAsync();
-            }
-
-            return client;
+            services.AddHostedService<ElasticsearchHostedService>();
         }
     }
 }

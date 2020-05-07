@@ -3,6 +3,8 @@
 
 using Elasticsearch.Net;
 using ElasticsearchFulltextExample.Web.Elasticsearch.Model;
+using ElasticsearchFulltextExample.Web.Options;
+using Microsoft.Extensions.Options;
 using Nest;
 using System;
 using System.Collections.Generic;
@@ -15,15 +17,15 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
         public readonly IElasticClient Client;
         public readonly string IndexName;
 
+        public ElasticsearchClient(IOptions<ElasticsearchOptions> options)
+            : this(CreateClient(options.Value.Uri), options.Value.IndexName)
+        {
+        }
+
         public ElasticsearchClient(IElasticClient client, string indexName)
         {
             IndexName = indexName;
             Client = client;
-        }
-
-        public ElasticsearchClient(Uri uri, string indexName)
-            : this(CreateClient(uri), indexName)
-        {
         }
 
         public Task<ExistsResponse> ExistsAsync()
@@ -150,9 +152,10 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                     .Field(x => x.Attachment.Content)));
         }
 
-        private static IElasticClient CreateClient(Uri uri)
+        private static IElasticClient CreateClient(string uriString)
         {
-            var connectionPool = new SingleNodeConnectionPool(uri);
+            var connectionUri = new Uri(uriString);
+            var connectionPool = new SingleNodeConnectionPool(connectionUri);
             var connectionSettings = new ConnectionSettings(connectionPool);
 
             return new ElasticClient(connectionSettings);

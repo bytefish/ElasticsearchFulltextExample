@@ -8,6 +8,7 @@ import { map, retryWhen, mergeMap, switchMap, debounceTime, filter, tap, catchEr
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { FileUploadComponent } from '@app/components/file-upload/file-upload.component';
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-search',
@@ -20,6 +21,9 @@ export class SearchComponent implements OnInit {
 
   results$: Observable<SearchResults>;
   suggestions$: Observable<SearchSuggestions>;
+
+  @ViewChild('search', { read: MatAutocompleteTrigger }) 
+  autoComplete: MatAutocompleteTrigger;
 
   constructor(private dialog: MatDialog, private router: Router, private route: ActivatedRoute, private httpClient: HttpClient) {
 
@@ -46,12 +50,16 @@ export class SearchComponent implements OnInit {
   }
 
   onKeyupEnter(value: string): void {
+    
+    if(!!this.autoComplete) {
+      this.autoComplete.closePanel();
+    }
+
     // Instead of firing the Search directly, let's update the Route instead:
     this.router.navigate(['/search'], { queryParams: { q: value } });
   }
 
   doSearch(query: string): Observable<SearchResults> {
-    console.log(query);
 
     return this.httpClient
       // Get the Results from the API:

@@ -10,17 +10,17 @@ namespace ElasticsearchFulltextExample.Web.Services
 {
     public class TesseractService
     {
-        private readonly ApplicationOptions applicationOptions;
+        private readonly TesseractOptions tesseractOptions;
 
-        public TesseractService(IOptions<ApplicationOptions> applicationOptions)
+        public TesseractService(IOptions<TesseractOptions> tesseractOptions)
         {
-            this.applicationOptions = applicationOptions.Value;
+            this.tesseractOptions = tesseractOptions.Value;
         }
 
         public async Task<string> ProcessDocument(DocumentDto document, string language)
         {
-            var temporarySourceFilename = Path.Combine(applicationOptions.TempDirectory, Path.GetRandomFileName());
-            var temporaryTargetFilename = Path.Combine(applicationOptions.TempDirectory, Path.GetRandomFileName());
+            var temporarySourceFilename = Path.Combine(tesseractOptions.TempDirectory, Path.GetRandomFileName());
+            var temporaryTargetFilename = Path.Combine(tesseractOptions.TempDirectory, Path.GetRandomFileName());
 
             // The Tesseract CLI in 5.0.0-alpha always adds a .txt to the output file:
             var temporaryTesseractOutputFile = $"{temporaryTargetFilename}.txt";
@@ -34,7 +34,7 @@ namespace ElasticsearchFulltextExample.Web.Services
 
                 var tesseractArguments = $"{temporarySourceFilename} {temporaryTargetFilename} -l {language}";
 
-                var result = await RunProcessAsync(applicationOptions.Tesseract, tesseractArguments);
+                var result = await RunProcessAsync(tesseractOptions.Executable, tesseractArguments);
 
                 if (result != 0)
                 {
