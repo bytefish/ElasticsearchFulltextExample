@@ -24,9 +24,9 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch.Model
         public string Filename { get; set; }
 
         /// <summary>
-        /// The Base64 Content of the Document.
+        /// The Data of the Document.
         /// </summary>
-        public string Data { get; set; }
+        public byte[] Data { get; set; }
 
         /// <summary>
         /// Keywords to filter for.
@@ -44,9 +44,9 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch.Model
         public DateTime IndexedOn { get; set; }
 
         /// <summary>
-        /// The OCR Content extracted from the Document.
+        /// OCR Data.
         /// </summary>
-        public string OCR { get; set; }
+        public string Ocr { get; set; }
 
         /// <summary>
         /// The Attachment.

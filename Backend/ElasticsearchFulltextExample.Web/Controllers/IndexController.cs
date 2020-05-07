@@ -42,8 +42,8 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 IndexedOn = DateTime.UtcNow,
                 Suggestions = GetSuggestions(document.Suggestions),
                 Keywords = GetSuggestions(document.Suggestions),
-                OCR = await GetOcrDataAsync(document),
-                Data = await GetBase64Async(document.File)
+                Data = await GetBytesAsync(document.File),
+                Ocr = await GetOcrDataAsync(document)
             });
 
             if (indexResponse.IsValid)
@@ -57,7 +57,9 @@ namespace ElasticsearchFulltextExample.Web.Controllers
 
         private async Task<string> GetOcrDataAsync(DocumentDto document)
         {
-            if(!document.OCR)
+            var isProcessingRequested = Convert.ToBoolean(document.OCR);
+
+            if(!isProcessingRequested)
             {
                 return string.Empty;
             }
@@ -79,19 +81,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 .ToArray();
         }
 
-        private async Task<string> GetBase64Async(IFormFile file)
-        {
-            if(file == null)
-            {
-                return null;
-            }
-
-            var bytes = await GetBytes(file);
-
-            return Convert.ToBase64String(bytes);
-        }
-
-        private async Task<byte[]> GetBytes(IFormFile formFile)
+        private async Task<byte[]> GetBytesAsync(IFormFile formFile)
         {
             using (var memoryStream = new MemoryStream())
             {

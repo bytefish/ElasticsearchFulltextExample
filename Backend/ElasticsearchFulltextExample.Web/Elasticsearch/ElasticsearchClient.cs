@@ -35,7 +35,27 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
         {
             return Client.Indices.CreateAsync(IndexName, descriptor =>
             {
-                return descriptor.Map<Document>(mapping => ConfigureDocumentMapping(mapping));
+                return descriptor.Map<Document>(mapping => mapping
+                    .Properties(properties => properties
+                        .Text(textField => textField.Name(document => document.Id))
+                        .Text(textField => textField.Name(document => document.Title))
+                        .Text(textField => textField.Name(document => document.Filename))
+                        .Text(textField => textField.Name(document => document.Ocr))
+                        .Binary(textField => textField.Name(document => document.Data))
+                        .Date(dateField => dateField.Name(document => document.IndexedOn))
+                        .Keyword(keywordField => keywordField.Name(document => document.Keywords))
+                        .Completion(completionField => completionField.Name(document => document.Suggestions))
+                        .Object<Attachment>(attachment => attachment
+                            .Name(document => document.Attachment)
+                            .Properties(attachmentProperties => attachmentProperties
+                                .Text(t => t.Name(n => n.Name))
+                                .Text(t => t.Name(n => n.Content))
+                                .Text(t => t.Name(n => n.ContentType))
+                                .Number(n => n.Name(nn => nn.ContentLength))
+                                .Date(d => d.Name(n => n.Date))
+                                .Text(t => t.Name(n => n.Author))
+                                .Text(t => t.Name(n => n.Title))
+                                .Text(t => t.Name(n => n.Keywords))))));
             });
         }
 
@@ -44,43 +64,14 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
             return Client.GetAsync<Document>(documentId, x => x.Index(IndexName));
         }
 
-        private ITypeMapping ConfigureDocumentMapping(TypeMappingDescriptor<Document> mapping)
-        {
-            return mapping
-                .Properties(properties => ConfigureDocumentProperties(properties));
-        }
-
-        private IPromise<IProperties> ConfigureDocumentProperties(PropertiesDescriptor<Document> properties)
-        {
-            return properties
-                .Text(textField => textField.Name(document => document.Id))
-                .Text(textField => textField.Name(document => document.Title))
-                .Text(textField => textField.Name(document => document.Filename))
-                .Text(textField => textField.Name(document => document.OCR))
-                .Date(dateField => dateField.Name(document => document.IndexedOn))
-                .Keyword(keywordField => keywordField.Name(document => document.Keywords))
-                .Completion(completionField => completionField.Name(document => document.Suggestions))
-                .Object<Attachment>(attachment => attachment
-                    .Name(document => document.Attachment)
-                        .Properties(attachmentProperties => attachmentProperties
-                            .Text(t => t.Name(n => n.Name))
-                            .Text(t => t.Name(n => n.Content))
-                            .Text(t => t.Name(n => n.ContentType))
-                            .Number(n => n.Name(nn => nn.ContentLength))
-                            .Date(d => d.Name(n => n.Date))
-                            .Text(t => t.Name(n => n.Author))
-                            .Text(t => t.Name(n => n.Title))
-                            .Text(t => t.Name(n => n.Keywords))));
-        }
-
         public Task<PutPipelineResponse> CreatePipelineAsync()
         {
             return Client.Ingest.PutPipelineAsync("attachments", p => p
                 .Description("Document attachment pipeline")
                 .Processors(pr => pr
-                .Attachment<Document>(a => a
-                    .Field(f => f.Data)
-                    .TargetField(f => f.Attachment))));
+                    .Attachment<Document>(a => a
+                        .Field(f => f.Data)
+                        .TargetField(f => f.Attachment))));
         }
 
         public Task<BulkResponse> BulkIndexAsync(IEnumerable<Document> documents)
@@ -114,14 +105,24 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                 .Index(IndexName)
                 // Highlight Text Content:
                 .Highlight(highlight => highlight
-                    .Fields(fields => fields
-                        .Fragmenter(HighlighterFragmenter.Span)
-                        .PreTags("<strong>")
-                        .PostTags("</strong>")
-                        .FragmentSize(150)
-                        .NoMatchSize(150)
-                        .NumberOfFragments(5)
-                        .Field(x => x.Attachment.Content)))
+                    .Fields(
+                        fields => fields
+                            .Fragmenter(HighlighterFragmenter.Span)
+                            .PreTags("<strong>")
+                            .PostTags("</strong>")
+                            .FragmentSize(150)
+                            .NoMatchSize(150)
+                            .NumberOfFragments(5)
+                            .Field(x => x.Ocr),
+                        fields => fields
+                            .Fragmenter(HighlighterFragmenter.Span)
+                            .PreTags("<strong>")
+                            .PostTags("</strong>")
+                            .FragmentSize(150)
+                            .NoMatchSize(150)
+                            .NumberOfFragments(5)
+                            .Field(x => x.Attachment.Content))
+                    )
                 // Now kick off the query:
                 .Query(q => BuildQueryContainer(query)));
         }
@@ -145,6 +146,7 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                 .Type(TextQueryType.BoolPrefix)
                 .Fields(f => f
                     .Field(x => x.Keywords)
+                    .Field(x => x.Ocr)
                     .Field(x => x.Attachment.Content)));
         }
 

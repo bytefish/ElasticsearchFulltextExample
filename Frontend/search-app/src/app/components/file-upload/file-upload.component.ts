@@ -94,6 +94,8 @@ export class FileUploadComponent {
         formData.append('file', this.file);
         formData.append('ocr', this.ocrControl.value);
 
+        console.log(this.ocrControl.value);
+        
         return formData;
     }
 

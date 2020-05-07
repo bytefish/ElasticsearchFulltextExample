@@ -49,7 +49,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
 
             var fileName = document.Filename;
             var fileType = GetContentType(document.Attachment);
-            var fileBytes = Convert.FromBase64String(document.Data);
+            var fileBytes = document.Data;
 
             return File(fileBytes, fileType, fileName);
         }

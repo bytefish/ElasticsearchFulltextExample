@@ -116,7 +116,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                     Identifier = x.Source.Id,
                     Title = x.Source.Title,
                     Keywords = x.Source.Keywords,
-                    Matches = GetSearchBoxMatches(x.Highlight),
+                    Matches = GetMatches(x.Highlight),
                     Url = $"{applicationOptions.BaseUri}/api/files/{x.Source.Id}"
                 })
                 // And convert to array:
@@ -129,19 +129,29 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             };
         }
 
-        private string[] GetSearchBoxMatches(IReadOnlyDictionary<string, IReadOnlyCollection<string>> highlight)
+        private string[] GetMatches(IReadOnlyDictionary<string, IReadOnlyCollection<string>> highlight)
+        {
+            var matchesForOcr = GetMatchesForField(highlight, "ocr"); 
+            var matchesForContent = GetMatchesForField(highlight, "attachment.content");
+
+            return Enumerable
+                .Concat(matchesForOcr, matchesForContent)
+                .ToArray();
+        }
+
+        private string[] GetMatchesForField(IReadOnlyDictionary<string, IReadOnlyCollection<string>> highlight, string field)
         {
             if(highlight == null)
             {
-                return null;
+                return new string[] { };
             }
 
-            if(highlight.TryGetValue("attachment.content", out var matches))
+            if(highlight.TryGetValue(field, out var matches))
             {
                 return matches.ToArray();
             }
 
-            return null;
+            return new string[] { };
         }
     }
 }

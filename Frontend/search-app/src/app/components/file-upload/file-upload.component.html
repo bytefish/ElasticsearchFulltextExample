@@ -38,10 +38,11 @@
                 <mat-icon>attach_file</mat-icon>
             </button>
         </div>
-        <div fxLayout="column">
-            <mat-form-field fxFlex>
-                <mat-checkbox color="accent" formControlName="ocr">Apply OCR</mat-checkbox>
-            </mat-form-field>
+        <div fxLayout="column" fxLayoutAlign="center start">
+
+            <div style="margin: 20px">
+                <mat-checkbox color="primary" formControlName="ocr">Add OCR Data to Search Index</mat-checkbox>
+            </div>
         </div>
         <div fxLayout="column">
             <button type="submit" mat-raised-button color="accent" [disabled]="isFileUploading">Index Document</button>

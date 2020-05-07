@@ -108,6 +108,7 @@ namespace ElasticsearchFulltextExample.Web
             // Prepare Elasticsearch Database:
             var response = await client.ExistsAsync();
 
+
             if (!response.Exists)
             {
                 await client.CreateIndexAsync();
