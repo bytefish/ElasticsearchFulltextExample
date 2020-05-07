@@ -43,6 +43,7 @@ export class FileUploadComponent {
     }
 
     onAddSuggestion(event: MatChipInputEvent): void {
+
         const input = event.input;
         const value = event.value;
 
@@ -95,7 +96,7 @@ export class FileUploadComponent {
         formData.append('ocr', this.ocrControl.value);
 
         console.log(this.ocrControl.value);
-        
+
         return formData;
     }
 

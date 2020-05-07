@@ -29,7 +29,9 @@ export class SearchComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       var query = params['q'];
       if (!!query) {
-        this.control.setValue(query);
+        // We want to set the original value, but not emit any events, 
+        // so we can ignore, that Suggestions are unnecessarily queried:
+        this.control.setValue(query, { emitEvent: false });
         this.doSearch(query);
       }
     });
@@ -53,9 +55,7 @@ export class SearchComponent implements OnInit {
         params: {
           q: query
         }
-      })
-      // ... and introduce an Exponential Backoff to retry calls:
-      .pipe<SearchResults>(this.backoff(3, 250));
+      });
   }
 
   getSuggestions(query: string): Observable<SearchSuggestions> {
@@ -75,19 +75,6 @@ export class SearchComponent implements OnInit {
           q: query
         }
       })
-      // ... and introduce an Exponential Backoff to retry calls:
-      .pipe<SearchSuggestions>(this.backoff(3, 250));
-  }
-
-  backoff(maxTries, ms) {
-    return (src: Observable<any>) => src.pipe(
-      retryWhen(attempts => zip(range(1, maxTries), attempts)
-        .pipe(
-          map(([i]) => i * i),
-          mergeMap(i => timer(i * ms))
-        )
-      )
-    );
   }
 
   openFileUploadDocument() {
