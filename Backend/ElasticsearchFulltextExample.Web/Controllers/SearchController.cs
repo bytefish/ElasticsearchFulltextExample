@@ -88,7 +88,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 foreach (var option in suggestion.Options)
                 {
                     var text = option.Text;
-                    var prefix = option.Text?.Substring(offset, length); 
+                    var prefix = option.Text.Substring(offset, Math.Min(length, text.Length)); 
                     var highlight = ReplaceAt(option.Text, offset, length, $"<strong>{prefix}</strong>");
 
                     result.Add(new SearchSuggestionDto { Text = text, Highlight = highlight });
