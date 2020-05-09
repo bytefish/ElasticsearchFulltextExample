@@ -3,7 +3,7 @@
 
 namespace ElasticsearchFulltextExample.Web.Options
 {
-    public class JobSchedulerOptions
+    public class IndexerOptions
     {
         public int IndexDelay { get; set; }
     }

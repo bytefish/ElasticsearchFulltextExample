@@ -45,7 +45,6 @@ namespace ElasticsearchFulltextExample.Web.Services
                 return string.Empty;
             }
 
-
             return await tesseractService.ProcessDocument(document.Data, "eng").ConfigureAwait(false);
         }
 

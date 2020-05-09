@@ -4,12 +4,9 @@
 using ElasticsearchFulltextExample.Web.Contracts;
 using ElasticsearchFulltextExample.Web.Database.Context;
 using ElasticsearchFulltextExample.Web.Database.Model;
-using ElasticsearchFulltextExample.Web.Elasticsearch;
-using ElasticsearchFulltextExample.Web.Elasticsearch.Model;
-using ElasticsearchFulltextExample.Web.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Nest;
+using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Linq;
@@ -22,14 +19,12 @@ namespace ElasticsearchFulltextExample.Web.Controllers
 {
     public class IndexController : Controller
     {
+        private readonly ILogger<IndexController> logger;
         private readonly ITokenizer suggestionsTokenizer;
-        private readonly TesseractService tesseractService;
-        private readonly ElasticsearchClient elasticsearchClient;
 
-        public IndexController(ElasticsearchClient elasticsearchClient, TesseractService tesseractService)
+        public IndexController(ILogger<IndexController> logger)
         {
-            this.elasticsearchClient = elasticsearchClient;
-            this.tesseractService = tesseractService;
+            this.logger = logger;
             this.suggestionsTokenizer = new QuotedStringTokenizer(',');
         }
 
@@ -37,9 +32,18 @@ namespace ElasticsearchFulltextExample.Web.Controllers
         [Route("/api/index")]
         public async Task<IActionResult> IndexDocument([FromForm] DocumentDto documentDto, CancellationToken cancellationToken)
         {
-            await ScheduleIndexing(documentDto, cancellationToken);
+            try
+            {
+                await ScheduleIndexing(documentDto, cancellationToken);
 
-            return Ok();
+                return Ok();
+            } 
+            catch(Exception e)
+            {
+                logger.LogError(e, "Failed to schedule document for Indexing");
+
+                return StatusCode(500);
+            }
         }
 
         private async Task ScheduleIndexing(DocumentDto documentDto, CancellationToken cancellationToken)

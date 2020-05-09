@@ -16,14 +16,14 @@ using System.Threading.Tasks;
 
 namespace ElasticsearchFulltextExample.Web.Hosting
 {
-    public class ElasticsearchIndexHostedService : BackgroundService
+    public class DocumentIndexerHostedService : BackgroundService
     {
-        private readonly JobSchedulerOptions options;
+        private readonly IndexerOptions options;
 
-        private readonly ILogger<ElasticsearchIndexHostedService> logger;
+        private readonly ILogger<DocumentIndexerHostedService> logger;
         private readonly ElasticsearchIndexService elasticsearchIndexService;
 
-        public ElasticsearchIndexHostedService(ILogger<ElasticsearchIndexHostedService> logger, IOptions<JobSchedulerOptions> options, ElasticsearchIndexService elasticsearchIndexService)
+        public DocumentIndexerHostedService(ILogger<DocumentIndexerHostedService> logger, IOptions<IndexerOptions> options, ElasticsearchIndexService elasticsearchIndexService)
         {
             this.logger = logger;
             this.options = options.Value;
@@ -32,7 +32,9 @@ namespace ElasticsearchFulltextExample.Web.Hosting
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            logger.LogDebug($"ElasticsearchIndexHostedService is starting.");
+            var indexDelay = TimeSpan.FromSeconds(options.IndexDelay);
+
+            logger.LogDebug($"ElasticsearchIndexHostedService is starting with Index Delay: {options.IndexDelay} seconds.");
 
             cancellationToken.Register(() => logger.LogDebug($"ElasticsearchIndexHostedService background task is stopping."));
 
@@ -42,7 +44,7 @@ namespace ElasticsearchFulltextExample.Web.Hosting
 
                 await IndexDocumentsAsync(cancellationToken);
 
-                await Task.Delay(options.IndexDelay, cancellationToken);
+                await Task.Delay(indexDelay, cancellationToken);
             }
 
             logger.LogDebug($"ElasticsearchIndexHostedService background task is stopping.");

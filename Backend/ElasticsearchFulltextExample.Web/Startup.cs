@@ -9,8 +9,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.DataProtection;
 using System.IO;
 using ElasticsearchFulltextExample.Web.Elasticsearch;
-using System;
-using System.Threading.Tasks;
 using ElasticsearchFulltextExample.Web.Options;
 using ElasticsearchFulltextExample.Web.Services;
 using ElasticsearchFulltextExample.Web.Hosting;
@@ -67,8 +65,6 @@ namespace ElasticsearchFulltextExample.Web
             services.AddMvc();
         }
 
-
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -97,6 +93,7 @@ namespace ElasticsearchFulltextExample.Web
             services.Configure<ApplicationOptions>(Configuration.GetSection("Application"));
             services.Configure<TesseractOptions>(Configuration.GetSection("Application:Tesseract"));
             services.Configure<ElasticsearchOptions>(Configuration.GetSection("Application:Elasticsearch"));
+            services.Configure<IndexerOptions>(Configuration.GetSection("Application:Indexer"));
         }
 
         private void RegisterApplicationServices(IServiceCollection services)
@@ -107,7 +104,9 @@ namespace ElasticsearchFulltextExample.Web
 
         private void RegisterHostedServices(IServiceCollection services)
         {
-            services.AddHostedService<ElasticsearchHostedService>();
+            services.AddHostedService<DatabaseInitializerHostedService>();
+            services.AddHostedService<ElasticsearchInitializerHostedService>();
+            services.AddHostedService<DocumentIndexerHostedService>();
         }
     }
 }

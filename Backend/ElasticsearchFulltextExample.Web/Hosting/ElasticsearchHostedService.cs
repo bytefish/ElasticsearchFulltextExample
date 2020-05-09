@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace ElasticsearchFulltextExample.Web.Hosting
 {
-    public class ElasticsearchHostedService : IHostedService
+    public class ElasticsearchInitializerHostedService : IHostedService
     {
         private readonly IServiceProvider serviceProvider;
 
-        public ElasticsearchHostedService(IServiceProvider serviceProvider)
+        public ElasticsearchInitializerHostedService(IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
         }
