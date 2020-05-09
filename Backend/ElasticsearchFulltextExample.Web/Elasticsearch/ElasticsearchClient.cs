@@ -37,7 +37,7 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
         {
             return Client.Indices.CreateAsync(IndexName, descriptor =>
             {
-                return descriptor.Map<Document>(mapping => mapping
+                return descriptor.Map<ElasticsearchDocument>(mapping => mapping
                     .Properties(properties => properties
                         .Text(textField => textField.Name(document => document.Id))
                         .Text(textField => textField.Name(document => document.Title))
@@ -61,9 +61,9 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
             });
         }
 
-        public Task<GetResponse<Document>> GetDocumentByIdAsync(string documentId)
+        public Task<GetResponse<ElasticsearchDocument>> GetDocumentByIdAsync(string documentId)
         {
-            return Client.GetAsync<Document>(documentId, x => x.Index(IndexName));
+            return Client.GetAsync<ElasticsearchDocument>(documentId, x => x.Index(IndexName));
         }
 
         public Task<PutPipelineResponse> CreatePipelineAsync()
@@ -71,18 +71,18 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
             return Client.Ingest.PutPipelineAsync("attachments", p => p
                 .Description("Document attachment pipeline")
                 .Processors(pr => pr
-                    .Attachment<Document>(a => a
+                    .Attachment<ElasticsearchDocument>(a => a
                         .Field(f => f.Data)
                         .TargetField(f => f.Attachment))));
         }
 
-        public Task<BulkResponse> BulkIndexAsync(IEnumerable<Document> documents)
+        public Task<BulkResponse> BulkIndexAsync(IEnumerable<ElasticsearchDocument> documents)
         {
             var request = new BulkDescriptor();
 
             foreach (var document in documents)
             {
-                request.Index<Document>(op => op
+                request.Index<ElasticsearchDocument>(op => op
                     .Id(document.Id)
                     .Index(IndexName)
                     .Document(document)
@@ -92,7 +92,7 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
             return Client.BulkAsync(request);
         }
 
-        public Task<IndexResponse> IndexAsync(Document document)
+        public Task<IndexResponse> IndexAsync(ElasticsearchDocument document)
         {
             return Client.IndexAsync(document, x => x
                 .Id(document.Id)
@@ -100,9 +100,9 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                 .Pipeline("attachments"));
         }
 
-        public Task<ISearchResponse<Document>> SearchAsync(string query)
+        public Task<ISearchResponse<ElasticsearchDocument>> SearchAsync(string query)
         {
-            return Client.SearchAsync<Document>(document => document
+            return Client.SearchAsync<ElasticsearchDocument>(document => document
                 // Query this Index:
                 .Index(IndexName)
                 // Highlight Text Content:
@@ -129,9 +129,9 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                 .Query(q => BuildQueryContainer(query)));
         }
 
-        public Task<ISearchResponse<Document>> SuggestAsync(string query)
+        public Task<ISearchResponse<ElasticsearchDocument>> SuggestAsync(string query)
         {
-            return Client.SearchAsync<Document>(x => x
+            return Client.SearchAsync<ElasticsearchDocument>(x => x
                 // Query this Index:
                 .Index(IndexName)
                 // Suggest Titles:
@@ -144,7 +144,7 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
 
         private QueryContainer BuildQueryContainer(string query)
         {
-            return Query<Document>.MultiMatch(x => x.Query(query)
+            return Query<ElasticsearchDocument>.MultiMatch(x => x.Query(query)
                 .Type(TextQueryType.BoolPrefix)
                 .Fields(f => f
                     .Field(x => x.Keywords)

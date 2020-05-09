@@ -1,17 +1,19 @@
 ﻿// Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Nest;
-using System;
-
-namespace ElasticsearchFulltextExample.Web.Elasticsearch.Model
+namespace ElasticsearchFulltextExample.Web.Database.Model
 {
     public class Document
     {
         /// <summary>
         /// A unique document id.
         /// </summary>
-        public string Id { get; set; }
+        public int Id { get; set; }
+
+        /// <summary>
+        /// A unique document id.
+        /// </summary>
+        public string DocumentId { get; set; }
 
         /// <summary>
         /// The Title of the Document for Suggestion.
@@ -39,18 +41,13 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch.Model
         public string[] Suggestions { get; set; }
 
         /// <summary>
-        /// The Date the document was indexed on.
-        /// </summary>
-        public DateTime IndexedOn { get; set; }
-
-        /// <summary>
         /// OCR Data.
         /// </summary>
-        public string Ocr { get; set; }
+        public bool IsOcrRequested { get; set; }
 
         /// <summary>
-        /// The Attachment.
+        /// The Document Status.
         /// </summary>
-        public Attachment Attachment { get; set; }
+        public StatusEnum Status { get; set; }
     }
 }

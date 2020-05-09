@@ -1,4 +1,6 @@
-﻿using ElasticsearchFulltextExample.Web.Contracts;
+﻿// Copyright (c) Philipp Wagner. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using ElasticsearchFulltextExample.Web.Options;
 using Microsoft.Extensions.Options;
 using System;
@@ -17,7 +19,7 @@ namespace ElasticsearchFulltextExample.Web.Services
             this.tesseractOptions = tesseractOptions.Value;
         }
 
-        public async Task<string> ProcessDocument(DocumentDto document, string language)
+        public async Task<string> ProcessDocument(byte[] document, string language)
         {
             var temporarySourceFilename = Path.Combine(tesseractOptions.TempDirectory, Path.GetRandomFileName());
             var temporaryTargetFilename = Path.Combine(tesseractOptions.TempDirectory, Path.GetRandomFileName());
@@ -27,10 +29,7 @@ namespace ElasticsearchFulltextExample.Web.Services
 
             try
             {
-                using (var fileStream = new FileStream(temporarySourceFilename, FileMode.Create))
-                {
-                    await document.File.CopyToAsync(fileStream);
-                }
+                await File.WriteAllBytesAsync(temporarySourceFilename, document);
 
                 var tesseractArguments = $"{temporarySourceFilename} {temporaryTargetFilename} -l {language}";
 

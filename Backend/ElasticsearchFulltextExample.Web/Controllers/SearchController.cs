@@ -45,7 +45,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             return Ok(searchSuggestions);
         }
 
-        private SearchSuggestionsDto ConvertToSearchSuggestions(string query, ISearchResponse<Elasticsearch.Model.Document> searchResponse)
+        private SearchSuggestionsDto ConvertToSearchSuggestions(string query, ISearchResponse<Elasticsearch.Model.ElasticsearchDocument> searchResponse)
         {
             return new SearchSuggestionsDto
             {
@@ -54,7 +54,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             };
         }
 
-        private SearchSuggestionDto[] GetSuggestions(ISearchResponse<Elasticsearch.Model.Document> searchResponse)
+        private SearchSuggestionDto[] GetSuggestions(ISearchResponse<Elasticsearch.Model.ElasticsearchDocument> searchResponse)
         {
             if (searchResponse == null)
             {
@@ -105,7 +105,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 .Insert(index, replace);
         }
 
-        private SearchResultsDto ConvertToSearchResults(string query, ISearchResponse<Elasticsearch.Model.Document> searchResponse)
+        private SearchResultsDto ConvertToSearchResults(string query, ISearchResponse<Elasticsearch.Model.ElasticsearchDocument> searchResponse)
         {
             var searchResults = searchResponse
                 // Get the Hits:

@@ -40,7 +40,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             return BuildResult(document);
         }
 
-        private FileContentResult BuildResult(Document document)
+        private FileContentResult BuildResult(ElasticsearchDocument document)
         {
             if(document == null)
             {

@@ -2,6 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using ElasticsearchFulltextExample.Web.Contracts;
+using ElasticsearchFulltextExample.Web.Database.Context;
+using ElasticsearchFulltextExample.Web.Database.Model;
 using ElasticsearchFulltextExample.Web.Elasticsearch;
 using ElasticsearchFulltextExample.Web.Elasticsearch.Model;
 using ElasticsearchFulltextExample.Web.Services;
@@ -11,6 +13,7 @@ using Nest;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using TinyCsvParser.Tokenizer;
 using ITokenizer = TinyCsvParser.Tokenizer.ITokenizer;
@@ -32,41 +35,37 @@ namespace ElasticsearchFulltextExample.Web.Controllers
 
         [HttpPut]
         [Route("/api/index")]
-        public async Task<IActionResult> IndexDocument([FromForm] DocumentDto document)
+        public async Task<IActionResult> IndexDocument([FromForm] DocumentDto documentDto, CancellationToken cancellationToken)
         {
-            var indexResponse = await elasticsearchClient.IndexAsync(new Document
-            {
-                Id = document.Id,
-                Title = document.Title,
-                Filename = document.File.FileName,
-                IndexedOn = DateTime.UtcNow,
-                Suggestions = GetSuggestions(document.Suggestions),
-                Keywords = GetSuggestions(document.Suggestions),
-                Data = await GetBytesAsync(document.File),
-                Ocr = await GetOcrDataAsync(document)
-            });
+            await ScheduleIndexing(documentDto, cancellationToken);
 
-            if (indexResponse.IsValid)
-            {
-                return Ok();
-            }
-
-            return BadRequest();
+            return Ok();
         }
 
-
-        private async Task<string> GetOcrDataAsync(DocumentDto document)
+        private async Task ScheduleIndexing(DocumentDto documentDto, CancellationToken cancellationToken)
         {
-            var isProcessingRequested = Convert.ToBoolean(document.OCR);
-
-            if(!isProcessingRequested)
+            using (var context = new ApplicationDbContext())
             {
-                return string.Empty;
-            }
+                bool.TryParse(documentDto.IsOcrRequested, out var isOcrRequest);
 
-            return await tesseractService.ProcessDocument(document, "eng")
-                .ConfigureAwait(false);
+                var document = new Document
+                {
+                    DocumentId = documentDto.Id,
+                    Title = documentDto.Title,
+                    Filename = documentDto.File.FileName,
+                    Suggestions = GetSuggestions(documentDto.Suggestions),
+                    Keywords = GetSuggestions(documentDto.Suggestions),
+                    Data = await GetBytesAsync(documentDto.File),
+                    IsOcrRequested = isOcrRequest,
+                    Status = StatusEnum.Scheduled
+                };
+
+                context.Documents.Add(document);
+
+                await context.SaveChangesAsync(cancellationToken);
+            }
         }
+
 
         private string[] GetSuggestions(string suggestions)
         {
