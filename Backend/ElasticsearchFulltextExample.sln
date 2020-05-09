@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElasticsearchFulltextExample.Web", "ElasticsearchFulltextExample.Web\ElasticsearchFulltextExample.Web.csproj", "{E77D0D6F-4918-4C79-AE7B-7009CA294344}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElasticsearchFulltextExample.Scheduler", "ElasticsearchFulltextExample.Scheduler\ElasticsearchFulltextExample.Scheduler.csproj", "{7B40FB9E-5F4F-4B5D-8CF4-23007500C78A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{E77D0D6F-4918-4C79-AE7B-7009CA294344}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E77D0D6F-4918-4C79-AE7B-7009CA294344}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E77D0D6F-4918-4C79-AE7B-7009CA294344}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7B40FB9E-5F4F-4B5D-8CF4-23007500C78A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7B40FB9E-5F4F-4B5D-8CF4-23007500C78A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7B40FB9E-5F4F-4B5D-8CF4-23007500C78A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7B40FB9E-5F4F-4B5D-8CF4-23007500C78A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

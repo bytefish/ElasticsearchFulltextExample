@@ -98,8 +98,9 @@ namespace ElasticsearchFulltextExample.Web
 
         private void RegisterApplicationServices(IServiceCollection services)
         {
-            services.AddSingleton<TesseractService>();
             services.AddSingleton<ElasticsearchClient>();
+            services.AddSingleton<TesseractService>();
+            services.AddSingleton<ElasticsearchIndexService>();
         }
 
         private void RegisterHostedServices(IServiceCollection services)

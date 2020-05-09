@@ -68,6 +68,11 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 return null;
             }
 
+            if(!suggest.ContainsKey("suggest"))
+            {
+                return null;
+            }
+
             var suggestions = suggest["suggest"];
 
             if (suggestions == null)
