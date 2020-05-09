@@ -12,6 +12,9 @@ using ElasticsearchFulltextExample.Web.Elasticsearch;
 using ElasticsearchFulltextExample.Web.Options;
 using ElasticsearchFulltextExample.Web.Services;
 using ElasticsearchFulltextExample.Web.Hosting;
+using Microsoft.EntityFrameworkCore;
+using ElasticsearchFulltextExample.Web.Database.Context;
+using ElasticsearchFulltextExample.Web.Database.Factory;
 
 namespace ElasticsearchFulltextExample.Web
 {
@@ -46,6 +49,9 @@ namespace ElasticsearchFulltextExample.Web
 
             // Configure all Options Here:
             ConfigureOptions(services);
+
+            // Configures Database-related logic:
+            ConfigureDbContext(services);
 
             // Register Hosted Services:
             RegisterHostedServices(services);
@@ -85,7 +91,6 @@ namespace ElasticsearchFulltextExample.Web
 
                 endpoints.MapFallbackToController("Index", "Home");
             });
-
         }
 
         private void ConfigureOptions(IServiceCollection services)
@@ -108,6 +113,19 @@ namespace ElasticsearchFulltextExample.Web
             services.AddHostedService<DatabaseInitializerHostedService>();
             services.AddHostedService<ElasticsearchInitializerHostedService>();
             services.AddHostedService<DocumentIndexerHostedService>();
+        }
+
+        private void ConfigureDbContext(IServiceCollection services)
+        {
+            // Add the DbContextOptions:
+            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseSqlite(Configuration.GetConnectionString("DocumentDatabase"))
+                .Options;
+
+            // Construct the Factory, so we do not have do deal with DI Lifetime Scopes when instantiating the Context:
+            var dbContextFactory = new ApplicationDbContextFactory(dbContextOptions);
+
+            services.AddSingleton(dbContextFactory);
         }
     }
 }

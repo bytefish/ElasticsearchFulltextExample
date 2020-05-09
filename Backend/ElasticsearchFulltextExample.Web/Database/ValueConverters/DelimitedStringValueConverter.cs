@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+﻿// Copyright (c) Philipp Wagner. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Linq;
 using TinyCsvParser.Tokenizer;
 
@@ -16,11 +19,11 @@ namespace ElasticsearchFulltextExample.Web.Database
         {
         }
 
-        private static string BuildDelimitedLine(string[] value, char delimiter)
+        private static string BuildDelimitedLine(string[] values, char delimiter)
         {
-            var quoted = value.Select(x => $"\"{value}\"");
+            var quotedValues = values.Select(value => $"\"{value}\"");
 
-            return string.Join(delimiter, quoted);
+            return string.Join(delimiter, quotedValues);
         }
     }
 }

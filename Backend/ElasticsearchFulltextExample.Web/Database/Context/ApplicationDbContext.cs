@@ -9,12 +9,12 @@ namespace ElasticsearchFulltextExample.Web.Database.Context
 {
     public class ApplicationDbContext : DbContext
     {
-        public DbSet<Document> Documents { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public ApplicationDbContext(DbContextOptions options)
+            : base(options)
         {
-            optionsBuilder.UseSqlite(@"Data Source=documents.db");
         }
+
+        public DbSet<Document> Documents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

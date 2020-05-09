@@ -3,6 +3,7 @@
 
 using ElasticsearchFulltextExample.Web.Contracts;
 using ElasticsearchFulltextExample.Web.Database.Context;
+using ElasticsearchFulltextExample.Web.Database.Factory;
 using ElasticsearchFulltextExample.Web.Database.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,11 +22,13 @@ namespace ElasticsearchFulltextExample.Web.Controllers
     {
         private readonly ILogger<IndexController> logger;
         private readonly ITokenizer suggestionsTokenizer;
+        private readonly ApplicationDbContextFactory applicationDbContextFactory;
 
-        public IndexController(ILogger<IndexController> logger)
+        public IndexController(ILogger<IndexController> logger, ApplicationDbContextFactory applicationDbContextFactory)
         {
             this.logger = logger;
             this.suggestionsTokenizer = new QuotedStringTokenizer(',');
+            this.applicationDbContextFactory = applicationDbContextFactory;
         }
 
         [HttpPut]
@@ -48,7 +51,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
 
         private async Task ScheduleIndexing(DocumentDto documentDto, CancellationToken cancellationToken)
         {
-            using (var context = new ApplicationDbContext())
+            using (var context = applicationDbContextFactory.Create())
             {
                 bool.TryParse(documentDto.IsOcrRequested, out var isOcrRequest);
 

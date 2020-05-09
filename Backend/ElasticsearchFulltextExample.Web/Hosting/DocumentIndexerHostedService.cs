@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using ElasticsearchFulltextExample.Web.Database.Context;
+using ElasticsearchFulltextExample.Web.Database.Factory;
 using ElasticsearchFulltextExample.Web.Database.Model;
 using ElasticsearchFulltextExample.Web.Options;
 using ElasticsearchFulltextExample.Web.Services;
@@ -21,13 +22,15 @@ namespace ElasticsearchFulltextExample.Web.Hosting
         private readonly IndexerOptions options;
 
         private readonly ILogger<DocumentIndexerHostedService> logger;
+        private readonly ApplicationDbContextFactory applicationDbContextFactory;
         private readonly ElasticsearchIndexService elasticsearchIndexService;
 
-        public DocumentIndexerHostedService(ILogger<DocumentIndexerHostedService> logger, IOptions<IndexerOptions> options, ElasticsearchIndexService elasticsearchIndexService)
+        public DocumentIndexerHostedService(ILogger<DocumentIndexerHostedService> logger, IOptions<IndexerOptions> options, ApplicationDbContextFactory applicationDbContextFactory, ElasticsearchIndexService elasticsearchIndexService)
         {
             this.logger = logger;
             this.options = options.Value;
             this.elasticsearchIndexService = elasticsearchIndexService;
+            this.applicationDbContextFactory = applicationDbContextFactory;
         }
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -52,7 +55,7 @@ namespace ElasticsearchFulltextExample.Web.Hosting
 
         private async Task IndexDocumentsAsync(CancellationToken cancellationToken)
         {
-            using(var context = new ApplicationDbContext())
+            using(var context = applicationDbContextFactory.Create())
             {
                 var documents = context.Documents
                     .Where(x => x.Status == StatusEnum.Scheduled)
