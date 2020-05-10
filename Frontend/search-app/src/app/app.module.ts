@@ -16,14 +16,18 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTableModule } from '@angular/material/table';
+import { MatMenuModule } from '@angular/material/menu';
 import { FileUploadComponent } from '@app/components/file-upload/file-upload.component';
 import { SearchComponent } from '@app/components/search/search.component';
+import { DocumentStatusComponent } from '@app/components/document-status/document-status.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SearchComponent,
-    FileUploadComponent
+    FileUploadComponent,
+    DocumentStatusComponent
   ],
   imports: [
     BrowserModule,
@@ -42,7 +46,9 @@ import { SearchComponent } from '@app/components/search/search.component';
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatTableModule,
+    MatMenuModule
   ],
   providers: [],
   bootstrap: [AppComponent]

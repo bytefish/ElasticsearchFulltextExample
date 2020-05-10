@@ -21,3 +21,18 @@ export interface SearchSuggestion {
   text: string;
   highlight: string;
 }
+
+export enum StatusEnum {
+  None = "none",
+  Scheduled = "scheduled",
+  Indexed = "indexed",
+  Failed = "failed"
+}
+
+export interface DocumentStatus {
+  documentId: string;
+  filename: string;
+  title: string;
+  isOcrRequested: boolean;
+  status: StatusEnum;
+}

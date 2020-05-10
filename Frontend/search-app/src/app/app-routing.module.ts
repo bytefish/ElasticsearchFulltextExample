@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AppComponent } from '@app/app.component';
 import { FileUploadComponent } from '@app/components/file-upload/file-upload.component';
 import { SearchComponent } from '@app/components/search/search.component';
+import { DocumentStatusComponent } from './components/document-status/document-status.component';
 
 
 const routes: Routes = [
@@ -15,8 +16,8 @@ const routes: Routes = [
     component: SearchComponent
   },
   {
-    path: 'upload',
-    component: FileUploadComponent
+    path: 'status',
+    component: DocumentStatusComponent
   }
 ];
 

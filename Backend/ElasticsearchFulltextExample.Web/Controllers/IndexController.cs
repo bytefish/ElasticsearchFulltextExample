@@ -64,6 +64,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                     Keywords = GetSuggestions(documentDto.Suggestions),
                     Data = await GetBytesAsync(documentDto.File),
                     IsOcrRequested = isOcrRequest,
+                    UploadedAt = DateTime.UtcNow,
                     Status = StatusEnum.Scheduled
                 };
 
@@ -72,7 +73,6 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 await context.SaveChangesAsync(cancellationToken);
             }
         }
-
 
         private string[] GetSuggestions(string suggestions)
         {

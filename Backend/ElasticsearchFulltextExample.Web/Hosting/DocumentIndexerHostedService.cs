@@ -68,13 +68,13 @@ namespace ElasticsearchFulltextExample.Web.Hosting
                     {
                         await elasticsearchIndexService.IndexDocumentAsync(document, cancellationToken);
 
-                        await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Indexed}");
+                        await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Indexed}, indexed_at = {DateTime.UtcNow}");                        
                     } 
                     catch(Exception e)
                     {
                         logger.LogError(e, $"Indexing Document '{document.Id}' failed");
 
-                        await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Failed}");
+                        await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Failed}, indexed_at = {null}");
                     }
                 }
             }

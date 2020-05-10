@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
+
 namespace ElasticsearchFulltextExample.Web.Database.Model
 {
     public class Document
@@ -44,6 +46,16 @@ namespace ElasticsearchFulltextExample.Web.Database.Model
         /// OCR Data.
         /// </summary>
         public bool IsOcrRequested { get; set; }
+
+        /// <summary>
+        /// The Date the Document was uploaded.
+        /// </summary>
+        public DateTime UploadedAt { get; set; }
+
+        /// <summary>
+        /// The Date the Document was indexed at.
+        /// </summary>
+        public DateTime? IndexedAt { get; set; }
 
         /// <summary>
         /// The Document Status.

@@ -58,6 +58,15 @@ namespace ElasticsearchFulltextExample.Web.Database.TypeConfigurations
                 .IsRequired();
 
             builder
+                .Property(x => x.UploadedAt)
+                .HasColumnName("uploaded_at")
+                .IsRequired();
+
+            builder
+                .Property(x => x.IndexedAt)
+                .HasColumnName("indexed_at");
+
+            builder
                 .Property(x => x.Status)
                 .HasConversion<int>()
                 .IsRequired();
