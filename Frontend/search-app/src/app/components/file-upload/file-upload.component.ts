@@ -93,7 +93,7 @@ export class FileUploadComponent {
         formData.append('title', this.titleControl.value);
         formData.append('suggestions', this.getCommaSeparatedSuggestions(this.suggestionsControl.value));
         formData.append('file', this.file);
-        formData.append('ocr', this.ocrControl.value);
+        formData.append('isOcrRequested', this.ocrControl.value);
 
         console.log(this.ocrControl.value);
 
