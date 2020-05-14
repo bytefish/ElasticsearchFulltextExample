@@ -53,7 +53,6 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             return File(fileBytes, fileType, fileName);
         }
 
-
         private string GetContentType(Document document)
         {
             if(document == null)
