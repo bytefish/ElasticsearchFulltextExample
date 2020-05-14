@@ -35,7 +35,8 @@ namespace ElasticsearchFulltextExample.Web
                 options.AddPolicy("CorsPolicy", policyBuilder =>
                 {
                     policyBuilder
-                        .AllowAnyOrigin()
+                        .WithOrigins("http://localhost:4200", "http://localhost:9000")
+                        .SetIsOriginAllowedToAllowWildcardSubdomains()
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();
