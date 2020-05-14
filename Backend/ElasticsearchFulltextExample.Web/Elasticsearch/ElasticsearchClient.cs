@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Elasticsearch.Net;
+using ElasticsearchFulltextExample.Web.Database.Model;
 using ElasticsearchFulltextExample.Web.Elasticsearch.Model;
 using ElasticsearchFulltextExample.Web.Options;
 using Microsoft.Extensions.Options;
@@ -73,7 +74,8 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                 .Processors(pr => pr
                     .Attachment<ElasticsearchDocument>(a => a
                         .Field(f => f.Data)
-                        .TargetField(f => f.Attachment))));
+                        .TargetField(f => f.Attachment))
+                    .Remove<ElasticsearchDocument>(r => r.Field("data"))));
         }
 
         public Task<BulkResponse> BulkIndexAsync(IEnumerable<ElasticsearchDocument> documents)
