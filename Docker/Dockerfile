@@ -17,10 +17,11 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-focal
 
 # Install Elasticsearch and Tesseract:
 RUN  apt-get update && apt-get install -y \
+    gnupg \
     wget \
     apt-transport-https
 
-RUN wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+RUN wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
 RUN echo "deb https://artifacts.elastic.co/packages/oss-7.x/apt stable main" | tee  /etc/apt/sources.list.d/elastic-7.x.list
 
 # Install Tesseract:
