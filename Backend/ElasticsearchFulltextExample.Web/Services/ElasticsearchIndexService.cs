@@ -4,6 +4,8 @@
 using ElasticsearchFulltextExample.Web.Database.Model;
 using ElasticsearchFulltextExample.Web.Elasticsearch;
 using ElasticsearchFulltextExample.Web.Elasticsearch.Model;
+using ElasticsearchFulltextExample.Web.Logging;
+using Microsoft.Extensions.Logging;
 using Nest;
 using System;
 using System.Threading;
@@ -13,17 +15,21 @@ namespace ElasticsearchFulltextExample.Web.Services
 {
     public class ElasticsearchIndexService
     {
+        private readonly ILogger<ElasticsearchIndexService> logger;
         private readonly TesseractService tesseractService;
         private readonly ElasticsearchClient elasticsearchClient;
 
-        public ElasticsearchIndexService(ElasticsearchClient elasticsearchClient, TesseractService tesseractService)
+        public ElasticsearchIndexService(ILogger<ElasticsearchIndexService> logger, ElasticsearchClient elasticsearchClient, TesseractService tesseractService)
         {
+            this.logger = logger;
             this.elasticsearchClient = elasticsearchClient;
             this.tesseractService = tesseractService;
         }
 
-        public async Task<IndexResponse> IndexDocumentAsync(Document document, CancellationToken cancellationToken) {
-            
+        public async Task<IndexResponse> IndexDocumentAsync(Document document, CancellationToken cancellationToken) 
+        {
+           
+
             return await elasticsearchClient.IndexAsync(new ElasticsearchDocument
             {
                 Id = document.DocumentId,
@@ -34,7 +40,7 @@ namespace ElasticsearchFulltextExample.Web.Services
                 Data = document.Data,
                 Ocr = await GetOcrDataAsync(document),
                 IndexedOn = DateTime.UtcNow,
-            });
+            }, cancellationToken);
         }
     
 
@@ -42,10 +48,22 @@ namespace ElasticsearchFulltextExample.Web.Services
         {
             if(!document.IsOcrRequested)
             {
+                if(logger.IsDebugEnabled())
+                {
+                    logger.LogDebug($"OCR Processing not requested for Document ID '{document.DocumentId}'");
+                }
+
                 return string.Empty;
             }
 
-            return await tesseractService.ProcessDocument(document.Data, "eng").ConfigureAwait(false);
+            if (logger.IsDebugEnabled())
+            {
+                logger.LogDebug($"Running OCR for Document ID '{document.DocumentId}'");
+            }
+
+            return await tesseractService
+                .ProcessDocument(document.Data, "eng")
+                .ConfigureAwait(false);
         }
 
 

@@ -39,12 +39,12 @@ namespace ElasticsearchFulltextExample.Web.Hosting
             await WaitForClusterAsync(healthTimeout, cancellationToken);
 
             // Prepare Elasticsearch Database:
-            var response = await elasticsearchClient.ExistsAsync();
+            var response = await elasticsearchClient.ExistsAsync(cancellationToken);
 
             if (!response.Exists)
             {
                 await elasticsearchClient.CreateIndexAsync();
-                var res = await elasticsearchClient.CreatePipelineAsync();
+                var res = await elasticsearchClient.CreatePipelineAsync(cancellationToken);
 
                 logger.LogWarning(res.DebugInformation);
             }

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Nest;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ElasticsearchFulltextExample.Web.Elasticsearch
@@ -29,9 +30,9 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
             Client = client;
         }
 
-        public Task<ExistsResponse> ExistsAsync()
+        public Task<ExistsResponse> ExistsAsync(CancellationToken cancellationToken)
         {
-            return Client.Indices.ExistsAsync(IndexName);
+            return Client.Indices.ExistsAsync(IndexName, ct: cancellationToken);
         }
 
         public Task<CreateIndexResponse> CreateIndexAsync()
@@ -62,22 +63,22 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
             });
         }
 
-        public Task<GetResponse<ElasticsearchDocument>> GetDocumentByIdAsync(string documentId)
+        public Task<GetResponse<ElasticsearchDocument>> GetDocumentByIdAsync(string documentId, CancellationToken cancellationToken)
         {
-            return Client.GetAsync<ElasticsearchDocument>(documentId, x => x.Index(IndexName));
+            return Client.GetAsync<ElasticsearchDocument>(documentId, x => x.Index(IndexName), cancellationToken);
         }
 
-        public Task<PutPipelineResponse> CreatePipelineAsync()
+        public Task<PutPipelineResponse> CreatePipelineAsync(CancellationToken cancellationToken)
         {
             return Client.Ingest.PutPipelineAsync("attachments", p => p
                 .Description("Document attachment pipeline")
                 .Processors(pr => pr
                     .Attachment<ElasticsearchDocument>(a => a
                         .Field(f => f.Data)
-                        .TargetField(f => f.Attachment))));
+                        .TargetField(f => f.Attachment))), cancellationToken);
         }
 
-        public Task<BulkResponse> BulkIndexAsync(IEnumerable<ElasticsearchDocument> documents)
+        public Task<BulkResponse> BulkIndexAsync(IEnumerable<ElasticsearchDocument> documents, CancellationToken cancellationToken)
         {
             var request = new BulkDescriptor();
 
@@ -90,18 +91,18 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                     .Pipeline("attachments"));
             }
 
-            return Client.BulkAsync(request);
+            return Client.BulkAsync(request, cancellationToken);
         }
 
-        public Task<IndexResponse> IndexAsync(ElasticsearchDocument document)
+        public Task<IndexResponse> IndexAsync(ElasticsearchDocument document, CancellationToken cancellationToken)
         {
             return Client.IndexAsync(document, x => x
                 .Id(document.Id)
                 .Index(IndexName)
-                .Pipeline("attachments"));
+                .Pipeline("attachments"), cancellationToken);
         }
 
-        public Task<ISearchResponse<ElasticsearchDocument>> SearchAsync(string query)
+        public Task<ISearchResponse<ElasticsearchDocument>> SearchAsync(string query, CancellationToken cancellationToken)
         {
             return Client.SearchAsync<ElasticsearchDocument>(document => document
                 // Query this Index:
@@ -127,10 +128,10 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                             .Field(x => x.Attachment.Content))
                     )
                 // Now kick off the query:
-                .Query(q => BuildQueryContainer(query)));
+                .Query(q => BuildQueryContainer(query)), cancellationToken);
         }
 
-        public Task<ISearchResponse<ElasticsearchDocument>> SuggestAsync(string query)
+        public Task<ISearchResponse<ElasticsearchDocument>> SuggestAsync(string query, CancellationToken cancellationToken)
         {
             return Client.SearchAsync<ElasticsearchDocument>(x => x
                 // Query this Index:
@@ -140,7 +141,7 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                     .Completion("suggest", x => x
                         .Prefix(query)
                         .SkipDuplicates(true)
-                        .Field(x => x.Suggestions))));
+                        .Field(x => x.Suggestions))), cancellationToken);
         }
 
         private QueryContainer BuildQueryContainer(string query)

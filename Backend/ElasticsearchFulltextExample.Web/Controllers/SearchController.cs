@@ -10,6 +10,7 @@ using Nest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ElasticsearchFulltextExample.Web.Controllers
@@ -27,9 +28,9 @@ namespace ElasticsearchFulltextExample.Web.Controllers
 
         [HttpGet]
         [Route("/api/search")]
-        public async Task<IActionResult> Query([FromQuery(Name = "q")] string query)
+        public async Task<IActionResult> Query([FromQuery(Name = "q")] string query, CancellationToken cancellationToken)
         {
-            var searchResponse = await elasticsearchClient.SearchAsync(query);
+            var searchResponse = await elasticsearchClient.SearchAsync(query, cancellationToken);
             var searchResult = ConvertToSearchResults(query, searchResponse);
 
             return Ok(searchResult);
@@ -37,9 +38,9 @@ namespace ElasticsearchFulltextExample.Web.Controllers
 
         [HttpGet]
         [Route("/api/suggest")]
-        public async Task<IActionResult> Suggest([FromQuery(Name = "q")] string query)
+        public async Task<IActionResult> Suggest([FromQuery(Name = "q")] string query, CancellationToken cancellationToken)
         {
-            var searchResponse = await elasticsearchClient.SuggestAsync(query);
+            var searchResponse = await elasticsearchClient.SuggestAsync(query, cancellationToken);
             var searchSuggestions = ConvertToSearchSuggestions(query, searchResponse);
            
             return Ok(searchSuggestions);
