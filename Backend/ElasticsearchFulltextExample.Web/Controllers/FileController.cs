@@ -3,28 +3,37 @@
 
 using ElasticsearchFulltextExample.Web.Database.Factory;
 using ElasticsearchFulltextExample.Web.Database.Model;
+using ElasticsearchFulltextExample.Web.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 namespace ElasticsearchFulltextExample.Web.Controllers
 {
     public class FileController : Controller
     {
+        private readonly ILogger<FileController> logger;
         private readonly ApplicationDbContextFactory applicationDbContextFactory;
         private readonly FileExtensionContentTypeProvider fileExtensionContentTypeProvider;
 
-        public FileController(ApplicationDbContextFactory applicationDbContextFactory)
+        public FileController(ILogger<FileController> logger, ApplicationDbContextFactory applicationDbContextFactory)
         {
+            this.logger = logger;
             this.applicationDbContextFactory = applicationDbContextFactory;
             this.fileExtensionContentTypeProvider = new FileExtensionContentTypeProvider();
         }
 
         [HttpGet]
         [Route("/api/files/{id}")]
-        public async Task<IActionResult> Query([FromRoute(Name = "id")] string id)
+        public async Task<IActionResult> GetFileById([FromRoute(Name = "id")] string id)
         {
+            if(logger.IsDebugEnabled())
+            {
+                logger.LogDebug($"Downloading File with Document ID '{id}'");
+            }
+
             using(var context = applicationDbContextFactory.Create())
             {
                 var document = await context.Documents
@@ -32,6 +41,11 @@ namespace ElasticsearchFulltextExample.Web.Controllers
 
                 if(document == null)
                 {
+                    if(logger.IsDebugEnabled())
+                    {
+                        logger.LogDebug($"No File with Document ID '{id}' found");
+                    }
+
                     return NotFound();
                 }
 

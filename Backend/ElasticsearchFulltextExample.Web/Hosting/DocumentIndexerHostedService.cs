@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using ElasticsearchFulltextExample.Web.Database.Context;
 using ElasticsearchFulltextExample.Web.Database.Factory;
 using ElasticsearchFulltextExample.Web.Database.Model;
+using ElasticsearchFulltextExample.Web.Logging;
 using ElasticsearchFulltextExample.Web.Options;
 using ElasticsearchFulltextExample.Web.Services;
 using Microsoft.EntityFrameworkCore;
@@ -37,13 +37,19 @@ namespace ElasticsearchFulltextExample.Web.Hosting
         {
             var indexDelay = TimeSpan.FromSeconds(options.IndexDelay);
 
-            logger.LogDebug($"ElasticsearchIndexHostedService is starting with Index Delay: {options.IndexDelay} seconds.");
+            if (logger.IsDebugEnabled())
+            {
+                logger.LogDebug($"ElasticsearchIndexHostedService is starting with Index Delay: {options.IndexDelay} seconds.");
+            }
 
             cancellationToken.Register(() => logger.LogDebug($"ElasticsearchIndexHostedService background task is stopping."));
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                logger.LogDebug($"ElasticsearchIndexHostedService task doing background work.");
+                if (logger.IsDebugEnabled())
+                {
+                    logger.LogDebug($"ElasticsearchIndexHostedService task doing background work.");
+                }
 
                 await IndexDocumentsAsync(cancellationToken);
 
@@ -64,6 +70,11 @@ namespace ElasticsearchFulltextExample.Web.Hosting
 
                 await foreach(Document document in documents.WithCancellation(cancellationToken))
                 {
+                    if(logger.IsInformationEnabled())
+                    {
+                        logger.LogInformation($"Start indexing Document: {document.DocumentId}");
+                    }
+
                     try
                     {
                         await elasticsearchIndexService.IndexDocumentAsync(document, cancellationToken);
@@ -75,6 +86,11 @@ namespace ElasticsearchFulltextExample.Web.Hosting
                         logger.LogError(e, $"Indexing Document '{document.Id}' failed");
 
                         await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Failed}, indexed_at = {null}");
+                    }
+
+                    if (logger.IsInformationEnabled())
+                    {
+                        logger.LogInformation($"Finished indexing Document: {document.DocumentId}");
                     }
                 }
             }

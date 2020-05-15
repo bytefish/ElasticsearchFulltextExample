@@ -4,11 +4,14 @@
 using Elasticsearch.Net;
 using ElasticsearchFulltextExample.Web.Database.Model;
 using ElasticsearchFulltextExample.Web.Elasticsearch.Model;
+using ElasticsearchFulltextExample.Web.Logging;
 using ElasticsearchFulltextExample.Web.Options;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nest;
 using System;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,28 +19,50 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
 {
     public class ElasticsearchClient
     {
-        public readonly IElasticClient Client;
-        public readonly string IndexName;
+        private readonly ILogger<ElasticsearchClient> logger;
+        private readonly IElasticClient client;
+        private readonly string indexName;
 
-        public ElasticsearchClient(IOptions<ElasticsearchOptions> options)
-            : this(CreateClient(options.Value.Uri), options.Value.IndexName)
+        public ElasticsearchClient(ILogger<ElasticsearchClient> logger, IOptions<ElasticsearchOptions> options)
+            : this(logger, CreateClient(options.Value.Uri), options.Value.IndexName)
         {
+
         }
 
-        public ElasticsearchClient(IElasticClient client, string indexName)
+        public ElasticsearchClient(ILogger<ElasticsearchClient> logger, IElasticClient client, string indexName)
         {
-            IndexName = indexName;
-            Client = client;
+            this.logger = logger;
+            this.indexName = indexName;
+            this.client = client;
         }
 
-        public Task<ExistsResponse> ExistsAsync(CancellationToken cancellationToken)
+        public async Task<ExistsResponse> ExistsAsync(CancellationToken cancellationToken)
         {
-            return Client.Indices.ExistsAsync(IndexName, ct: cancellationToken);
+            var indexExistsResponse = await client.Indices.ExistsAsync(indexName, ct: cancellationToken);
+
+            if (logger.IsDebugEnabled())
+            {
+                logger.LogDebug($"ExistsResponse DebugInformation: {indexExistsResponse.DebugInformation}");
+            }
+
+            return indexExistsResponse;
         }
 
-        public Task<CreateIndexResponse> CreateIndexAsync()
+        public async Task<PingResponse> PingAsync(CancellationToken cancellationToken)
         {
-            return Client.Indices.CreateAsync(IndexName, descriptor =>
+            var pingResponse = await client.PingAsync(ct: cancellationToken);
+
+            if (logger.IsDebugEnabled())
+            {
+                logger.LogDebug($"Ping DebugInformation: {pingResponse.DebugInformation}");
+            }
+
+            return pingResponse;
+        }
+
+        public async Task<CreateIndexResponse> CreateIndexAsync(CancellationToken cancellationToken)
+        {
+            var createIndexResponse = await client.Indices.CreateAsync(indexName, descriptor =>
             {
                 return descriptor.Map<ElasticsearchDocument>(mapping => mapping
                     .Properties(properties => properties
@@ -60,25 +85,61 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                                 .Text(t => t.Name(n => n.Author))
                                 .Text(t => t.Name(n => n.Title))
                                 .Text(t => t.Name(n => n.Keywords))))));
-            });
+            }, cancellationToken);
+
+            if (logger.IsDebugEnabled())
+            {
+                logger.LogDebug($"CreateIndexResponse DebugInformation: {createIndexResponse.DebugInformation}");
+            }
+
+            return createIndexResponse;
         }
 
-        public Task<GetResponse<ElasticsearchDocument>> GetDocumentByIdAsync(string documentId, CancellationToken cancellationToken)
+        public async Task<GetResponse<ElasticsearchDocument>> GetDocumentByIdAsync(string documentId, CancellationToken cancellationToken)
         {
-            return Client.GetAsync<ElasticsearchDocument>(documentId, x => x.Index(IndexName), cancellationToken);
+            var getResponse = await client.GetAsync<ElasticsearchDocument>(documentId, x => x.Index(indexName), cancellationToken);
+            
+            if (logger.IsDebugEnabled())
+            {
+                logger.LogDebug($"GetResponse DebugInformation: {getResponse.DebugInformation}");
+            }
+
+            return getResponse;
         }
 
-        public Task<PutPipelineResponse> CreatePipelineAsync(CancellationToken cancellationToken)
+        public async Task<PutPipelineResponse> CreatePipelineAsync(CancellationToken cancellationToken)
         {
-            return Client.Ingest.PutPipelineAsync("attachments", p => p
+            var putPipelineResponse = await client.Ingest.PutPipelineAsync("attachments", p => p
                 .Description("Document attachment pipeline")
                 .Processors(pr => pr
                     .Attachment<ElasticsearchDocument>(a => a
                         .Field(f => f.Data)
-                        .TargetField(f => f.Attachment))), cancellationToken);
+                        .TargetField(f => f.Attachment))
+                    .Remove<ElasticsearchDocument>(x => x.Field("data"))), cancellationToken);
+
+            if (logger.IsDebugEnabled())
+            {
+                logger.LogDebug($"PutPipelineResponse DebugInformation: {putPipelineResponse.DebugInformation}");
+            }
+
+            return putPipelineResponse;
         }
 
-        public Task<BulkResponse> BulkIndexAsync(IEnumerable<ElasticsearchDocument> documents, CancellationToken cancellationToken)
+        public async Task<ClusterHealthResponse> WaitForClusterAsync(TimeSpan timeout, CancellationToken cancellationToken)
+        {
+            var clusterHealthResponse = await client.Cluster.HealthAsync(selector: cluster => cluster
+                .WaitForNodes(">=1")
+                .WaitForActiveShards(">=1").Timeout(timeout), ct: cancellationToken);
+
+            if (logger.IsDebugEnabled())
+            {
+                logger.LogDebug($"ClusterHealthResponse DebugInformation: {clusterHealthResponse.DebugInformation}");
+            }
+
+            return clusterHealthResponse;
+        }
+
+        public async Task<BulkResponse> BulkIndexAsync(IEnumerable<ElasticsearchDocument> documents, CancellationToken cancellationToken)
         {
             var request = new BulkDescriptor();
 
@@ -86,27 +147,41 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
             {
                 request.Index<ElasticsearchDocument>(op => op
                     .Id(document.Id)
-                    .Index(IndexName)
+                    .Index(indexName)
                     .Document(document)
                     .Pipeline("attachments"));
             }
 
-            return Client.BulkAsync(request, cancellationToken);
+            var bulkResponse = await client.BulkAsync(request, cancellationToken);
+
+            if (logger.IsDebugEnabled())
+            {
+                logger.LogDebug($"BulkResponse DebugInformation: {bulkResponse.DebugInformation}");
+            }
+
+            return bulkResponse;
         }
 
-        public Task<IndexResponse> IndexAsync(ElasticsearchDocument document, CancellationToken cancellationToken)
+        public async Task<IndexResponse> IndexAsync(ElasticsearchDocument document, CancellationToken cancellationToken)
         {
-            return Client.IndexAsync(document, x => x
+            var indexResponse = await client.IndexAsync(document, x => x
                 .Id(document.Id)
-                .Index(IndexName)
+                .Index(indexName)
                 .Pipeline("attachments"), cancellationToken);
+
+            if (logger.IsDebugEnabled())
+            {
+                logger.LogDebug($"IndexResponse DebugInformation: {indexResponse.DebugInformation}");
+            }
+
+            return indexResponse;
         }
 
         public Task<ISearchResponse<ElasticsearchDocument>> SearchAsync(string query, CancellationToken cancellationToken)
         {
-            return Client.SearchAsync<ElasticsearchDocument>(document => document
+            return client.SearchAsync<ElasticsearchDocument>(document => document
                 // Query this Index:
-                .Index(IndexName)
+                .Index(indexName)
                 // Highlight Text Content:
                 .Highlight(highlight => highlight
                     .Fields(
@@ -133,9 +208,9 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
 
         public Task<ISearchResponse<ElasticsearchDocument>> SuggestAsync(string query, CancellationToken cancellationToken)
         {
-            return Client.SearchAsync<ElasticsearchDocument>(x => x
+            return client.SearchAsync<ElasticsearchDocument>(x => x
                 // Query this Index:
-                .Index(IndexName)
+                .Index(indexName)
                 // Suggest Titles:
                 .Suggest(s => s
                     .Completion("suggest", x => x

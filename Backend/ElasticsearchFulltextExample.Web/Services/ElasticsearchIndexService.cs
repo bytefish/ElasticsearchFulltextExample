@@ -28,8 +28,6 @@ namespace ElasticsearchFulltextExample.Web.Services
 
         public async Task<IndexResponse> IndexDocumentAsync(Document document, CancellationToken cancellationToken) 
         {
-           
-
             return await elasticsearchClient.IndexAsync(new ElasticsearchDocument
             {
                 Id = document.DocumentId,

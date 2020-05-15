@@ -19,7 +19,6 @@ namespace ElasticsearchFulltextExample.Web
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
-                        .UseKestrel()
                         .UseContentRoot(Directory.GetCurrentDirectory())
                         .UseWebRoot("wwwroot")
                         .UseUrls("http://*:9000")
