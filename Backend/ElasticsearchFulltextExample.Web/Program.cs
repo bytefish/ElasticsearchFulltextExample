@@ -3,6 +3,7 @@
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using System.IO;
 
 namespace ElasticsearchFulltextExample.Web
 {
@@ -17,7 +18,13 @@ namespace ElasticsearchFulltextExample.Web
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder
+                        .UseKestrel()
+                        .UseContentRoot(Directory.GetCurrentDirectory())
+                        .UseWebRoot("wwwroot")
+                        .UseUrls("http://*:9000")
+                        .UseIISIntegration()
+                        .UseStartup<Startup>();
                 });
     }
 }

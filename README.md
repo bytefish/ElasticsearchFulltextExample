@@ -22,6 +22,13 @@ Every project grows to a point it needs to support a Fulltext Search. In this re
     <img src="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Search_Results.jpg" alt="Search Box with Auto Complete" width="50%" />
 </a>
 
+
+### Rebuild web Container ###
+
+```
+docker-compose up -d --no-deps --build web
+```
+
 ## License ##
 
 All code is released under terms of the [MIT License].

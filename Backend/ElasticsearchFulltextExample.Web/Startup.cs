@@ -56,13 +56,11 @@ namespace ElasticsearchFulltextExample.Web
             // Register Hosted Services:
             RegisterHostedServices(services);
 
-            // Register Application Specific Services here ...
+            // Register Application Specific Services here:
             RegisterApplicationServices(services);
 
-            // Use a fixed Machine Key, so the Machine Key isn't regenerated for each restart:
-            services.AddDataProtection()
-                .SetApplicationName("sample-app")
-                .PersistKeysToFileSystem(new DirectoryInfo(@"D:\data"));
+            // Data Protection-related stuff goes here:
+            ConfigureDataProtection(services);
 
             // Use Web Controllers:
             services.AddControllers();
@@ -82,6 +80,7 @@ namespace ElasticsearchFulltextExample.Web
             app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseRouting();
+            app.UseStaticFiles();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
@@ -113,6 +112,16 @@ namespace ElasticsearchFulltextExample.Web
             services.AddHostedService<DatabaseInitializerHostedService>();
             services.AddHostedService<ElasticsearchInitializerHostedService>();
             services.AddHostedService<DocumentIndexerHostedService>();
+        }
+
+        private void ConfigureDataProtection(IServiceCollection services)
+        {
+            var keyDirectory = Configuration.GetValue<string>("Application:DataProtection:Directory");
+
+            // Use a fixed Machine Key, so the Machine Key isn't regenerated for each restart:
+            services.AddDataProtection()
+                .SetApplicationName("sample-app")
+                .PersistKeysToFileSystem(new DirectoryInfo(keyDirectory));
         }
 
         private void ConfigureDbContext(IServiceCollection services)
