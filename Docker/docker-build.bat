@@ -16,7 +16,11 @@ echo\
 call :AskQuestionWithYdefault "Do you want to run the Docker Container 'elasticsearch_fulltext' now [Y,n]?" reply_
 
 if /i [%reply_%] EQU [y]  (
-    docker run --rm -it -p 8000:80 elasticsearch_fulltext
+    docker run --rm -it \
+        -v G:/Data:/Data 
+        -p 9000:80 \ 
+        -e ASPNETCORE_ENVIRONMENT=Linux \
+        elasticsearch_fulltext
 )
 
 goto :end

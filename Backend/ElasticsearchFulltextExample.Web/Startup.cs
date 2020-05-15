@@ -67,7 +67,7 @@ namespace ElasticsearchFulltextExample.Web
             // Use Web Controllers:
             services.AddControllers();
 
-            // We need this for Antiforgery to work:
+            // MVC for Controllers:
             services.AddMvc();
         }
 

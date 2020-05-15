@@ -1,0 +1,27 @@
+version: '3.0'
+services:
+  web:
+    build: 
+        context: ../Backend
+        dockerfile: Dockerfile
+    ports:
+    - "9000:80"
+    volumes:
+    - G:/Data:/Data
+    links:
+    - elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - G:/Data/Elasticsearch:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
