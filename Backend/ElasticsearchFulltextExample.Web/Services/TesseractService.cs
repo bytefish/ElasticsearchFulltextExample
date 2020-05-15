@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using ElasticsearchFulltextExample.Web.Options;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics;
@@ -12,10 +13,12 @@ namespace ElasticsearchFulltextExample.Web.Services
 {
     public class TesseractService
     {
+        private readonly ILogger<TesseractService> logger;
         private readonly TesseractOptions tesseractOptions;
 
-        public TesseractService(IOptions<TesseractOptions> tesseractOptions)
+        public TesseractService(ILogger<TesseractService> logger, IOptions<TesseractOptions> tesseractOptions)
         {
+            this.logger = logger;
             this.tesseractOptions = tesseractOptions.Value;
         }
 
@@ -23,6 +26,8 @@ namespace ElasticsearchFulltextExample.Web.Services
         {
             var temporarySourceFilename = Path.Combine(tesseractOptions.TempDirectory, Path.GetRandomFileName());
             var temporaryTargetFilename = Path.Combine(tesseractOptions.TempDirectory, Path.GetRandomFileName());
+
+            logger.LogInformation($"Generating Temporary Filenames (Source = \"{temporarySourceFilename}\", Target = \"{temporaryTargetFilename}\")");
 
             // The Tesseract CLI in 5.0.0-alpha always adds a .txt to the output file:
             var temporaryTesseractOutputFile = $"{temporaryTargetFilename}.txt";
@@ -33,22 +38,35 @@ namespace ElasticsearchFulltextExample.Web.Services
 
                 var tesseractArguments = $"{temporarySourceFilename} {temporaryTargetFilename} -l {language}";
 
+                logger.LogInformation($"Running OCR Command: \"{tesseractOptions.Executable} {tesseractArguments}\"");
+
                 var result = await RunProcessAsync(tesseractOptions.Executable, tesseractArguments);
 
                 if (result != 0)
                 {
-                    throw new Exception($"Tesseract exited with Error Code {result}");
+                    logger.LogError($"Tesseract Exited with Error Code = \"{result}\"");
+
+                    throw new Exception($"Tesseract exited with Error Code \"{result}\"");
                 }
 
                 if (!File.Exists(temporaryTesseractOutputFile))
                 {
+                    logger.LogWarning("Tesseract failed to extract data from the document. No output document exists.");
+
                     return string.Empty;
                 }
 
-                return File.ReadAllText(temporaryTesseractOutputFile);
+                var ocrDocumentText = File.ReadAllText(temporaryTesseractOutputFile);
+
+                logger.LogDebug($"Tesseract extracted the following text from the document: {ocrDocumentText}");
+
+                return ocrDocumentText;
+
             }
             finally
             {
+                logger.LogDebug($"Deleting temporary files (Source = \"{temporarySourceFilename}\", Target = \"{temporaryTargetFilename}\")");
+
                 if (File.Exists(temporarySourceFilename))
                 {
                     File.Delete(temporarySourceFilename);
