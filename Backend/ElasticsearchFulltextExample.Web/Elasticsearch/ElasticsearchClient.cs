@@ -74,8 +74,7 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                 .Processors(pr => pr
                     .Attachment<ElasticsearchDocument>(a => a
                         .Field(f => f.Data)
-                        .TargetField(f => f.Attachment))
-                    .Remove<ElasticsearchDocument>(r => r.Field("data"))));
+                        .TargetField(f => f.Attachment))));
         }
 
         public Task<BulkResponse> BulkIndexAsync(IEnumerable<ElasticsearchDocument> documents)

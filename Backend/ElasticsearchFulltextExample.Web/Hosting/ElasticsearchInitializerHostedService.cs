@@ -24,12 +24,19 @@ namespace ElasticsearchFulltextExample.Web.Hosting
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             var pingDelay = TimeSpan.FromSeconds(5);
-
+            
             // We have to wait until the Elasticsearch Cluster is up and ready:
             while (!await IsServerReachableAsync(cancellationToken))
             {
+                logger.LogWarning($"Elasticsearch is not reachable. Retrying in {pingDelay.Seconds} seconds ...");
+
                 await Task.Delay(pingDelay, cancellationToken);
             }
+
+            // Now we can wait for the Shards to boot up
+            var healthTimeout = TimeSpan.FromSeconds(50);
+
+            await WaitForClusterAsync(healthTimeout, cancellationToken);
 
             // Prepare Elasticsearch Database:
             var response = await elasticsearchClient.ExistsAsync();
@@ -37,7 +44,9 @@ namespace ElasticsearchFulltextExample.Web.Hosting
             if (!response.Exists)
             {
                 await elasticsearchClient.CreateIndexAsync();
-                await elasticsearchClient.CreatePipelineAsync();
+                var res = await elasticsearchClient.CreatePipelineAsync();
+
+                logger.LogWarning(res.DebugInformation);
             }
         }
 
@@ -55,6 +64,14 @@ namespace ElasticsearchFulltextExample.Web.Hosting
 
                 return false;
             }
+        }
+
+
+        private async Task WaitForClusterAsync(TimeSpan timeout, CancellationToken cancellationToken)
+        {
+                await elasticsearchClient.Client.Cluster.HealthAsync(
+                    selector: x => x.WaitForNodes(">=1").WaitForActiveShards(">=1").Timeout(timeout),
+                    ct: cancellationToken);
         }
     }
 }
