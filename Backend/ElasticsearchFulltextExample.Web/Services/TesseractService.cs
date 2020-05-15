@@ -40,7 +40,6 @@ namespace ElasticsearchFulltextExample.Web.Services
                     throw new Exception($"Tesseract exited with Error Code {result}");
                 }
 
-
                 if (!File.Exists(temporaryTesseractOutputFile))
                 {
                     return string.Empty;
@@ -54,7 +53,7 @@ namespace ElasticsearchFulltextExample.Web.Services
                 {
                     File.Delete(temporarySourceFilename);
                 }
-                
+
                 if (File.Exists(temporaryTesseractOutputFile))
                 {
                     File.Delete(temporaryTesseractOutputFile);

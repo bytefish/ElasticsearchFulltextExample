@@ -4,15 +4,15 @@ services:
     container_name: web
     build: 
         context: ../Backend
-        dockerfile: ../Docker/Dockerfile
+        dockerfile: ../Docker/web/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Linux
     ports:
-    - 9000:9000
+      - 9000:9000
     volumes:
-    - G:/Data:/Data
+      - G:/Data:/Data
     links:
-    - elasticsearch
+      - elasticsearch
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
     container_name: elasticsearch
