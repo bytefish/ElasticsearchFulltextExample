@@ -8,6 +8,7 @@ using ElasticsearchFulltextExample.Web.Options;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Nest;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -56,12 +57,16 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             {
                 case StatusEnum.None:
                     return StatusEnumDto.None;
-                case StatusEnum.Scheduled:
-                    return StatusEnumDto.Scheduled;
+                case StatusEnum.ScheduledIndex:
+                    return StatusEnumDto.ScheduledIndex;
+                case StatusEnum.ScheduledDelete:
+                    return StatusEnumDto.ScheduledDelete;
                 case StatusEnum.Indexed:
                     return StatusEnumDto.Indexed;
                 case StatusEnum.Failed:
                     return StatusEnumDto.Failed;
+                case StatusEnum.Deleted:
+                    return StatusEnumDto.Deleted;
                 default:
                     return StatusEnumDto.None;
             }

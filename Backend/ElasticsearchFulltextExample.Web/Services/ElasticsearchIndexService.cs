@@ -40,7 +40,12 @@ namespace ElasticsearchFulltextExample.Web.Services
                 IndexedOn = DateTime.UtcNow,
             }, cancellationToken);
         }
-    
+
+        public async Task<DeleteResponse> DeleteDocumentAsync(Document document, CancellationToken cancellationToken)
+        {
+            return await elasticsearchClient.DeleteAsync(document.DocumentId, cancellationToken);
+        }
+
 
         private async Task<string> GetOcrDataAsync(Document document)
         {

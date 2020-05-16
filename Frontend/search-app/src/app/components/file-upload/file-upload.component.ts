@@ -78,7 +78,7 @@ export class FileUploadComponent {
         this.isFileUploading = true;
 
         this.httpClient
-            .put<any>(`${environment.apiUrl}/index`, this.buildRequestFormData())
+            .post<any>(`${environment.apiUrl}/document`, this.buildRequestFormData())
             .subscribe(x => {
                 this.isFileUploading = false;
                 this.dialogRef.close();

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using ElasticsearchFulltextExample.Web.Database.Context;
 using ElasticsearchFulltextExample.Web.Database.Factory;
 using ElasticsearchFulltextExample.Web.Database.Model;
 using ElasticsearchFulltextExample.Web.Logging;
@@ -63,14 +64,54 @@ namespace ElasticsearchFulltextExample.Web.Hosting
         {
             using(var context = applicationDbContextFactory.Create())
             {
+                await IndexScheduledDocuments(context, cancellationToken);
+                await RemoveDeletedDocuments(context, cancellationToken);
+            }
+
+            async Task RemoveDeletedDocuments(ApplicationDbContext context, CancellationToken cancellationToken)
+            {
                 var documents = context.Documents
-                    .Where(x => x.Status == StatusEnum.Scheduled)
+                    .Where(x => x.Status == StatusEnum.ScheduledDelete)
                     .AsNoTracking()
                     .AsAsyncEnumerable();
 
-                await foreach(Document document in documents.WithCancellation(cancellationToken))
+                await foreach (Document document in documents.WithCancellation(cancellationToken))
                 {
-                    if(logger.IsInformationEnabled())
+                    if (logger.IsInformationEnabled())
+                    {
+                        logger.LogInformation($"Start indexing Document: {document.DocumentId}");
+                    }
+
+                    try
+                    {
+                        await elasticsearchIndexService.DeleteDocumentAsync(document, cancellationToken);
+
+                        await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Deleted}, indexed_at = {null}");
+                    }
+                    catch (Exception e)
+                    {
+                        logger.LogError(e, $"Indexing Document '{document.Id}' failed");
+
+                        await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Failed}, indexed_at = {null}");
+                    }
+
+                    if (logger.IsInformationEnabled())
+                    {
+                        logger.LogInformation($"Finished indexing Document: {document.DocumentId}");
+                    }
+                }
+            }
+
+            async Task IndexScheduledDocuments(ApplicationDbContext context, CancellationToken cancellationToken)
+            {
+                var documents = context.Documents
+                    .Where(x => x.Status == StatusEnum.ScheduledIndex)
+                    .AsNoTracking()
+                    .AsAsyncEnumerable();
+
+                await foreach (Document document in documents.WithCancellation(cancellationToken))
+                {
+                    if (logger.IsInformationEnabled())
                     {
                         logger.LogInformation($"Start indexing Document: {document.DocumentId}");
                     }
@@ -79,9 +120,9 @@ namespace ElasticsearchFulltextExample.Web.Hosting
                     {
                         await elasticsearchIndexService.IndexDocumentAsync(document, cancellationToken);
 
-                        await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Indexed}, indexed_at = {DateTime.UtcNow}");                        
-                    } 
-                    catch(Exception e)
+                        await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Indexed}, indexed_at = {DateTime.UtcNow}");
+                    }
+                    catch (Exception e)
                     {
                         logger.LogError(e, $"Indexing Document '{document.Id}' failed");
 

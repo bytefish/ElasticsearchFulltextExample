@@ -95,6 +95,18 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
             return createIndexResponse;
         }
 
+        public async Task<DeleteResponse> DeleteAsync(string documentId, CancellationToken cancellationToken)
+        {
+            var deleteResponse = await client.DeleteAsync<ElasticsearchDocument>(documentId, x => x.Index(indexName), cancellationToken);
+
+            if (logger.IsDebugEnabled())
+            {
+                logger.LogDebug($"DeleteResponse DebugInformation: {deleteResponse.DebugInformation}");
+            }
+
+            return deleteResponse;
+        }
+
         public async Task<GetResponse<ElasticsearchDocument>> GetDocumentByIdAsync(string documentId, CancellationToken cancellationToken)
         {
             var getResponse = await client.GetAsync<ElasticsearchDocument>(documentId, x => x.Index(indexName), cancellationToken);

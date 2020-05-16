@@ -9,8 +9,10 @@ namespace ElasticsearchFulltextExample.Web.Contracts
     public enum StatusEnumDto
     {
         None = 0,
-        Scheduled = 1,
-        Indexed = 2,
-        Failed = 3
+        ScheduledIndex = 1,
+        ScheduledDelete = 2,
+        Indexed = 3,
+        Failed = 4,
+        Deleted = 5
     }
 }
