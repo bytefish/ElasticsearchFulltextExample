@@ -1,6 +1,6 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
-import { Component, AfterViewInit, OnInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit, HostListener } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
@@ -67,4 +67,30 @@ export class DocumentStatusComponent implements OnInit {
       }
       return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.documentId}`;
     }
+
+    @HostListener('document:keyup', ['$event'])
+    handleKeyboardEvent(event: KeyboardEvent) {
+      if(event.altKey && event.key === 'Delete')
+      {
+        this.removeSelectedDocuments();
+      }
+
+      if(event.altKey && (event.key === 'r' || event.key === 'R'))
+      {
+        this.scheduleSelectedDocuments();
+      }
+    }
+
+    removeSelectedDocuments() {
+      console.log("Remove: " + this.selection);
+
+      console.log(this.selection);
+    }
+
+    scheduleSelectedDocuments() {
+      console.log("Schedule: " + this.selection);
+
+      this.reloadDataTable();
+    }
+
 }
