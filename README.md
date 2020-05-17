@@ -37,18 +37,6 @@ Then you can add migrations for your database like this:
 PM> add-migration InitialCreate -Context ApplicationDbContext -OutputDir "Database/Migrations" 
 ```
 
-### Rebuild web Container ###
-
-Create a Volume for persistent storage:
-
-```
-docker volume create pgdata
-```
-
-And then Compose and Build:
-```
-docker-compose up --build
-```
 
 ## License ##
 
