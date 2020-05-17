@@ -24,19 +24,6 @@ namespace ElasticsearchFulltextExample.Web.Hosting
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            var pingDelay = TimeSpan.FromSeconds(5);
-            
-            // We have to wait until the Elasticsearch Cluster is up and ready:
-            while (!await IsServerReachableAsync(cancellationToken))
-            {
-                if (logger.IsWarningEnabled())
-                {
-                    logger.LogWarning($"Elasticsearch is not reachable. Retrying in {pingDelay.Seconds} seconds ...");
-                }
-
-                await Task.Delay(pingDelay, cancellationToken);
-            }
-
             // Now we can wait for the Shards to boot up
             var healthTimeout = TimeSpan.FromSeconds(50);
 
@@ -47,7 +34,6 @@ namespace ElasticsearchFulltextExample.Web.Hosting
 
             await elasticsearchClient.WaitForClusterAsync(healthTimeout, cancellationToken);
 
-
             // Prepare Elasticsearch Database:
             var indexExistsResponse = await elasticsearchClient.ExistsAsync(cancellationToken);
 
@@ -55,25 +41,6 @@ namespace ElasticsearchFulltextExample.Web.Hosting
             {
                 await elasticsearchClient.CreateIndexAsync(cancellationToken);
                 await elasticsearchClient.CreatePipelineAsync(cancellationToken);
-            }
-        }
-
-        private async Task<bool> IsServerReachableAsync(CancellationToken cancellationToken)
-        {
-            try
-            {
-                var pingResponse = await elasticsearchClient.PingAsync(cancellationToken);
-                
-                return pingResponse.IsValid;
-            } 
-            catch(Exception e)
-            {
-                if (logger.IsErrorEnabled())
-                {
-                    logger.LogError(e, "Ping to Elasticsearch Server failed with an Exception");
-                }
-
-                return false;
             }
         }
     }

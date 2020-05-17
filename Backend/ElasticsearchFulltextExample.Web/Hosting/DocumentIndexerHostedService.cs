@@ -15,7 +15,6 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Transactions;
 
 namespace ElasticsearchFulltextExample.Web.Hosting
 {
@@ -37,36 +36,30 @@ namespace ElasticsearchFulltextExample.Web.Hosting
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            var pingDelay = TimeSpan.FromSeconds(5);
-
-            // We have to wait until the Postgres Cluster is up and ready:
-            while (!await IsServerReachableAsync(cancellationToken))
-            {
-                if (logger.IsWarningEnabled())
-                {
-                    logger.LogWarning($"Elasticsearch is not reachable. Retrying in {pingDelay.Seconds} seconds ...");
-                }
-
-                await Task.Delay(pingDelay, cancellationToken);
-            }
-
             var indexDelay = TimeSpan.FromSeconds(options.IndexDelay);
 
             if (logger.IsDebugEnabled())
             {
-                logger.LogDebug($"ElasticsearchIndexHostedService is starting with Index Delay: {options.IndexDelay} seconds.");
+                logger.LogDebug($"DocumentIndexer is starting with Index Delay: {options.IndexDelay} seconds.");
             }
 
-            cancellationToken.Register(() => logger.LogDebug($"ElasticsearchIndexHostedService background task is stopping."));
+            cancellationToken.Register(() => logger.LogDebug($"DocumentIndexer background task is stopping."));
 
             while (!cancellationToken.IsCancellationRequested)
             {
                 if (logger.IsDebugEnabled())
                 {
-                    logger.LogDebug($"ElasticsearchIndexHostedService task doing background work.");
+                    logger.LogDebug($"DocumentIndexer is running indexing loop.");
                 }
 
-                await IndexDocumentsAsync(cancellationToken);
+                try
+                {
+                    await IndexDocumentsAsync(cancellationToken);
+                } 
+                catch(Exception e)
+                {
+                    logger.LogError(e, "Indexing failed due to an Exception")
+                }
 
                 await Task.Delay(indexDelay, cancellationToken);
             }
@@ -164,12 +157,5 @@ namespace ElasticsearchFulltextExample.Web.Hosting
             }
         }
 
-        public async Task<bool> IsServerReachableAsync(CancellationToken cancellationToken)
-        {
-            using (var context = applicationDbContextFactory.Create())
-            {
-                return await context.Database.CanConnectAsync(cancellationToken);
-            }
-        }
     }
 }

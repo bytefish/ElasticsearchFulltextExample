@@ -19,35 +19,15 @@ namespace ElasticsearchFulltextExample.Web.Hosting
 
         public DatabaseInitializerHostedService(ILogger<DatabaseInitializerHostedService> logger, ApplicationDbContextFactory applicationDbContextFactory)
         {
+            this.logger = logger;
             this.applicationDbContextFactory = applicationDbContextFactory;
         }
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            var pingDelay = TimeSpan.FromSeconds(5);
-
-            // We have to wait until the Posgres Cluster is up and ready:
-            while (!await IsServerReachableAsync(cancellationToken))
-            {
-                if (logger.IsWarningEnabled())
-                {
-                    logger.LogWarning($"Postgres is not reachable. Retrying in {pingDelay.Seconds} seconds ...");
-                }
-
-                await Task.Delay(pingDelay, cancellationToken);
-            }
-
             using (var context = applicationDbContextFactory.Create())
             {
                 await context.Database.MigrateAsync();
-            }
-        }
-
-        public async Task<bool> IsServerReachableAsync(CancellationToken cancellationToken)
-        {
-            using(var context = applicationDbContextFactory.Create())
-            {
-                return await context.Database.CanConnectAsync(cancellationToken);
             }
         }
     }

@@ -47,6 +47,11 @@ namespace ElasticsearchFulltextExample.Web.Services
         }
 
 
+        public async Task<PingResponse> PingAsync(CancellationToken cancellationToken)
+        {
+            return await elasticsearchClient.PingAsync(cancellationToken: cancellationToken);
+        }
+
         private async Task<string> GetOcrDataAsync(Document document)
         {
             if(!document.IsOcrRequested)

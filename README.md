@@ -39,8 +39,15 @@ PM> add-migration InitialCreate -Context ApplicationDbContext -OutputDir "Databa
 
 ### Rebuild web Container ###
 
+Create a Volume for persistent storage:
+
 ```
-docker-compose up -d --no-deps --build web
+docker volume create pgdata
+```
+
+And then Compose and Build:
+```
+docker-compose up --build
 ```
 
 ## License ##
