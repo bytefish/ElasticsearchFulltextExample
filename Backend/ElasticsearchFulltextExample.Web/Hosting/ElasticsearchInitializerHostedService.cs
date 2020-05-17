@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ElasticsearchFulltextExample.Web.Hosting
 {
-    public class ElasticsearchInitializerHostedService : BackgroundService
+    public class ElasticsearchInitializerHostedService : IHostedService
     {
         private readonly ElasticsearchClient elasticsearchClient;
         private readonly ILogger<ElasticsearchInitializerHostedService> logger;
@@ -22,12 +22,12 @@ namespace ElasticsearchFulltextExample.Web.Hosting
             this.elasticsearchClient = elasticsearchClient;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             // Now we can wait for the Shards to boot up
             var healthTimeout = TimeSpan.FromSeconds(50);
 
-            if(logger.IsDebugEnabled())
+            if (logger.IsDebugEnabled())
             {
                 logger.LogDebug($"Waiting for at least 1 Node and at least 1 Active Shard, with a Timeout of {healthTimeout.TotalSeconds} seconds.");
             }
@@ -42,6 +42,11 @@ namespace ElasticsearchFulltextExample.Web.Hosting
                 await elasticsearchClient.CreateIndexAsync(cancellationToken);
                 await elasticsearchClient.CreatePipelineAsync(cancellationToken);
             }
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
         }
     }
 }

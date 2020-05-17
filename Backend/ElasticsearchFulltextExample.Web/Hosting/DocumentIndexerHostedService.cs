@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using ElasticsearchFulltextExample.Web.Database.Context;
 using ElasticsearchFulltextExample.Web.Database.Factory;
 using ElasticsearchFulltextExample.Web.Database.Model;
 using ElasticsearchFulltextExample.Web.Logging;

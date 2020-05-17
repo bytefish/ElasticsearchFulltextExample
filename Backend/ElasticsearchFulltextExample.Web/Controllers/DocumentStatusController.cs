@@ -65,7 +65,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
         {
             using (var context = applicationDbContextFactory.Create())
             {
-                using (var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable))
+                using (var transaction = await context.Database.BeginTransactionAsync())
                 {
                     var document = await context.Documents.FirstAsync(x => x.Id == id, cancellationToken);
 
@@ -93,7 +93,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
         {
             using (var context = applicationDbContextFactory.Create())
             {
-                using (var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable))
+                using (var transaction = await context.Database.BeginTransactionAsync())
                 {
                     var document = await context.Documents.FirstAsync(x => x.Id == id, cancellationToken);
 

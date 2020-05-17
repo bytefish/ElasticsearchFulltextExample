@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ElasticsearchFulltextExample.Web.Hosting
 {
-    public class DatabaseInitializerHostedService : BackgroundService
+    public class DatabaseInitializerHostedService : IHostedService
     {
         private readonly ILogger<DatabaseInitializerHostedService> logger;
         private readonly ApplicationDbContextFactory applicationDbContextFactory;
@@ -23,12 +23,27 @@ namespace ElasticsearchFulltextExample.Web.Hosting
             this.applicationDbContextFactory = applicationDbContextFactory;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
+            if(logger.IsInformationEnabled())
+            {
+                logger.LogInformation("Start Database Migration ...");
+            }
+
             using (var context = applicationDbContextFactory.Create())
             {
                 await context.Database.MigrateAsync();
             }
+
+            if (logger.IsInformationEnabled())
+            {
+                logger.LogInformation("Finish Database Migration ...");
+            }
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
         }
     }
 }

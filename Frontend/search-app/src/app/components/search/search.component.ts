@@ -34,7 +34,7 @@ export class SearchComponent implements OnInit {
         tap(query => this.control.setValue(query, { emitEvent: false })),
         switchMap(query => this
           .doSearch(query)
-          .pipe(catchError(err => of(<SearchResults>{ query: query, results: []}))))
+          .pipe(catchError(err => of(<SearchResults>{ query: query, results: [] }))))
       );
   }
 
@@ -47,6 +47,6 @@ export class SearchComponent implements OnInit {
           q: query
         }
       })
-      .pipe(catchError(err => of(<SearchResults>{ query: query, results: []})));
+      .pipe(catchError(err => of(<SearchResults>{ query: query, results: [] })));
   }
 }

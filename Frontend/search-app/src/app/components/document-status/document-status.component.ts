@@ -5,7 +5,7 @@ import { environment } from '@environments/environment';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { DocumentStatus } from '@app/app.model';
-import { catchError, concatMap } from 'rxjs/operators';
+import { catchError, concatMap, mergeMap, toArray } from 'rxjs/operators';
 import { of, from } from 'rxjs';
 
 @Component({
@@ -30,6 +30,7 @@ export class DocumentStatusComponent implements OnInit {
   }
 
   reloadDataTable() {
+    this.selection.clear();
     this.isDataSourceLoading = true;
 
     this.httpClient
@@ -80,7 +81,8 @@ export class DocumentStatusComponent implements OnInit {
 
     from(documentsToRemove)
       .pipe(
-        concatMap(x => this.httpClient.delete(`${environment.apiUrl}/status/${x.id}`))
+        mergeMap(x => this.httpClient.delete(`${environment.apiUrl}/status/${x.id}`)),
+        toArray()
       )
       .subscribe(() => this.reloadDataTable());
   }
@@ -91,7 +93,8 @@ export class DocumentStatusComponent implements OnInit {
 
     from(documentsToIndex)
       .pipe(
-        concatMap(x => this.httpClient.post<any>(`${environment.apiUrl}/status/${x.id}/index`, []))
+        mergeMap(x => this.httpClient.post<any>(`${environment.apiUrl}/status/${x.id}/index`, [])),
+        toArray()
       )
       .subscribe(() => this.reloadDataTable());
   }
