@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ElasticsearchFulltextExample.Web.Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200517091906_InitialCreate")]
+    [Migration("20200517112739_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,11 +33,6 @@ namespace ElasticsearchFulltextExample.Web.Database.Migrations
                         .IsRequired()
                         .HasColumnName("data")
                         .HasColumnType("bytea");
-
-                    b.Property<string>("DocumentId")
-                        .IsRequired()
-                        .HasColumnName("document_id")
-                        .HasColumnType("text");
 
                     b.Property<string>("Filename")
                         .IsRequired()

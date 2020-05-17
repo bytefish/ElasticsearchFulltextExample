@@ -61,7 +61,6 @@ namespace ElasticsearchFulltextExample.Web.Controllers
 
                     var document = new Document
                     {
-                        DocumentId = documentDto.Id,
                         Title = documentDto.Title,
                         Filename = documentDto.File.FileName,
                         Suggestions = GetSuggestions(documentDto.Suggestions),

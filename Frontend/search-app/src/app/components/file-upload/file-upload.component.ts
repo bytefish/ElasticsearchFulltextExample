@@ -18,7 +18,6 @@ export class FileUploadComponent {
     separatorKeysCodes: number[] = [ENTER, COMMA];
 
     fileUploadForm = new FormGroup({
-        id: new FormControl('', Validators.required),
         title: new FormControl('', Validators.required),
         suggestions: new FormControl([], Validators.required),
         file: new FormControl('', Validators.required),
@@ -33,12 +32,7 @@ export class FileUploadComponent {
 
     onFileInputChange(fileInputEvent: any): void {
         this.file = fileInputEvent.target.files[0];
-
         this.fileControl.setValue(this.file?.name);
-
-        if (StringUtils.isNullOrWhitespace(this.idControl.value)) {
-            this.idControl.setValue(this.file?.name);
-        }
     }
 
     onAddSuggestion(event: MatChipInputEvent): void {
@@ -88,7 +82,6 @@ export class FileUploadComponent {
     buildRequestFormData(): FormData {
         const formData = new FormData();
 
-        formData.append('id', this.idControl.value);
         formData.append('title', this.titleControl.value);
         formData.append('suggestions', this.getCommaSeparatedSuggestions(this.suggestionsControl.value));
         formData.append('file', this.file);
@@ -103,10 +96,6 @@ export class FileUploadComponent {
         return values
             .map(x => `"${x}"`)
             .join(",");
-    }
-
-    get idControl(): AbstractControl {
-        return this.fileUploadForm.get('id');
     }
 
     get titleControl(): AbstractControl {

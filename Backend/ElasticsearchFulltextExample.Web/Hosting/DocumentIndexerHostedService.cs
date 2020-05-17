@@ -87,7 +87,7 @@ namespace ElasticsearchFulltextExample.Web.Hosting
                         {
                             if (logger.IsInformationEnabled())
                             {
-                                logger.LogInformation($"Start indexing Document: {document.DocumentId}");
+                                logger.LogInformation($"Removing Document: {document.Id}");
                             }
 
                             try
@@ -96,23 +96,23 @@ namespace ElasticsearchFulltextExample.Web.Hosting
 
                                 if (deleteDocumentResponse.IsValid)
                                 {
-                                    await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Deleted}, indexed_at = {null}");
+                                    await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Deleted}, indexed_at = {null} where id = {document.Id}");
                                 }
                                 else
                                 {
-                                    await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Failed}");
+                                    await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Failed} where id = {document.Id}");
                                 }
                             }
                             catch (Exception e)
                             {
-                                logger.LogError(e, $"Indexing Document '{document.Id}' failed");
+                                logger.LogError(e, $"Removing Document '{document.Id}' failed");
 
-                                await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Failed}");
+                                await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Failed} where id = {document.Id}");
                             }
 
                             if (logger.IsInformationEnabled())
                             {
-                                logger.LogInformation($"Finished indexing Document: {document.DocumentId}");
+                                logger.LogInformation($"Finished Removing Document: {document.Id}");
                             }
                         }
 
@@ -136,7 +136,7 @@ namespace ElasticsearchFulltextExample.Web.Hosting
                         {
                             if (logger.IsInformationEnabled())
                             {
-                                logger.LogInformation($"Start indexing Document: {document.DocumentId}");
+                                logger.LogInformation($"Start indexing Document: {document.Id}");
                             }
 
                             try
@@ -145,23 +145,23 @@ namespace ElasticsearchFulltextExample.Web.Hosting
 
                                 if (indexDocumentResponse.IsValid)
                                 {
-                                    await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Indexed}, indexed_at = {DateTime.UtcNow}");
+                                    await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Indexed}, indexed_at = {DateTime.UtcNow} where id = {document.Id}");
                                 } 
                                 else
                                 {
-                                    await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Failed}, indexed_at = {null}");
+                                    await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Failed}, indexed_at = {null} where id = {document.Id}");
                                 }
                             }
                             catch (Exception e)
                             {
                                 logger.LogError(e, $"Indexing Document '{document.Id}' failed");
 
-                                await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Failed}, indexed_at = {null}");
+                                await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Failed}, indexed_at = {null} where id = {document.Id}");
                             }
 
                             if (logger.IsInformationEnabled())
                             {
-                                logger.LogInformation($"Finished indexing Document: {document.DocumentId}");
+                                logger.LogInformation($"Finished indexing Document: {document.Id}");
                             }
                         }
 
@@ -170,6 +170,5 @@ namespace ElasticsearchFulltextExample.Web.Hosting
                 }
             }
         }
-
     }
 }

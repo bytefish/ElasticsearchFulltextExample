@@ -15,7 +15,7 @@ import { of, from } from 'rxjs';
 })
 export class DocumentStatusComponent implements OnInit {
 
-  displayedColumns: string[] = ['select', 'documentId', 'title', 'filename', 'isOcrRequested', 'status'];
+  displayedColumns: string[] = ['select', 'id', 'title', 'filename', 'isOcrRequested', 'status'];
 
   isDataSourceLoading: boolean = false;
   dataSource = new MatTableDataSource<DocumentStatus>();
@@ -60,7 +60,7 @@ export class DocumentStatusComponent implements OnInit {
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.documentId}`;
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id}`;
   }
 
   @HostListener('document:keyup', ['$event'])
@@ -80,7 +80,7 @@ export class DocumentStatusComponent implements OnInit {
 
     from(documentsToRemove)
       .pipe(
-        concatMap(x => this.httpClient.delete(`${environment.apiUrl}/status/${x.documentId}`))
+        concatMap(x => this.httpClient.delete(`${environment.apiUrl}/status/${x.id}`))
       )
       .subscribe(() => this.reloadDataTable());
   }
@@ -91,7 +91,7 @@ export class DocumentStatusComponent implements OnInit {
 
     from(documentsToIndex)
       .pipe(
-        concatMap(x => this.httpClient.post<any>(`${environment.apiUrl}/status/${x.documentId}/index`, []))
+        concatMap(x => this.httpClient.post<any>(`${environment.apiUrl}/status/${x.id}/index`, []))
       )
       .subscribe(() => this.reloadDataTable());
   }

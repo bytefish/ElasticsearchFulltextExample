@@ -13,11 +13,6 @@ namespace ElasticsearchFulltextExample.Web.Database.Model
         public int Id { get; set; }
 
         /// <summary>
-        /// A unique document id.
-        /// </summary>
-        public string DocumentId { get; set; }
-
-        /// <summary>
         /// The Title of the Document for Suggestion.
         /// </summary>
         public string Title { get; set; }

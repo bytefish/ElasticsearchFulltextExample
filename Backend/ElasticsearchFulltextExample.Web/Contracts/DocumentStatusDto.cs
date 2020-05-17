@@ -7,8 +7,8 @@ namespace ElasticsearchFulltextExample.Web.Contracts
 {
     public class DocumentStatusDto
     {
-        [JsonPropertyName("documentId")]
-        public string DocumentId { get; set; }
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
 
         [JsonPropertyName("filename")]
         public string Filename { get; set; }

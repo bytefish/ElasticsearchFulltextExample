@@ -42,12 +42,14 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                         // Project, so we do not load binary data:
                         .Select(document => new DocumentStatusDto
                         {
-                            DocumentId = document.DocumentId,
+                            Id = document.Id,
                             Title = document.Title,
                             Filename = document.Filename,
                             IsOcrRequested = document.IsOcrRequested,
                             Status = ConvertStatusEnum(document.Status)
                         })
+                        // Order By ID for now:
+                        .OrderBy(x => x.Id)
                         // Do not track this query
                         .AsNoTracking()
                         // Evaluate Asynchronously:
@@ -59,23 +61,26 @@ namespace ElasticsearchFulltextExample.Web.Controllers
 
         [HttpDelete]
         [Route("/api/status/{id}")]
-        public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             using (var context = applicationDbContextFactory.Create())
             {
                 using (var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable))
                 {
-                    var document = await context.Documents.FirstAsync(x => x.DocumentId == id, cancellationToken);
+                    var document = await context.Documents.FirstAsync(x => x.Id == id, cancellationToken);
 
                     if (document == null)
                     {
                         return NotFound();
                     }
 
-                    document.Status = StatusEnum.ScheduledDelete;
+                    if (document.Status != StatusEnum.Deleted)
+                    {
+                        document.Status = StatusEnum.ScheduledDelete;
 
-                    await context.SaveChangesAsync(cancellationToken);
-                    await transaction.CommitAsync(cancellationToken);
+                        await context.SaveChangesAsync(cancellationToken);
+                        await transaction.CommitAsync(cancellationToken);
+                    }
                 }
             }
 
@@ -84,13 +89,13 @@ namespace ElasticsearchFulltextExample.Web.Controllers
 
         [HttpPost]
         [Route("/api/status/{id}/index")]
-        public async Task<IActionResult> Index(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Index(int id, CancellationToken cancellationToken)
         {
             using (var context = applicationDbContextFactory.Create())
             {
                 using (var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable))
                 {
-                    var document = await context.Documents.FirstAsync(x => x.DocumentId == id, cancellationToken);
+                    var document = await context.Documents.FirstAsync(x => x.Id == id, cancellationToken);
 
                     if (document == null)
                     {

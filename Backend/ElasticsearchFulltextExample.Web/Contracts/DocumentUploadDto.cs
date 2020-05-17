@@ -8,9 +8,6 @@ namespace ElasticsearchFulltextExample.Web.Contracts
 {
     public class DocumentUploadDto
     {
-        [FromForm(Name = "id")]
-        public string Id { get; set; }
-
         [FromForm(Name = "title")]
         public string Title { get; set; }
 

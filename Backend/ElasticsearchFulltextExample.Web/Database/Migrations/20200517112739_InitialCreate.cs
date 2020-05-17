@@ -14,7 +14,6 @@ namespace ElasticsearchFulltextExample.Web.Database.Migrations
                 {
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    document_id = table.Column<string>(nullable: false),
                     title = table.Column<string>(nullable: false),
                     filename = table.Column<string>(nullable: false),
                     data = table.Column<byte[]>(nullable: false),

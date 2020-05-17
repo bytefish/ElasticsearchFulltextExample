@@ -3,6 +3,7 @@ using System;
 using ElasticsearchFulltextExample.Web.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ElasticsearchFulltextExample.Web.Database.Migrations
@@ -30,11 +31,6 @@ namespace ElasticsearchFulltextExample.Web.Database.Migrations
                         .IsRequired()
                         .HasColumnName("data")
                         .HasColumnType("bytea");
-
-                    b.Property<string>("DocumentId")
-                        .IsRequired()
-                        .HasColumnName("document_id")
-                        .HasColumnType("text");
 
                     b.Property<string>("Filename")
                         .IsRequired()

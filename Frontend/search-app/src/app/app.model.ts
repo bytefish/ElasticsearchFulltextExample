@@ -32,7 +32,7 @@ export enum StatusEnum {
 }
 
 export interface DocumentStatus {
-  documentId: string;
+  id: number;
   filename: string;
   title: string;
   isOcrRequested: boolean;

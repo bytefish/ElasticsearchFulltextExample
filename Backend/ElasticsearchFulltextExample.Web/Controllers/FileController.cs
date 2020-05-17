@@ -27,7 +27,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
 
         [HttpGet]
         [Route("/api/files/{id}")]
-        public async Task<IActionResult> GetFileById([FromRoute(Name = "id")] string id)
+        public async Task<IActionResult> GetFileById([FromRoute(Name = "id")] int id)
         {
             if(logger.IsDebugEnabled())
             {
@@ -37,7 +37,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             using(var context = applicationDbContextFactory.Create())
             {
                 var document = await context.Documents
-                    .FirstOrDefaultAsync(x => x.DocumentId == id);
+                    .FirstOrDefaultAsync(x => x.Id == id);
 
                 if(document == null)
                 {

@@ -22,11 +22,6 @@ namespace ElasticsearchFulltextExample.Web.Database.TypeConfigurations
                 .ValueGeneratedOnAdd();
 
             builder
-                .Property(x => x.DocumentId)
-                .HasColumnName("document_id")
-                .IsRequired();
-
-            builder
                 .Property(x => x.Filename)
                 .HasColumnName("filename")
                 .IsRequired();

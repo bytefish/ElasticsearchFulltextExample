@@ -30,7 +30,7 @@ namespace ElasticsearchFulltextExample.Web.Services
         {
             return await elasticsearchClient.IndexAsync(new ElasticsearchDocument
             {
-                Id = document.DocumentId,
+                Id = document.Id.ToString(),
                 Title = document.Title,
                 Filename = document.Filename,
                 Suggestions = document.Suggestions,
@@ -43,7 +43,7 @@ namespace ElasticsearchFulltextExample.Web.Services
 
         public async Task<DeleteResponse> DeleteDocumentAsync(Document document, CancellationToken cancellationToken)
         {
-            return await elasticsearchClient.DeleteAsync(document.DocumentId, cancellationToken);
+            return await elasticsearchClient.DeleteAsync(document.Id.ToString(), cancellationToken);
         }
 
 
@@ -58,7 +58,7 @@ namespace ElasticsearchFulltextExample.Web.Services
             {
                 if(logger.IsDebugEnabled())
                 {
-                    logger.LogDebug($"OCR Processing not requested for Document ID '{document.DocumentId}'");
+                    logger.LogDebug($"OCR Processing not requested for Document ID '{document.Id}'");
                 }
 
                 return string.Empty;
@@ -66,7 +66,7 @@ namespace ElasticsearchFulltextExample.Web.Services
 
             if (logger.IsDebugEnabled())
             {
-                logger.LogDebug($"Running OCR for Document ID '{document.DocumentId}'");
+                logger.LogDebug($"Running OCR for Document ID '{document.Id}'");
             }
 
             return await tesseractService
