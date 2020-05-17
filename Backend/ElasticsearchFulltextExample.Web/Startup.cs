@@ -126,9 +126,13 @@ namespace ElasticsearchFulltextExample.Web
 
         private void ConfigureDbContext(IServiceCollection services)
         {
+            services.AddDbContext<ApplicationDbContext>(builder => builder
+                
+                .UseNpgsql(Configuration.GetConnectionString("DocumentDatabase"), x => x.MigrationsAssembly("ElasticsearchFulltextExample.Web").CommandTimeout(10)));
+
             // Add the DbContextOptions:
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseSqlite(Configuration.GetConnectionString("DocumentDatabase"))
+                .UseNpgsql(Configuration.GetConnectionString("DocumentDatabase"), x => x.MigrationsAssembly("ElasticsearchFulltextExample.Web").CommandTimeout(10))
                 .Options;
 
             // Construct the Factory, so we do not have do deal with DI Lifetime Scopes when instantiating the Context:

@@ -24,9 +24,11 @@ export interface SearchSuggestion {
 
 export enum StatusEnum {
   None = "none",
-  Scheduled = "scheduled",
+  ScheduledIndex = "scheduledIndex",
+  ScheduledDelete = "scheduledDelete",
   Indexed = "indexed",
-  Failed = "failed"
+  Failed = "failed",
+  Deleted = "deleted"
 }
 
 export interface DocumentStatus {

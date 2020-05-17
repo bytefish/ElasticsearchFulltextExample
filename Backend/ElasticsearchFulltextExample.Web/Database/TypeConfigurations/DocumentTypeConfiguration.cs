@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using ElasticsearchFulltextExample.Web.Database.Model;
+using ElasticsearchFulltextExample.Web.Database.ValueComparers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -44,13 +45,15 @@ namespace ElasticsearchFulltextExample.Web.Database.TypeConfigurations
                 .Property(x => x.Suggestions)
                 .HasColumnName("suggestions")
                 .HasConversion(new DelimitedStringValueConverter(','))
-                .IsRequired();
+                .IsRequired()
+                .Metadata.SetValueComparer(new StringArrayValueComparer());
 
             builder
                 .Property(x => x.Keywords)
                 .HasColumnName("keywords")
                 .HasConversion(new DelimitedStringValueConverter(','))
-                .IsRequired();
+                .IsRequired()
+                .Metadata.SetValueComparer(new StringArrayValueComparer());
 
             builder
                 .Property(x => x.IsOcrRequested)
@@ -68,6 +71,7 @@ namespace ElasticsearchFulltextExample.Web.Database.TypeConfigurations
 
             builder
                 .Property(x => x.Status)
+                .HasColumnName("status")
                 .HasConversion<int>()
                 .IsRequired();
         }

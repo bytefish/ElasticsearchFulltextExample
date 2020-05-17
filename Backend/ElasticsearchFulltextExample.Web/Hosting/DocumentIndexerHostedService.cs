@@ -15,6 +15,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace ElasticsearchFulltextExample.Web.Hosting
 {
@@ -36,6 +37,19 @@ namespace ElasticsearchFulltextExample.Web.Hosting
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
+            var pingDelay = TimeSpan.FromSeconds(5);
+
+            // We have to wait until the Postgres Cluster is up and ready:
+            while (!await IsServerReachableAsync(cancellationToken))
+            {
+                if (logger.IsWarningEnabled())
+                {
+                    logger.LogWarning($"Elasticsearch is not reachable. Retrying in {pingDelay.Seconds} seconds ...");
+                }
+
+                await Task.Delay(pingDelay, cancellationToken);
+            }
+
             var indexDelay = TimeSpan.FromSeconds(options.IndexDelay);
 
             if (logger.IsDebugEnabled())
@@ -62,78 +76,99 @@ namespace ElasticsearchFulltextExample.Web.Hosting
 
         private async Task IndexDocumentsAsync(CancellationToken cancellationToken)
         {
-            using(var context = applicationDbContextFactory.Create())
-            {
-                await IndexScheduledDocuments(context, cancellationToken);
-                await RemoveDeletedDocuments(context, cancellationToken);
-            }
+            await IndexScheduledDocuments(cancellationToken);
+            await RemoveDeletedDocuments(cancellationToken);
 
-            async Task RemoveDeletedDocuments(ApplicationDbContext context, CancellationToken cancellationToken)
+            async Task RemoveDeletedDocuments(CancellationToken cancellationToken)
             {
-                var documents = context.Documents
-                    .Where(x => x.Status == StatusEnum.ScheduledDelete)
-                    .AsNoTracking()
-                    .AsAsyncEnumerable();
-
-                await foreach (Document document in documents.WithCancellation(cancellationToken))
+                using (var context = applicationDbContextFactory.Create())
                 {
-                    if (logger.IsInformationEnabled())
+                    using (var transaction = await context.Database.BeginTransactionAsync())
                     {
-                        logger.LogInformation($"Start indexing Document: {document.DocumentId}");
-                    }
+                        var documents = await context.Documents
+                            .Where(x => x.Status == StatusEnum.ScheduledDelete)
+                            .AsNoTracking()
+                            .ToListAsync(cancellationToken);
 
-                    try
-                    {
-                        await elasticsearchIndexService.DeleteDocumentAsync(document, cancellationToken);
+                        foreach (Document document in documents)
+                        {
+                            if (logger.IsInformationEnabled())
+                            {
+                                logger.LogInformation($"Start indexing Document: {document.DocumentId}");
+                            }
 
-                        await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Deleted}, indexed_at = {null}");
-                    }
-                    catch (Exception e)
-                    {
-                        logger.LogError(e, $"Indexing Document '{document.Id}' failed");
+                            try
+                            {
+                                await elasticsearchIndexService.DeleteDocumentAsync(document, cancellationToken);
 
-                        await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Failed}, indexed_at = {null}");
-                    }
+                                await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Deleted}, indexed_at = {null}");
+                            }
+                            catch (Exception e)
+                            {
+                                logger.LogError(e, $"Indexing Document '{document.Id}' failed");
 
-                    if (logger.IsInformationEnabled())
-                    {
-                        logger.LogInformation($"Finished indexing Document: {document.DocumentId}");
+                                await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Failed}, indexed_at = {null}");
+                            }
+
+                            if (logger.IsInformationEnabled())
+                            {
+                                logger.LogInformation($"Finished indexing Document: {document.DocumentId}");
+                            }
+                        }
+
+                        await transaction.CommitAsync();
                     }
                 }
             }
 
-            async Task IndexScheduledDocuments(ApplicationDbContext context, CancellationToken cancellationToken)
+            async Task IndexScheduledDocuments(CancellationToken cancellationToken)
             {
-                var documents = context.Documents
-                    .Where(x => x.Status == StatusEnum.ScheduledIndex)
-                    .AsNoTracking()
-                    .AsAsyncEnumerable();
-
-                await foreach (Document document in documents.WithCancellation(cancellationToken))
+                using (var context = applicationDbContextFactory.Create())
                 {
-                    if (logger.IsInformationEnabled())
+                    using (var transaction = await context.Database.BeginTransactionAsync())
                     {
-                        logger.LogInformation($"Start indexing Document: {document.DocumentId}");
-                    }
+                        var documents = await context.Documents
+                            .Where(x => x.Status == StatusEnum.ScheduledIndex)
+                            .AsNoTracking()
+                            .ToListAsync(cancellationToken);
 
-                    try
-                    {
-                        await elasticsearchIndexService.IndexDocumentAsync(document, cancellationToken);
+                        foreach (Document document in documents)
+                        {
+                            if (logger.IsInformationEnabled())
+                            {
+                                logger.LogInformation($"Start indexing Document: {document.DocumentId}");
+                            }
 
-                        await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Indexed}, indexed_at = {DateTime.UtcNow}");
-                    }
-                    catch (Exception e)
-                    {
-                        logger.LogError(e, $"Indexing Document '{document.Id}' failed");
+                            try
+                            {
+                                await elasticsearchIndexService.IndexDocumentAsync(document, cancellationToken);
 
-                        await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Failed}, indexed_at = {null}");
-                    }
+                                await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Indexed}, indexed_at = {DateTime.UtcNow}");
+                            }
+                            catch (Exception e)
+                            {
+                                logger.LogError(e, $"Indexing Document '{document.Id}' failed");
 
-                    if (logger.IsInformationEnabled())
-                    {
-                        logger.LogInformation($"Finished indexing Document: {document.DocumentId}");
+                                await context.Database.ExecuteSqlInterpolatedAsync($"UPDATE documents SET status = {StatusEnum.Failed}, indexed_at = {null}");
+                            }
+
+                            if (logger.IsInformationEnabled())
+                            {
+                                logger.LogInformation($"Finished indexing Document: {document.DocumentId}");
+                            }
+                        }
+
+                        await transaction.CommitAsync();
                     }
                 }
+            }
+        }
+
+        public async Task<bool> IsServerReachableAsync(CancellationToken cancellationToken)
+        {
+            using (var context = applicationDbContextFactory.Create())
+            {
+                return await context.Database.CanConnectAsync(cancellationToken);
             }
         }
     }

@@ -1,17 +1,12 @@
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
-import { Component, AfterViewInit, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
-import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
-import { MatChipInputEvent } from '@angular/material/chips';
-import { StringUtils } from '@app/utils/string-utils';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { DocumentStatus } from '@app/app.model';
-import { catchError, map, flatMap, switchMap, concatMap } from 'rxjs/operators';
-import { observable, of, from } from 'rxjs';
+import { catchError, concatMap } from 'rxjs/operators';
+import { of, from } from 'rxjs';
 
 @Component({
   selector: 'app-document-status',
@@ -80,19 +75,24 @@ export class DocumentStatusComponent implements OnInit {
   }
 
   removeSelectedDocuments() {
-    var documentsToRemove = this.selection.selected;
+
+    var documentsToRemove = this.selection.selected
 
     from(documentsToRemove)
       .pipe(
-        concatMap(x => this.httpClient.patch<any>(`${environment.apiUrl}/document/${x.documentId}`))
+        concatMap(x => this.httpClient.delete(`${environment.apiUrl}/status/${x.documentId}`))
       )
-      .subscribe(x => this.reloadDataTable());
+      .subscribe(() => this.reloadDataTable());
   }
 
   scheduleSelectedDocuments() {
-    console.log("Schedule: " + this.selection);
 
-    this.reloadDataTable();
+    var documentsToIndex = this.selection.selected
+
+    from(documentsToIndex)
+      .pipe(
+        concatMap(x => this.httpClient.post<any>(`${environment.apiUrl}/status/${x.documentId}/index`, []))
+      )
+      .subscribe(() => this.reloadDataTable());
   }
-
 }
