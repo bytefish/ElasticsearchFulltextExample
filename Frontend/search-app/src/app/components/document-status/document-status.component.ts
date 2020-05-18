@@ -1,19 +1,21 @@
 
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { DocumentStatus } from '@app/app.model';
-import { catchError, concatMap, mergeMap, toArray } from 'rxjs/operators';
-import { of, from } from 'rxjs';
+import { catchError, concatMap, mergeMap, toArray, tap } from 'rxjs/operators';
+import { of, from, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-document-status',
   templateUrl: './document-status.component.html',
   styleUrls: ['./document-status.component.scss']
 })
-export class DocumentStatusComponent implements OnInit {
+export class DocumentStatusComponent implements OnInit, OnDestroy {
+
+  private destroy$ = new Subject<void>();
 
   displayedColumns: string[] = ['select', 'id', 'title', 'filename', 'isOcrRequested', 'status'];
 
@@ -31,11 +33,13 @@ export class DocumentStatusComponent implements OnInit {
 
   reloadDataTable() {
     this.selection.clear();
-    this.isDataSourceLoading = true;
+    
+    this.isDataSourceLoading = true
 
     this.httpClient
       .get<DocumentStatus[]>(`${environment.apiUrl}/status`)
-      .pipe(catchError(() => of<DocumentStatus[]>([])))
+      .pipe(
+        catchError(() => of<DocumentStatus[]>([])))
       .subscribe(data => {
         this.isDataSourceLoading = false;
         this.dataSource.data = data;
@@ -97,5 +101,10 @@ export class DocumentStatusComponent implements OnInit {
         toArray()
       )
       .subscribe(() => this.reloadDataTable());
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

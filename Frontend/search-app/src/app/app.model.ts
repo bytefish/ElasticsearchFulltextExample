@@ -1,3 +1,15 @@
+export enum SearchStateEnum {
+  Loading = "loading",
+  Finished = "finished",
+  Error = "error"
+}
+
+export interface SearchQuery {
+  state: SearchStateEnum;
+  data: SearchResults;
+  error: string;
+}
+
 export interface SearchResults {
   query: string;
   results: SearchResult[];

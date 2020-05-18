@@ -21,6 +21,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { FileUploadComponent } from '@app/components/file-upload/file-upload.component';
 import { SearchComponent } from '@app/components/search/search.component';
 import { DocumentStatusComponent } from '@app/components/document-status/document-status.component';
+import { SearchService } from './services/search.service';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,9 @@ import { DocumentStatusComponent } from '@app/components/document-status/documen
     MatTableModule,
     MatMenuModule
   ],
-  providers: [],
+  providers: [
+    SearchService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

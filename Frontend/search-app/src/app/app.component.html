@@ -1,7 +1,6 @@
 <div class="search-container" fxLayout="column">
     <div class="search-bar" fxLayout="row" fxLayoutAlign="center center">
-        <input #search type="search" (keyup.enter)="onKeyupEnter(search.value)" [formControl]="control"
-            [matAutocomplete]="auto">
+        <input #search type="search" (keyup.enter)="onKeyupEnter(search.value)" [formControl]="control" [matAutocomplete]="auto">
         <mat-autocomplete #auto="matAutocomplete">
             <ng-container *ngIf="suggestions$ | async as suggestions">
                 <mat-option *ngFor="let suggestion of suggestions?.results" [value]="suggestion.text">

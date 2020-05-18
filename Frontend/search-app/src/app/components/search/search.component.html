@@ -1,6 +1,25 @@
 <div fxFill fxLayout="column" style="padding-top: 25px;">
-    <ng-container *ngIf="results$ | async as results">
-      <div *ngFor="let result of results?.results" fxFlex fxLayout="row" style="margin-bottom:25px;">
+  <ng-container *ngIf="query$ | async as query">
+    <!--  -->
+    <ng-template [ngIf]="query.state == 'loading'">
+      <div fxFlex fxLayout="row" fxLayoutAlign="center" style="margin-bottom:25px;">
+        <mat-spinner></mat-spinner>
+      </div>
+    </ng-template>
+    <!-- There was an error processing this request -->
+    <ng-template [ngIf]="query.state == 'error'">
+      <div fxFlex fxLayout="row" fxLayoutAlign="center" style="margin-bottom:25px;">
+        <p>An error occured ...</p>
+      </div>
+    </ng-template>
+    <!--No results found -->
+    <ng-template [ngIf]="query.state == 'finished' && query.data?.results.length == 0">
+      <div fxFlex fxLayout="row" fxLayoutAlign="center" style="margin-bottom:25px;">
+        <p>This query has no results. Maybe try a different one? 😓</p>
+      </div>      
+    </ng-template>
+    <ng-template [ngIf]="query.state == 'finished' && query.data?.results.length > 0">
+      <div *ngFor="let result of query.data?.results" fxFlex fxLayout="row" style="margin-bottom:25px;">
         <div fxFlex fxLayoutAlign="center">
           <mat-card class="search-result">
             <mat-card-content>
@@ -25,5 +44,6 @@
           </mat-card>
         </div>
       </div>
+    </ng-template>
   </ng-container>
 </div>

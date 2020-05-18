@@ -1,15 +1,16 @@
 import { Component, ViewChildren, ElementRef, QueryList, ViewChild, OnInit, HostListener } from '@angular/core';
-import { SearchResults, SearchSuggestions } from '@app/app.model';
+import { SearchResults, SearchSuggestions, SearchStateEnum, StatusEnum, SearchQuery } from '@app/app.model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, empty, timer, zip, range, of } from 'rxjs';
-import { map, retryWhen, mergeMap, switchMap, debounceTime, filter, tap, catchError } from 'rxjs/operators';
+import { Observable, empty, timer, zip, range, of, Subject, concat } from 'rxjs';
+import { map, retryWhen, mergeMap, switchMap, debounceTime, filter, tap, catchError, finalize, delay, takeUntil } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { FileUploadComponent } from '@app/components/file-upload/file-upload.component';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { DocumentStatusComponent } from '../document-status/document-status.component';
+import { SearchService } from '@app/services/search.service';
 
 @Component({
   selector: 'app-search',
@@ -17,36 +18,39 @@ import { DocumentStatusComponent } from '../document-status/document-status.comp
   styleUrls: ['./search.component.scss']
 })
 export class SearchComponent implements OnInit {
-
   control = new FormControl();
 
-  results$: Observable<SearchResults>;
+  query$: Observable<SearchQuery>;
 
-  constructor(private route: ActivatedRoute, private httpClient: HttpClient) {
+  constructor(private route: ActivatedRoute, private httpClient: HttpClient, private searchService: SearchService) {
 
   }
 
   ngOnInit(): void {
-    this.results$ = this.route.queryParams
+    this.query$ = this.searchService.onSearchSubmit()
       .pipe(
-        map(params => params['q']),
-        filter(query => !!query),
-        tap(query => this.control.setValue(query, { emitEvent: false })),
-        switchMap(query => this
-          .doSearch(query)
-          .pipe(catchError(err => of(<SearchResults>{ query: query, results: [] }))))
+        filter(query => !!query.term),
+        switchMap(query =>
+          concat(
+            of(<SearchQuery>{ state: SearchStateEnum.Loading }),
+            this.doSearch(query.term).pipe(
+              map(results => <SearchQuery>{state: SearchStateEnum.Finished, data: results}),
+              catchError(err => of(<SearchQuery>{ state: SearchStateEnum.Error, error: err }))
+            )
+          )
+        )
       );
   }
 
   doSearch(query: string): Observable<SearchResults> {
-
     return this.httpClient
-      // Get the Results from the API:
       .get<SearchResults>(`${environment.apiUrl}/search`, {
         params: {
           q: query
         }
       })
-      .pipe(catchError(err => of(<SearchResults>{ query: query, results: [] })));
+      .pipe(
+        catchError(err => of(<SearchResults>{ query: query, results: [] }))
+      );
   }
 }
