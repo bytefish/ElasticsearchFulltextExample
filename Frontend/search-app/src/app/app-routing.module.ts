@@ -1,7 +1,8 @@
+// Copyright (c) Philipp Wagner. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AppComponent } from '@app/app.component';
-import { FileUploadComponent } from '@app/components/file-upload/file-upload.component';
 import { SearchComponent } from '@app/components/search/search.component';
 import { DocumentStatusComponent } from './components/document-status/document-status.component';
 

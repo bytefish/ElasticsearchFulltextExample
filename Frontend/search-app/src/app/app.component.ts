@@ -1,3 +1,6 @@
+// Copyright (c) Philipp Wagner. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 import { Component, ViewChild } from '@angular/core';
 import { SearchSuggestions } from '@app/app.model';
 import { HttpClient } from '@angular/common/http';

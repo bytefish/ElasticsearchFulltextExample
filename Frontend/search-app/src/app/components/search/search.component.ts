@@ -1,15 +1,13 @@
-import { Component, ViewChildren, ElementRef, QueryList, ViewChild, OnInit, HostListener } from '@angular/core';
-import { SearchResults, SearchSuggestions, SearchStateEnum, StatusEnum, SearchQuery } from '@app/app.model';
+// Copyright (c) Philipp Wagner. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+import { Component, OnInit } from '@angular/core';
+import { SearchResults, SearchStateEnum, SearchQuery } from '@app/app.model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, empty, timer, zip, range, of, Subject, concat } from 'rxjs';
-import { map, retryWhen, mergeMap, switchMap, debounceTime, filter, tap, catchError, finalize, delay, takeUntil } from 'rxjs/operators';
+import { Observable, of, concat } from 'rxjs';
+import { map, switchMap, filter, catchError } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { FileUploadComponent } from '@app/components/file-upload/file-upload.component';
-import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { DocumentStatusComponent } from '../document-status/document-status.component';
 import { SearchService } from '@app/services/search.service';
 
 @Component({
@@ -22,7 +20,7 @@ export class SearchComponent implements OnInit {
 
   query$: Observable<SearchQuery>;
 
-  constructor(private route: ActivatedRoute, private httpClient: HttpClient, private searchService: SearchService) {
+  constructor(private httpClient: HttpClient, private searchService: SearchService) {
 
   }
 
@@ -50,7 +48,7 @@ export class SearchComponent implements OnInit {
         }
       })
       .pipe(
-        catchError(err => of(<SearchResults>{ query: query, results: [] }))
+        catchError(() => of(<SearchResults>{ query: query, results: [] }))
       );
   }
 }
