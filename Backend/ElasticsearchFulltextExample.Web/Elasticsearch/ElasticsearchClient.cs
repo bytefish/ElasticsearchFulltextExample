@@ -140,8 +140,8 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
         public async Task<ClusterHealthResponse> WaitForClusterAsync(TimeSpan timeout, CancellationToken cancellationToken)
         {
             var clusterHealthResponse = await client.Cluster.HealthAsync(selector: cluster => cluster
-                .WaitForNodes(">=1")
-                .WaitForActiveShards(">=1").Timeout(timeout), ct: cancellationToken);
+                .WaitForNodes("1")
+                .WaitForActiveShards("1").Timeout(timeout), ct: cancellationToken);
 
             if (logger.IsDebugEnabled())
             {

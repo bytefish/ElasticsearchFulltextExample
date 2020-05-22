@@ -90,8 +90,6 @@ export class FileUploadComponent {
         formData.append('file', this.file);
         formData.append('isOcrRequested', this.ocrControl.value);
 
-        console.log(this.ocrControl.value);
-
         return formData;
     }
 

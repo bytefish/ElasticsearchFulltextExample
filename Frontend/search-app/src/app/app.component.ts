@@ -84,7 +84,11 @@ export class AppComponent {
           q: query
         }
       })
-      .pipe(catchError(() => of(<SearchSuggestions>{ query: query, results: []})));
+      .pipe(catchError((err) => {
+        console.error(`An error occured while fetching suggestions: ${err}`);
+
+        return of(<SearchSuggestions>{ query: query, results: []})
+      }));
   }
 
   openFileUploadDialog() {
