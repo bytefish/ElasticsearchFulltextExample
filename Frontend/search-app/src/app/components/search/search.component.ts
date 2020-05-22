@@ -46,9 +46,6 @@ export class SearchComponent implements OnInit {
         params: {
           q: query
         }
-      })
-      .pipe(
-        catchError(() => of(<SearchResults>{ query: query, results: [] }))
-      );
+      });
   }
 }
