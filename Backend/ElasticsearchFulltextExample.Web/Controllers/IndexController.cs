@@ -101,59 +101,5 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 return memoryStream.ToArray();
             }
         }
-
-
-        //[HttpPatch]
-        //[Route("/api/document/{id}")]
-        //[Consumes("application/merge-patch+json")]
-        //public async Task<IActionResult> PatchDocument([FromRoute] string id, [FromBody] JsonDocument jsonDocument, CancellationToken cancellationToken)
-        //{
-        //    try
-        //    {
-        //        using (var context = applicationDbContextFactory.Create())
-        //        {
-        //            var document = await context.Documents.FirstOrDefaultAsync(x => x.DocumentId == id, cancellationToken);
-
-        //            if (document == null)
-        //            {
-        //                return NotFound();
-        //            }
-
-        //            PatchValues(jsonDocument, document);
-        //        }
-
-        //        return Ok();
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        logger.LogError(e, "Failed to schedule document for Indexing");
-
-        //        return StatusCode(500);
-        //    }
-        //}
-
-        //// This is a very simple way to patch values, but I find it sufficient to diff between objects and 
-        //// it should be generic enough to adapt it to other projects. The idea is simple: We iterate the 
-        //// the JsonDocument and when we hit a path, we are setting the value based on the JsonElement 
-        //// value:
-        //private void PatchValues(JsonDocument jsonDocument, Document document)
-        //{
-        //    PatchValue(jsonDocument, document, "documentId", (document, element) => document.DocumentId = element.GetString());
-        //    PatchValue(jsonDocument, document, "data", (document, element) => document.Data = element.GetBytesFromBase64());
-        //    PatchValue(jsonDocument, document, "filename", (document, element) => document.Filename = element.GetString());
-        //    PatchValue(jsonDocument, document, "isOcrRequested", (document, element) => document.IsOcrRequested = element.GetBoolean());
-        //    PatchValue(jsonDocument, document, "keywords", (document, element) => document.Keywords = element.EnumerateArray().Select(x => x.GetString()).ToArray());
-        //    PatchValue(jsonDocument, document, "suggestions", (document, element) => document.Suggestions = element.EnumerateArray().Select(x => x.GetString()).ToArray());
-        //    PatchValue(jsonDocument, document, "status", (document, element) => document.Status = (StatusEnum) Enum.Parse(typeof(StatusEnum), element.GetString()));
-        //    PatchValue(jsonDocument, document, "title", (document, element) => document.Title = element.GetString());
-        //}
-
-        //private void PatchValue(JsonDocument jsonDocument, Document document, string path, Action<Document, JsonElement> patch)
-        //{
-        //    if (jsonDocument.RootElement.TryGetProperty(path, out JsonElement element))
-        //    {
-        //        patch(document, element);
-        //    }
-        //}
     }
 }
