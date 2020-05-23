@@ -2,17 +2,14 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using ElasticsearchFulltextExample.Web.Contracts;
-using ElasticsearchFulltextExample.Web.Database.Context;
 using ElasticsearchFulltextExample.Web.Database.Factory;
 using ElasticsearchFulltextExample.Web.Database.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using TinyCsvParser.Tokenizer;

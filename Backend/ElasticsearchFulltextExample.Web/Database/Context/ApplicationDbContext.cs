@@ -10,10 +10,7 @@ namespace ElasticsearchFulltextExample.Web.Database.Context
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions options)
-            : base(options)
-        {
-            
-        }
+            : base(options) { }
 
         public DbSet<Document> Documents { get; set; }
 
@@ -21,7 +18,5 @@ namespace ElasticsearchFulltextExample.Web.Database.Context
         {
             modelBuilder.ApplyConfiguration(new DocumentTypeConfiguration());
         }
-
-        
     }
 }

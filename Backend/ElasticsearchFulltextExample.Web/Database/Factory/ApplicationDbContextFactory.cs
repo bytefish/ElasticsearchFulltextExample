@@ -1,4 +1,7 @@
-﻿using ElasticsearchFulltextExample.Web.Database.Context;
+﻿// Copyright (c) Philipp Wagner. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using ElasticsearchFulltextExample.Web.Database.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace ElasticsearchFulltextExample.Web.Database.Factory
