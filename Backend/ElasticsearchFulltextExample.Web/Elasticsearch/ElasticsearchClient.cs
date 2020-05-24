@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Elasticsearch.Net;
-using ElasticsearchFulltextExample.Web.Database.Model;
 using ElasticsearchFulltextExample.Web.Elasticsearch.Model;
 using ElasticsearchFulltextExample.Web.Logging;
 using ElasticsearchFulltextExample.Web.Options;
@@ -11,7 +10,6 @@ using Microsoft.Extensions.Options;
 using Nest;
 using System;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -215,7 +213,13 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                             .Field(x => x.Attachment.Content))
                     )
                 // Now kick off the query:
-                .Query(q => BuildQueryContainer(query)), cancellationToken);
+                .Query(q => q.MultiMatch(mm => mm
+                    .Query(query)
+                    .Type(TextQueryType.BoolPrefix)
+                    .Fields(f => f
+                        .Field(d => d.Keywords)
+                        .Field(d => d.Ocr)
+                        .Field(d => d.Attachment.Content)))), cancellationToken);
         }
 
         public Task<ISearchResponse<ElasticsearchDocument>> SuggestAsync(string query, CancellationToken cancellationToken)
@@ -231,15 +235,6 @@ namespace ElasticsearchFulltextExample.Web.Elasticsearch
                         .Field(x => x.Suggestions))), cancellationToken);
         }
 
-        private QueryContainer BuildQueryContainer(string query)
-        {
-            return Query<ElasticsearchDocument>.MultiMatch(x => x.Query(query)
-                .Type(TextQueryType.BoolPrefix)
-                .Fields(f => f
-                    .Field(x => x.Keywords)
-                    .Field(x => x.Ocr)
-                    .Field(x => x.Attachment.Content)));
-        }
 
         private static IElasticClient CreateClient(string uriString)
         {

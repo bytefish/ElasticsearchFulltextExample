@@ -73,7 +73,5 @@ namespace ElasticsearchFulltextExample.Web.Services
                 .ProcessDocument(document.Data, "eng")
                 .ConfigureAwait(false);
         }
-
-
     }
 }
