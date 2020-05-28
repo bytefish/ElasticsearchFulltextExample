@@ -8,24 +8,29 @@ The Article for this repository can be found at:
 
 ## What we are going to build ##
 
-### Document Indexing ###
-
-<a href="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Index_Document_Dialog.jpg">
-    <img src="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Index_Document_Dialog.jpg" alt="Document Indexing Dialog" width="50%" />
-</a>
-
 ### Auto-Complete Search Box ###
 
-<a href="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Search_Box_Auto_Complete.jpg">
-    <img src="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Search_Box_Auto_Complete.jpg" alt="Search Box with Auto Complete" width="50%" />
+<a href="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Frontend_Auto_Completion.png">
+    <img src="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Frontend_Auto_Completion.png" alt="Search Box with Auto Complete" width="50%" />
 </a>
 
 ### Full-Text Search Results ###
 
-<a href="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Search_Results.jpg">
-    <img src="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Search_Results.jpg" alt="Search Box with Auto Complete" width="50%" />
+<a href="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Frontend_Search_Results.png">
+    <img src="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Frontend_Search_Results.png" alt="Search Box with Auto Complete" width="50%" />
 </a>
 
+### Document Indexing ###
+
+<a href="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Frontend_AddDocument.png">
+    <img src="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Frontend_AddDocument.png" alt="Document Indexing Dialog" width="50%" />
+</a>
+
+### Document Status Tracking ###
+
+<a href="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Frontend_DocumentStatus.png">
+    <img src="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Frontend_DocumentStatus.png" alt="Document Indexing Dialog" width="50%" />
+</a>
 
 ### Create Migrations ###
 
