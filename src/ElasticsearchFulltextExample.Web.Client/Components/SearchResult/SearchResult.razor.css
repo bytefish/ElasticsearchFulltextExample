@@ -1,0 +1,61 @@
+﻿.code-box {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+        "code-box-title"
+        "code-box-content";
+    border: 1px solid var(--neutral-foreground-rest);
+    background-color: var(--neutral-layer-1);
+}
+
+
+    .code-box .code-box-title {
+        grid-area: code-box-title;
+        background-color: var(--neutral-layer-4);
+        border-bottom: 1px solid var(--neutral-foreground-rest);
+        padding: 10px 16px;
+    }
+
+    .code-box .code-box-content {
+        display: grid;
+        grid-area: code-box-content;
+        grid-template-columns: 1fr;
+        overflow: auto;
+        white-space: nowrap;
+        color: var(--neutral-foreground-rest);
+        font-family: "JetBrains Mono","Menlo","DejaVu Sans Mono","Liberation Mono","Consolas","Ubuntu Mono","Courier New","andale mono","lucida console",monospace;
+    }
+
+        .code-box .code-box-content .highlighted-line {
+            background-color: #f8eec7ab !important;
+        }
+
+        .code-box .code-box-content .code-line {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-column-gap: 5px;
+        }
+
+            .code-box .code-box-content .code-line .code-line-number {
+                display: grid;
+                text-align: right;
+                padding-right: 0.5rem;
+                border-right: 1px solid var(--neutral-foreground-rest);
+                min-width: 4rem;
+            }
+
+            .code-box .code-box-content .code-line .code-line-content {
+                display: grid;
+                text-align: left;
+                white-space: pre;
+            }
+
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
