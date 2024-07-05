@@ -5,7 +5,7 @@ namespace ElasticsearchFulltextExample.Database.Model
     /// <summary>
     /// A Keyword.
     /// </summary>
-    public class Keyword
+    public class Keyword : Entity
     {
         /// <summary>
         /// Gets or sets the Name.

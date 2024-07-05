@@ -1,9 +1,10 @@
 ﻿// Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using ElasticsearchFulltextExample.Api.Elasticsearch;
+using ElasticsearchFulltextExample.Api.Elasticsearch.Model;
+using ElasticsearchFulltextExample.Api.Options;
 using ElasticsearchFulltextExample.Web.Contracts;
-using ElasticsearchFulltextExample.Web.Elasticsearch;
-using ElasticsearchFulltextExample.Web.Options;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Nest;
@@ -13,7 +14,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ElasticsearchFulltextExample.Web.Controllers
+namespace ElasticsearchFulltextExample.Api.Controllers
 {
     public class SearchController : Controller
     {
@@ -44,11 +45,11 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             var searchResponse = await elasticsearchClient.SuggestAsync(query, cancellationToken);
 
             var searchSuggestions = ConvertToSearchSuggestions(query, searchResponse);
-           
+
             return Ok(searchSuggestions);
         }
 
-        private SearchSuggestionsDto ConvertToSearchSuggestions(string query, ISearchResponse<Elasticsearch.Model.ElasticsearchDocument> searchResponse)
+        private SearchSuggestionsDto ConvertToSearchSuggestions(string query, ISearchResponse<ElasticsearchDocument> searchResponse)
         {
             return new SearchSuggestionsDto
             {
@@ -57,7 +58,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
             };
         }
 
-        private SearchSuggestionDto[] GetSuggestions(ISearchResponse<Elasticsearch.Model.ElasticsearchDocument> searchResponse)
+        private SearchSuggestionDto[] GetSuggestions(ISearchResponse<ElasticsearchDocument> searchResponse)
         {
             if (searchResponse == null)
             {
@@ -71,7 +72,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 return null;
             }
 
-            if(!suggest.ContainsKey("suggest"))
+            if (!suggest.ContainsKey("suggest"))
             {
                 return null;
             }
@@ -96,7 +97,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 foreach (var option in suggestion.Options)
                 {
                     var text = option.Text;
-                    var prefix = option.Text.Substring(offset, Math.Min(length, text.Length)); 
+                    var prefix = option.Text.Substring(offset, Math.Min(length, text.Length));
                     var highlight = ReplaceAt(option.Text, offset, length, $"<strong>{prefix}</strong>");
 
                     result.Add(new SearchSuggestionDto { Text = text, Highlight = highlight });
@@ -113,7 +114,7 @@ namespace ElasticsearchFulltextExample.Web.Controllers
                 .Insert(index, replace);
         }
 
-        private SearchResultsDto ConvertToSearchResults(string query, ISearchResponse<Elasticsearch.Model.ElasticsearchDocument> searchResponse)
+        private SearchResultsDto ConvertToSearchResults(string query, ISearchResponse<ElasticsearchDocument> searchResponse)
         {
             var searchResults = searchResponse
                 // Get the Hits:
@@ -139,22 +140,21 @@ namespace ElasticsearchFulltextExample.Web.Controllers
 
         private string[] GetMatches(IReadOnlyDictionary<string, IReadOnlyCollection<string>> highlight)
         {
-            var matchesForOcr = GetMatchesForField(highlight, "ocr"); 
+            var matchesForOcr = GetMatchesForField(highlight, "ocr");
             var matchesForContent = GetMatchesForField(highlight, "attachment.content");
 
-            return Enumerable
-                .Concat(matchesForOcr, matchesForContent)
+            return matchesForOcr.Concat(matchesForContent)
                 .ToArray();
         }
 
         private string[] GetMatchesForField(IReadOnlyDictionary<string, IReadOnlyCollection<string>> highlight, string field)
         {
-            if(highlight == null)
+            if (highlight == null)
             {
                 return new string[] { };
             }
 
-            if(highlight.TryGetValue(field, out var matches))
+            if (highlight.TryGetValue(field, out var matches))
             {
                 return matches.ToArray();
             }

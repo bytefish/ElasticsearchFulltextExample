@@ -1,6 +1,6 @@
 ﻿namespace ElasticsearchFulltextExample.Database.Model
 {
-    public class JobStatus
+    public class JobStatus : Entity
     {
         /// <summary>
         /// Gets or sets the Name.

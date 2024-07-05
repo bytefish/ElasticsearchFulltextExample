@@ -5,7 +5,7 @@ namespace ElasticsearchFulltextExample.Database.Model
     /// <summary>
     /// A Suggestion.
     /// </summary>
-    public class Suggestion
+    public class Suggestion : Entity
     {
         /// <summary>
         /// Gets or sets the Name.

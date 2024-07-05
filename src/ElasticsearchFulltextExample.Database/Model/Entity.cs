@@ -1,5 +1,7 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using NodaTime;
+
 namespace ElasticsearchFulltextExample.Database.Model
 {
     public abstract class Entity
@@ -18,5 +20,10 @@ namespace ElasticsearchFulltextExample.Database.Model
         /// Gets or sets the user, that made the latest modifications.
         /// </summary>
         public required int LastEditedBy { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SysPeriod.
+        /// </summary>
+        public Interval? SysPeriod { get; set; }
     }
 }

@@ -1,11 +1,33 @@
 ﻿namespace ElasticsearchFulltextExample.Database.Model
 {
-    public class Job
+    public class Job : Entity
     {
+        /// <summary>
+        /// A Correlation ID.
+        /// </summary>
+        public string? CorrelationId1 { get; set; }
+
+        /// <summary>
+        /// A Correlation ID.
+        /// </summary>
+        public string? CorrelationId2 { get; set; }
+
+        /// <summary>
+        /// A Correlation ID.
+        /// </summary>
+        public string? CorrelationId3 { get; set; }
+
+        /// <summary>
+        /// A Correlation ID.
+        /// </summary>
+        public string? CorrelationId4 { get; set; }
+
         /// <summary>
         /// Gets or sets the DocumentId.
         /// </summary>
         public int DocumentId { get; set; }
+
+        public required DateTime CreatedAt { get; set; }
 
         /// <summary>
         /// Gets or sets the Job Status.

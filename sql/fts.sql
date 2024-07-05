@@ -155,6 +155,11 @@ CREATE TABLE IF NOT EXISTS fts.job_status(
 CREATE TABLE IF NOT EXISTS fts.job (
     job_id integer default nextval('fts.job_seq'),,
     document_id int not null,
+    correlation_id_1 varchar(2000) null,
+    correlation_id_2 varchar(2000) null,
+    correlation_id_3 varchar(2000) null,
+    correlation_id_4 varchar(2000) null,
+    created_at timestamptz default current_timestamp,
     job_status_id int not null,
     last_edited_by integer not null,
     sys_period tstzrange not null default tstzrange(current_timestamp, null),
