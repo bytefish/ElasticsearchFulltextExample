@@ -46,10 +46,46 @@ namespace GitClub.Infrastructure.Outbox.Consumer
             switch (payload)
             {
                 case DocumentCreatedMessage documentCreatedMessage:
+                    await HandleDocumentCreatedAsync(documentCreatedMessage, cancellationToken).ConfigureAwait(false);
+                    break;
+                case DocumentUpdatedMessage documentUpdatedMessage:
+                    await HandleDocumentUpdatedAsync(documentUpdatedMessage, cancellationToken).ConfigureAwait(false);
+                    break;
+                case DocumentDeletedMessage documentDeletedMessage:
+                    await HandleDocumentDeletedAsync(documentDeletedMessage, cancellationToken).ConfigureAwait(false);
+                    break;
                 default:
                     _logger.LogInformation("Outbox Event: {OutboxEventId}", outboxEvent.Id);
                     break;
             }
         }
+
+        private Task HandleDocumentCreatedAsync(DocumentCreatedMessage message, CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            // ...
+
+            return Task.CompletedTask;
+        }
+
+        private Task HandleDocumentUpdatedAsync(DocumentUpdatedMessage message, CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            // ...
+
+            return Task.CompletedTask;
+        }
+
+        private Task HandleDocumentDeletedAsync(DocumentDeletedMessage message, CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            // ...
+
+            return Task.CompletedTask;
+        }
+
     }
 }
