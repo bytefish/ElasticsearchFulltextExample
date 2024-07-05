@@ -2,9 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Elasticsearch.Net;
+using ElasticsearchFulltextExample.Api.Configuration;
 using ElasticsearchFulltextExample.Api.Elasticsearch.Model;
 using ElasticsearchFulltextExample.Api.Logging;
-using ElasticsearchFulltextExample.Api.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nest;

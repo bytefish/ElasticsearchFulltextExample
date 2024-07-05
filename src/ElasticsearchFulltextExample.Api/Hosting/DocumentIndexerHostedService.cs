@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using ElasticsearchFulltextExample.Api.Configuration;
 using ElasticsearchFulltextExample.Api.Database.Model;
 using ElasticsearchFulltextExample.Api.Logging;
-using ElasticsearchFulltextExample.Api.Options;
 using ElasticsearchFulltextExample.Api.Services;
 using ElasticsearchFulltextExample.Web.Database.Factory;
 using Microsoft.EntityFrameworkCore;

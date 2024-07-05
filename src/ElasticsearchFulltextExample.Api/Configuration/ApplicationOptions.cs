@@ -5,12 +5,12 @@
 // Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace ElasticsearchFulltextExample.Api.Options
+namespace ElasticsearchFulltextExample.Api.Configuration
 {
     public class ApplicationOptions
     {
-        public string BaseUri { get; set; }
+        public required string BaseUri { get; set; }
 
-        public TesseractOptions Tesseract { get; set; }
+        public required TesseractOptions Tesseract { get; set; }
     }
 }

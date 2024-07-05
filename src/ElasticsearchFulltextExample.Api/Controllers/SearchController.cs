@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using ElasticsearchFulltextExample.Api.Configuration;
 using ElasticsearchFulltextExample.Api.Elasticsearch;
 using ElasticsearchFulltextExample.Api.Elasticsearch.Model;
-using ElasticsearchFulltextExample.Api.Options;
 using ElasticsearchFulltextExample.Web.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;

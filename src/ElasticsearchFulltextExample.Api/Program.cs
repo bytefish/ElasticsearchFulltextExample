@@ -17,15 +17,15 @@ using NodaTime.Serialization.SystemTextJson;
 using NodaTime;
 using GitClub.Infrastructure.Mvc;
 using GitClub.Database.Models;
-using GitClub.Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authentication;
-using GitClub.Hosted;
 using GitClub.Infrastructure.Outbox.Consumer;
 using ElasticsearchFulltextExample.Api.Constants;
 using ElasticsearchFulltextExample.Api.Infrastructure.Mvc;
 using ElasticsearchFulltextExample.Database.Model;
 using ElasticsearchFulltextExample.Api.Infrastructure.Errors;
 using ElasticsearchFulltextExample.Api.Infrastructure.Errors.Translators;
+using ElasticsearchFulltextExample.Api.Infrastructure.Authentication;
+using ElasticsearchFulltextExample.Api.Hosting;
 
 // We will log to %LocalAppData%/GitClub to store the Logs, so it doesn't need to be configured 
 // to a different path, when you run it on your machine.
@@ -99,26 +99,11 @@ try
         o.ConnectionString = connectionString;
         o.PublicationName = "outbox_pub";
         o.ReplicationSlotName = "outbox_slot";
-        o.OutboxEventSchemaName = "gitclub";
+        o.OutboxEventSchemaName = "fts";
         o.OutboxEventTableName = "outbox_event";
     });
 
     builder.Services.AddHostedService<PostgresOutboxEventProcessor>();
-
-    // OpenFGA
-    builder.Services.AddSingleton<OpenFgaClient>(sp =>
-    {
-        var configuration = new ClientConfiguration
-        {
-            ApiUrl = builder.Configuration.GetValue<string>("OpenFGA:ApiUrl")!,
-            StoreId = builder.Configuration.GetValue<string>("OpenFGA:StoreId")!,
-            AuthorizationModelId = builder.Configuration.GetValue<string>("OpenFGA:AuthorizationModelId")!,
-        };
-
-        return new OpenFgaClient(configuration);
-    });
-
-    builder.Services.AddSingleton<AclService>();
 
     // Authentication
     builder.Services.AddScoped<CurrentUser>();
