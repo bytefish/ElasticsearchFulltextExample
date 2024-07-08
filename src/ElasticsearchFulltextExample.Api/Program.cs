@@ -146,7 +146,7 @@ try
 
     // Application Services
     builder.Services.AddSingleton<TesseractExecutor>();
-    builder.Services.AddSingleton<ElasticsearchIndexService>();
+    builder.Services.AddSingleton<ElasticsearchService>();
 
     // Route Constraints
     builder.Services.Configure<RouteOptions>(options =>

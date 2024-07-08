@@ -23,9 +23,9 @@ namespace ElasticsearchFulltextExample.Api.Hosting
 
         private readonly ILogger<DocumentIndexerHostedService> logger;
         private readonly ApplicationDbContextFactory applicationDbContextFactory;
-        private readonly ElasticsearchIndexService elasticsearchIndexService;
+        private readonly ElasticsearchService elasticsearchIndexService;
 
-        public DocumentIndexerHostedService(ILogger<DocumentIndexerHostedService> logger, IOptions<IndexerOptions> options, ApplicationDbContextFactory applicationDbContextFactory, ElasticsearchIndexService elasticsearchIndexService)
+        public DocumentIndexerHostedService(ILogger<DocumentIndexerHostedService> logger, IOptions<IndexerOptions> options, ApplicationDbContextFactory applicationDbContextFactory, ElasticsearchService elasticsearchIndexService)
         {
             this.logger = logger;
             this.options = options.Value;

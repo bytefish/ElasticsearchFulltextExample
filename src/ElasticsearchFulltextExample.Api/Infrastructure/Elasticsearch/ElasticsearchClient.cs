@@ -288,58 +288,5 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
 
             return bulkResponse;
         }
-
-        public Task<SearchResponse<CodeSearchDocument>> SearchAsync(CodeSearchRequest searchRequest, CancellationToken cancellationToken)
-        {
-            _logger.TraceMethodEntry();
-
-            // Convert to Elasticsearch Sort Fields
-            var sortOptionsArray = searchRequest.Sort
-                .Select(sortField => ConvertToSortOptions(sortField))
-                .ToArray();
-
-            // Build the Search Query:
-            var codeSearchDocuments = _client.SearchAsync<CodeSearchDocument>(searchRequestDescriptor => searchRequestDescriptor
-                // Query this Index:
-                .Index(_indexName)
-                // Setup Pagination:
-                .From(searchRequest.From).Size(searchRequest.Size)
-                // Setup the QueryString:
-                .Query(q => q
-                    .QueryString(new QueryStringQuery()
-                    {
-                        AllowLeadingWildcard = true,
-                        Query = searchRequest.Query,
-                    })
-                )
-                // Setup the Highlighters:
-                .Highlight(highlight => highlight
-                    .Fields(fields => fields
-                        .Add(Infer.Field<CodeSearchDocument>(f => f.Content), hf => hf
-                            .Fragmenter(HighlighterFragmenter.Span)
-                            .PreTags(new[] { ElasticsearchConstants.HighlightStartTag })
-                            .PostTags(new[] { ElasticsearchConstants.HighlightEndTag })
-                            .NumberOfFragments(0)
-                        )
-                        .Add(Infer.Field<CodeSearchDocument>(f => f.Filename), hf => hf
-                            .Fragmenter(HighlighterFragmenter.Span)
-                            .PreTags(new[] { ElasticsearchConstants.HighlightStartTag })
-                            .PostTags(new[] { ElasticsearchConstants.HighlightEndTag })
-                            .NumberOfFragments(0)
-                        )
-                    )
-                )
-                // Setup the Search Order:
-                .Sort(sortOptionsArray), cancellationToken);
-
-            return codeSearchDocuments;
-        }
-
-        private static SortOptions ConvertToSortOptions(SortField sortField)
-        {
-            var sortOrder = sortField.Order == SortOrderEnum.Ascending ? SortOrder.Asc : SortOrder.Desc;
-
-            return SortOptions.Field(new Field(sortField.Field), new FieldSort { Order = sortOrder });
-        }
     }
 }
