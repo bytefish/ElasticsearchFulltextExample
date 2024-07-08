@@ -1,7 +1,5 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using GitClub.Database.Models;
-using GitClub.Infrastructure.Constants;
 using System.Security.Claims;
 
 namespace ElasticsearchFulltextExample.Api.Infrastructure.Authentication

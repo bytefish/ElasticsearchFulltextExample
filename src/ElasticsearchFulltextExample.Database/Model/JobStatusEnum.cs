@@ -23,23 +23,23 @@ namespace ElasticsearchFulltextExample.Database.Model
         Executing = 2,
         
         /// <summary>
-        /// Executing.
+        /// Paused.
         /// </summary>
-        Paused = 2,
+        Paused = 3,
 
         /// <summary>
         /// Finished.
         /// </summary>
-        Finished = 3,
+        Finished = 4,
 
         /// <summary>
         /// Failed.
         /// </summary>
-        Failed = 4,
+        Failed = 5,
 
         /// <summary>
         /// Cancelled.
         /// </summary>
-        Cancelled = 5
+        Cancelled = 6
     }
 }

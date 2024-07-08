@@ -2,9 +2,9 @@
 
 using ElasticsearchFulltextExample.Api.Infrastructure.Errors;
 using ElasticsearchFulltextExample.Api.Infrastructure.Logging;
+using ElasticsearchFulltextExample.Api.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace ElasticsearchFulltextExample.Api.Controllers
 {

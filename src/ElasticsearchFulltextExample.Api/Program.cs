@@ -26,6 +26,10 @@ using ElasticsearchFulltextExample.Api.Infrastructure.Errors;
 using ElasticsearchFulltextExample.Api.Infrastructure.Errors.Translators;
 using ElasticsearchFulltextExample.Api.Infrastructure.Authentication;
 using ElasticsearchFulltextExample.Api.Hosting;
+using ElasticsearchFulltextExample.Api.Configuration;
+using ElasticsearchFulltextExample.Database;
+using ElasticsearchFulltextExample.Api.Services;
+using ElasticsearchFulltextExample.Api.Infrastructure.Tesseract;
 
 // We will log to %LocalAppData%/GitClub to store the Logs, so it doesn't need to be configured 
 // to a different path, when you run it on your machine.
@@ -141,11 +145,8 @@ try
     builder.Services.AddSingleton<ExceptionToApplicationErrorMapper>();
 
     // Application Services
-    builder.Services.AddSingleton<UserService>();
-    builder.Services.AddSingleton<TeamService>();
-    builder.Services.AddSingleton<OrganizationService>();
-    builder.Services.AddSingleton<RepositoryService>();
-    builder.Services.AddSingleton<IssueService>();
+    builder.Services.AddSingleton<TesseractExecutor>();
+    builder.Services.AddSingleton<ElasticsearchIndexService>();
 
     // Route Constraints
     builder.Services.Configure<RouteOptions>(options =>

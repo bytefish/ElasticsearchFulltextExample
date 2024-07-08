@@ -11,6 +11,6 @@ namespace ElasticsearchFulltextExample.Api.Configuration
     {
         public required string BaseUri { get; set; }
 
-        public required TesseractOptions Tesseract { get; set; }
+        public required TesseractExecutorOptions Tesseract { get; set; }
     }
 }

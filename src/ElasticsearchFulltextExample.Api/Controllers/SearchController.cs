@@ -3,7 +3,7 @@
 
 using ElasticsearchFulltextExample.Api.Configuration;
 using ElasticsearchFulltextExample.Api.Elasticsearch;
-using ElasticsearchFulltextExample.Api.Elasticsearch.Model;
+using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Models;
 using ElasticsearchFulltextExample.Web.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -120,7 +120,7 @@ namespace ElasticsearchFulltextExample.Api.Controllers
                 // Get the Hits:
                 .Hits
                 // Convert the Hit into a SearchResultDto:
-                .Select(x => new SearchResultDto
+                .Select(x => new SearchResult
                 {
                     Identifier = x.Source.Id,
                     Title = x.Source.Title,

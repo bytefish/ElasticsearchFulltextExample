@@ -3,10 +3,16 @@
 
 namespace ElasticsearchFulltextExample.Api.Configuration
 {
-    public class TesseractOptions
+    public class TesseractExecutorOptions
     {
+        /// <summary>
+        /// Gets or sets the Tesseract Executable.
+        /// </summary>
         public required string Executable { get; set; }
 
+        /// <summary>
+        /// Gets or sets the Tesseract Temporary Directory.
+        /// </summary>
         public required string TempDirectory { get; set; }
     }
 }

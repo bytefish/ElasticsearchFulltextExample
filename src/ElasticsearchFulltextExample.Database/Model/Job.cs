@@ -27,6 +27,9 @@
         /// </summary>
         public int DocumentId { get; set; }
 
+        /// <summary>
+        /// Gets or sets the Creation Date.
+        /// </summary>
         public required DateTime CreatedAt { get; set; }
 
         /// <summary>
