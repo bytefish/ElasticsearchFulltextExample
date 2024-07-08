@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using ElasticsearchFulltextExample.Api.Elasticsearch;
+using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch;
 using ElasticsearchFulltextExample.Api.Logging;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -13,34 +14,32 @@ namespace ElasticsearchFulltextExample.Api.Hosting
 {
     public class ElasticsearchInitializerHostedService : IHostedService
     {
-        private readonly ElasticsearchClient elasticsearchClient;
+        private readonly ElasticsearchSearchClient _elasticsearchClient;
         private readonly ILogger<ElasticsearchInitializerHostedService> logger;
 
-        public ElasticsearchInitializerHostedService(ILogger<ElasticsearchInitializerHostedService> logger, ElasticsearchClient elasticsearchClient)
+        public ElasticsearchInitializerHostedService(ILogger<ElasticsearchInitializerHostedService> logger, ElasticsearchSearchClient elasticsearchClient)
         {
             this.logger = logger;
-            this.elasticsearchClient = elasticsearchClient;
+            this._elasticsearchClient = elasticsearchClient;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            // Now we can wait for the Shards to boot up
             var healthTimeout = TimeSpan.FromSeconds(50);
 
             if (logger.IsDebugEnabled())
             {
-                logger.LogDebug($"Waiting for at least 1 Node and at least 1 Active Shard, with a Timeout of {healthTimeout.TotalSeconds} seconds.");
+                logger.LogDebug($"Waiting for at least 1 Node, with a Timeout of '{healthTimeout.TotalSeconds}' seconds.");
             }
 
-            await elasticsearchClient.WaitForClusterAsync(healthTimeout, cancellationToken);
+            await _elasticsearchClient.WaitForClusterAsync(healthTimeout, cancellationToken);
 
-            // Prepare Elasticsearch Database:
-            var indexExistsResponse = await elasticsearchClient.ExistsAsync(cancellationToken);
+            var indexExistsResponse = await _elasticsearchClient.IndexExistsAsync(cancellationToken);
 
             if (!indexExistsResponse.Exists)
             {
-                await elasticsearchClient.CreateIndexAsync(cancellationToken);
-                await elasticsearchClient.CreatePipelineAsync(cancellationToken);
+                await _elasticsearchClient.CreateIndexAsync(cancellationToken);
+                await _elasticsearchClient.CreatePipelineAsync(cancellationToken);
             }
         }
 
