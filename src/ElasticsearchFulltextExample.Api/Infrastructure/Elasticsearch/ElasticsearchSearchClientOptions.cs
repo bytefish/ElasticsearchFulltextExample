@@ -5,7 +5,7 @@ namespace ElasticsearchCodeSearch.Shared.Elasticsearch
     /// <summary>
     /// Elasticsearch options.
     /// </summary>
-    public class ElasticOptions
+    public class ElasticsearchSearchClientOptions
     {
         /// <summary>
         /// Endpoint of the Elasticsearch Node.

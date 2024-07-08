@@ -3,6 +3,7 @@
 using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.Core.Search;
 using ElasticsearchFulltextExample.Api.Configuration;
+using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch;
 using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Models;
 using ElasticsearchFulltextExample.Api.Infrastructure.Exceptions;
 using ElasticsearchFulltextExample.Api.Logging;
@@ -12,7 +13,6 @@ using ElasticsearchFulltextExample.Database.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Globalization;
-using ElasticsearchClient = ElasticsearchFulltextExample.Api.Elasticsearch.ElasticsearchClient;
 
 namespace ElasticsearchFulltextExample.Api.Services
 {
@@ -22,14 +22,14 @@ namespace ElasticsearchFulltextExample.Api.Services
 
         private readonly ApplicationOptions _options;
         private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
-        private readonly ElasticsearchClient _elasticsearchClient;
+        private readonly ElasticsearchSearchClient _elasticsearchSearchClient;
 
-        public ElasticsearchService(ILogger<ElasticsearchService> logger, IOptions<ApplicationOptions> options, IDbContextFactory<ApplicationDbContext> dbContextFactory, ElasticsearchClient elasticsearchClient)
+        public ElasticsearchService(ILogger<ElasticsearchService> logger, IOptions<ApplicationOptions> options, IDbContextFactory<ApplicationDbContext> dbContextFactory, ElasticsearchSearchClient elasticsearchClient)
         {
             _logger = logger;
             _options = options.Value;
             _dbContextFactory = dbContextFactory;
-            _elasticsearchClient = elasticsearchClient;
+            _elasticsearchSearchClient = elasticsearchClient;
         }
 
         public async Task IndexDocumentAsync(int documentId, CancellationToken cancellationToken)
@@ -76,7 +76,7 @@ namespace ElasticsearchFulltextExample.Api.Services
                 Attachment = null // Will be set after indexing ...
             };
 
-            return await _elasticsearchClient.IndexAsync(elasticsearchDocument, cancellationToken);
+             await _elasticsearchSearchClient.IndexAsync(elasticsearchDocument, cancellationToken);
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace ElasticsearchFulltextExample.Api.Services
         /// <returns>Search Results found for the given query</returns>
         public async Task<SearchResults> SearchAsync(string query, CancellationToken cancellationToken)
         {
-            var searchResponse = await _elasticsearchClient
+            var searchResponse = await _elasticsearchSearchClient
                 .SearchAsync(query, cancellationToken)
                 .ConfigureAwait(false);
 
@@ -156,7 +156,7 @@ namespace ElasticsearchFulltextExample.Api.Services
         /// <returns>Suggestions found for the given query</returns>
         public async Task<SearchSuggestions> SuggestAsync(string query, CancellationToken cancellationToken)
         {
-            var suggestResponse = await _elasticsearchClient
+            var suggestResponse = await _elasticsearchSearchClient
                 .SuggestAsync(query, cancellationToken)
                 .ConfigureAwait(false);
 
@@ -173,7 +173,19 @@ namespace ElasticsearchFulltextExample.Api.Services
         /// <returns>The Delete Reponse from Elasticsearch</returns>
         public async Task<DeleteResponse> DeleteDocumentAsync(int documentId, CancellationToken cancellationToken)
         {
-            return await _elasticsearchClient
+            return await _elasticsearchSearchClient
+                .DeleteAsync(documentId.ToString(CultureInfo.InvariantCulture), cancellationToken);
+        }
+        
+        /// <summary>
+        /// Updates a Document by its Document ID.
+        /// </summary>
+        /// <param name="documentId">Document ID</param>
+        /// <param name="cancellationToken">Cancellation Token</param>
+        /// <returns>The Delete Reponse from Elasticsearch</returns>
+        public async Task<DeleteResponse> UpdateDocumentAsync(int documentId, CancellationToken cancellationToken)
+        {
+            return await _elasticsearchSearchClient
                 .DeleteAsync(documentId.ToString(CultureInfo.InvariantCulture), cancellationToken);
         }
 
@@ -184,7 +196,7 @@ namespace ElasticsearchFulltextExample.Api.Services
         /// <returns>Ping Response from Elasticsearch</returns>
         public async Task<PingResponse> PingAsync(CancellationToken cancellationToken)
         {
-            return await _elasticsearchClient.PingAsync(cancellationToken: cancellationToken);
+            return await _elasticsearchSearchClient.PingAsync(cancellationToken: cancellationToken);
         }
 
         /// <summary>

@@ -3,6 +3,7 @@
 using ElasticsearchFulltextExample.Api.Infrastructure.Logging;
 using ElasticsearchFulltextExample.Api.Infrastructure.Outbox.Consumer;
 using ElasticsearchFulltextExample.Api.Infrastructure.Outbox.Messages;
+using ElasticsearchFulltextExample.Api.Services;
 using ElasticsearchFulltextExample.Database.Model;
 
 namespace GitClub.Infrastructure.Outbox.Consumer
@@ -10,11 +11,13 @@ namespace GitClub.Infrastructure.Outbox.Consumer
     public class OutboxEventConsumer : IOutboxEventConsumer
     {
         private readonly ILogger<OutboxEventConsumer> _logger;
+        
+        private readonly ElasticsearchService _elasticsearchService;
 
-
-        public OutboxEventConsumer(ILogger<OutboxEventConsumer> logger)
+        public OutboxEventConsumer(ILogger<OutboxEventConsumer> logger, ElasticsearchService elasticsearchService)
         {
             _logger = logger;
+            _elasticsearchService = elasticsearchService;
         }
 
         public async Task ConsumeOutboxEventAsync(OutboxEvent outboxEvent, CancellationToken cancellationToken)
@@ -60,32 +63,31 @@ namespace GitClub.Infrastructure.Outbox.Consumer
             }
         }
 
-        private Task HandleDocumentCreatedAsync(DocumentCreatedMessage message, CancellationToken cancellationToken)
+        private async Task HandleDocumentCreatedAsync(DocumentCreatedMessage message, CancellationToken cancellationToken)
         {
             _logger.TraceMethodEntry();
 
-            // ...
-
-            return Task.CompletedTask;
+            await _elasticsearchService
+                .IndexDocumentAsync(message.DocumentId, cancellationToken)
+                .ConfigureAwait(false);
         }
 
-        private Task HandleDocumentUpdatedAsync(DocumentUpdatedMessage message, CancellationToken cancellationToken)
+        private async Task HandleDocumentUpdatedAsync(DocumentUpdatedMessage message, CancellationToken cancellationToken)
         {
             _logger.TraceMethodEntry();
 
-            // ...
-
-            return Task.CompletedTask;
+            await _elasticsearchService
+                .UpdateDocumentAsync(message.DocumentId, cancellationToken)
+                .ConfigureAwait(false);
         }
 
-        private Task HandleDocumentDeletedAsync(DocumentDeletedMessage message, CancellationToken cancellationToken)
+        private async Task HandleDocumentDeletedAsync(DocumentDeletedMessage message, CancellationToken cancellationToken)
         {
             _logger.TraceMethodEntry();
 
-            // ...
-
-            return Task.CompletedTask;
+            await _elasticsearchService
+                .DeleteDocumentAsync(message.DocumentId, cancellationToken)
+                .ConfigureAwait(false);
         }
-
     }
 }

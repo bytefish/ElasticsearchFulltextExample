@@ -10,11 +10,11 @@ namespace ElasticsearchCodeSearch.Shared.Elasticsearch
         /// <summary>
         /// A tag used to find the highlightning start position.
         /// </summary>
-        public static readonly string HighlightStartTag = "elasticsearchcodesearch→";
+        public static readonly string HighlightStartTag = "elasticsearch→";
 
         /// <summary>
         /// A tag used to find the highlightning end position.
         /// </summary>
-        public static readonly string HighlightEndTag = "←elasticsearchcodesearch";
+        public static readonly string HighlightEndTag = "←elasticsearch";
     }
 }

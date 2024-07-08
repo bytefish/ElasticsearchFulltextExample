@@ -16,22 +16,24 @@ using Elastic.Clients.Elasticsearch.Nodes;
 
 namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
 {
-    public class ElasticCodeSearchClient
+    public class ElasticsearchSearchClient
     {
-        private readonly ILogger<ElasticCodeSearchClient> _logger;
+        private readonly ILogger<ElasticsearchSearchClient> _logger;
 
         private readonly ElasticsearchClient _client;
         private readonly string _indexName;
 
-        public ElasticCodeSearchClient(ILogger<ElasticCodeSearchClient> logger, IOptions<ElasticCodeSearchOptions> options)
+        public ElasticsearchSearchClient(ILogger<ElasticsearchSearchClient> logger, IOptions<ElasticsearchSearchClientOptions> options)
         {
             _logger = logger;
             _indexName = options.Value.IndexName;
             _client = CreateClient(options.Value);
         }
 
-        public virtual ElasticsearchClient CreateClient(ElasticCodeSearchOptions options)
+        private ElasticsearchClient CreateClient(ElasticsearchSearchClientOptions options)
         {
+            _logger.TraceMethodEntry();
+
             var settings = new ElasticsearchClientSettings(new Uri(options.Uri))
                 .CertificateFingerprint(options.CertificateFingerprint)
                 .Authentication(new BasicAuthentication(options.Username, options.Password));
@@ -173,6 +175,22 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
                             .Field(x => x.Suggestions))))), cancellationToken);
         }
 
+        public async Task<DeleteResponse> DeleteByIdAsync(int documentId, CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            var deleteResponse = await _client
+                .DeleteAsync<ElasticsearchDocument>(_indexName, documentId.ToString(), cancellationToken)
+                .ConfigureAwait(false);
+
+            if (_logger.IsDebugEnabled())
+            {
+                _logger.LogDebug("DeleteResponse DebugInformation: {DebugInformation}", deleteResponse.DebugInformation);
+            }
+
+            return deleteResponse;
+        }
+
         public async Task<DeleteByQueryResponse> DeleteAllAsync(CancellationToken cancellationToken)
         {
             _logger.TraceMethodEntry();
@@ -272,6 +290,22 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
             return clusterHealthResponse;
         }
 
+        public async Task<UpdateResponse<ElasticsearchDocument>> UpdateAsync(ElasticsearchDocument document, CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            var updateResponse = await _client
+                .UpdateAsync<ElasticsearchDocument, ElasticsearchDocument>(document, cancellationToken)
+                .ConfigureAwait(false);
+
+            if (_logger.IsDebugEnabled())
+            {
+                _logger.LogDebug("UpdateResponse DebugInformation: {DebugInformation}", updateResponse.DebugInformation);
+            }
+
+            return updateResponse;
+        }
+
         public async Task<BulkResponse> BulkIndexAsync(IEnumerable<ElasticsearchDocument> documents, CancellationToken cancellationToken)
         {
             _logger.TraceMethodEntry();
@@ -287,6 +321,22 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
             }
 
             return bulkResponse;
+        }
+
+        public async Task<IndexResponse> IndexAsync(ElasticsearchDocument document, CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            var indexResponse = await _client
+                .IndexAsync<ElasticsearchDocument>(document, cancellationToken)
+                .ConfigureAwait(false);
+
+            if (_logger.IsDebugEnabled())
+            {
+                _logger.LogDebug("IndexResponse DebugInformation: {DebugInformation}", indexResponse.DebugInformation);
+            }
+
+            return indexResponse;
         }
     }
 }
