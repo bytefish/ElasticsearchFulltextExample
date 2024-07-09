@@ -8,18 +8,18 @@ namespace ElasticsearchFulltextExample.Web.Contracts
     public class SearchResultDto
     {
         [JsonPropertyName("identifier")]
-        public string Identifier { get; set; }
+        public required string Identifier { get; set; }
 
         [JsonPropertyName("title")]
-        public string Title { get; set; }
+        public required string Title { get; set; }
 
         [JsonPropertyName("matches")]
-        public string[] Matches { get; set; }
+        public List<string> Matches { get; set; } = [];
 
         [JsonPropertyName("keywords")]
-        public string[] Keywords { get; set; }
+        public List<string> Keywords { get; set; } = [];
 
         [JsonPropertyName("url")]
-        public string Url { get; set; }
+        public required string? Url { get; set; }
     }
 }

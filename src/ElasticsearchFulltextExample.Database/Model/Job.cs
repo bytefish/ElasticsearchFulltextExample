@@ -3,22 +3,22 @@
     public class Job : Entity
     {
         /// <summary>
-        /// A Correlation ID.
+        /// Gets or sets the Correlation ID 1.
         /// </summary>
         public string? CorrelationId1 { get; set; }
 
         /// <summary>
-        /// A Correlation ID.
+        /// Gets or sets the Correlation ID 2.
         /// </summary>
         public string? CorrelationId2 { get; set; }
 
         /// <summary>
-        /// A Correlation ID.
+        /// Gets or sets the Correlation ID 3.
         /// </summary>
         public string? CorrelationId3 { get; set; }
 
         /// <summary>
-        /// A Correlation ID.
+        /// Gets or sets the Correlation ID 4.
         /// </summary>
         public string? CorrelationId4 { get; set; }
 
