@@ -3,20 +3,13 @@
 using Serilog.Filters;
 using Serilog.Sinks.SystemConsole.Themes;
 using Serilog;
-using OpenFga.Sdk.Client;
-using GitClub.Services;
-using GitClub.Database;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System.Security.Claims;
 using System.Threading.RateLimiting;
-using GitClub.Infrastructure.Errors.Translators;
-using GitClub.Infrastructure.Errors;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using NodaTime.Serialization.SystemTextJson;
 using NodaTime;
-using GitClub.Infrastructure.Mvc;
-using GitClub.Database.Models;
 using Microsoft.AspNetCore.Authentication;
 using GitClub.Infrastructure.Outbox.Consumer;
 using ElasticsearchFulltextExample.Api.Constants;
@@ -29,7 +22,6 @@ using ElasticsearchFulltextExample.Api.Hosting;
 using ElasticsearchFulltextExample.Api.Configuration;
 using ElasticsearchFulltextExample.Database;
 using ElasticsearchFulltextExample.Api.Services;
-using ElasticsearchFulltextExample.Api.Infrastructure.Tesseract;
 
 // We will log to %LocalAppData%/GitClub to store the Logs, so it doesn't need to be configured 
 // to a different path, when you run it on your machine.
@@ -145,7 +137,7 @@ try
     builder.Services.AddSingleton<ExceptionToApplicationErrorMapper>();
 
     // Application Services
-    builder.Services.AddSingleton<TesseractExecutor>();
+    builder.Services.AddSingleton<DocumentService>();
     builder.Services.AddSingleton<ElasticsearchService>();
 
     // Route Constraints

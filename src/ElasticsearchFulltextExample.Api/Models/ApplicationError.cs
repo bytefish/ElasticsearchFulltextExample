@@ -24,7 +24,7 @@ namespace ElasticsearchFulltextExample.Api.Models
         /// The value for the target name/value pair is a potentially empty string indicating the target of the error (for example, 
         /// the name of the property in error). It can be null.
         /// </summary>
-        public string Target { get; set; }
+        public string? Target { get; set; }
 
         /// <summary>
         /// The value for the details name/value pair MUST be an array of JSON objects that MUST contain name/value pairs for code and 
@@ -36,7 +36,7 @@ namespace ElasticsearchFulltextExample.Api.Models
         /// The value for the innererror name/value pair MUST be an object. The contents of this object are service-defined. Usually 
         /// this object contains information that will help debug the service.
         /// </summary>
-        public ApplicationInnerError InnerError { get; set; }
+        public ApplicationInnerError? InnerError { get; set; }
 
         /// <summary>
         /// Additional Properties.

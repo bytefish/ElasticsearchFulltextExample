@@ -1,6 +1,9 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using ElasticsearchFulltextExample.Api.Configuration;
+using ElasticsearchFulltextExample.Api.Infrastructure.Errors;
+using ElasticsearchFulltextExample.Api.Infrastructure.Exceptions;
+using ElasticsearchFulltextExample.Api.Infrastructure.Logging;
 using ElasticsearchFulltextExample.Api.Models;
 using ElasticsearchFulltextExample.Api.Services;
 using ElasticsearchFulltextExample.Web.Contracts;
@@ -9,28 +12,54 @@ using Microsoft.Extensions.Options;
 
 namespace ElasticsearchFulltextExample.Api.Controllers
 {
-    public class SearchController : Controller
+    [Route("[controller]")]
+    public class SearchController : ControllerBase
     {
+        private readonly ILogger<SearchController> _logger;
+
         private readonly ApplicationOptions _applicationOptions;
         private readonly ElasticsearchService _elasticsearchService;
+        private readonly ExceptionToApplicationErrorMapper _exceptionToApplicationErrorMapper;
 
-        public SearchController(IOptions<ApplicationOptions> applicationOptions, ElasticsearchService elasticsearchService)
+        public SearchController(ILogger<SearchController> logger, IOptions<ApplicationOptions> applicationOptions, ElasticsearchService elasticsearchService, ExceptionToApplicationErrorMapper exceptionToApplicationErrorMapper)
         {
+            _logger = logger;
             _applicationOptions = applicationOptions.Value;
             _elasticsearchService = elasticsearchService;
+            _exceptionToApplicationErrorMapper = exceptionToApplicationErrorMapper;
         }
 
         [HttpGet]
         [Route("/api/search")]
         public async Task<IActionResult> Query([FromQuery(Name = "q")] string query, CancellationToken cancellationToken)
         {
-            var searchResults = await _elasticsearchService
-                .SearchAsync(query, cancellationToken)
-                .ConfigureAwait(false);
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new InvalidModelStateException
+                    {
+                        ModelStateDictionary = ModelState
+                    };
+                }
 
-            var searchResultsDto = Convert(searchResults);
+                if(_logger.IsDebugEnabled())
+                {
+                    _logger.LogDebug("Executing SearchQuery '{SearchQuery}'", query);
+                }
 
-            return Ok(searchResultsDto);
+                var searchResults = await _elasticsearchService
+                    .SearchAsync(query, cancellationToken)
+                    .ConfigureAwait(false);
+
+                var searchResultsDto = Convert(searchResults);
+
+                return Ok(searchResultsDto);
+            }
+            catch (Exception exception)
+            {
+                return _exceptionToApplicationErrorMapper.CreateApplicationErrorResult(HttpContext, exception);
+            }
         }
 
         private SearchResultsDto Convert(SearchResults source)
@@ -65,13 +94,33 @@ namespace ElasticsearchFulltextExample.Api.Controllers
         [Route("/api/suggest")]
         public async Task<IActionResult> Suggest([FromQuery(Name = "q")] string query, CancellationToken cancellationToken)
         {
-            var searchSuggestions = await _elasticsearchService
-                .SuggestAsync(query, cancellationToken)
-                .ConfigureAwait(false);
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new InvalidModelStateException
+                    {
+                        ModelStateDictionary = ModelState
+                    };
+                }
 
-            var searchSuggestionsDto = Convert(searchSuggestions);
+                if (_logger.IsDebugEnabled())
+                {
+                    _logger.LogDebug("Getting Suggestions '{SearchSuggestions}'", query);
+                }
 
-            return Ok(searchSuggestions);
+                var searchSuggestions = await _elasticsearchService
+                    .SuggestAsync(query, cancellationToken)
+                    .ConfigureAwait(false);
+
+                var searchSuggestionsDto = Convert(searchSuggestions);
+
+                return Ok(searchSuggestions);
+            }
+            catch (Exception exception)
+            {
+                return _exceptionToApplicationErrorMapper.CreateApplicationErrorResult(HttpContext, exception);
+            }
         }
 
         private SearchSuggestionsDto Convert(SearchSuggestions source)

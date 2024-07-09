@@ -11,8 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ElasticsearchCodeSearch.Shared\ElasticsearchCodeSearch.Shared.csproj" />
-    <ProjectReference Include="..\ElasticsearchCodeSearch.Web.Client\ElasticsearchCodeSearch.Web.Client.csproj" />
   </ItemGroup>
 
 </Project>

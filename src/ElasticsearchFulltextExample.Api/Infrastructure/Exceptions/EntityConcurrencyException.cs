@@ -33,7 +33,7 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Exceptions
         /// </summary>
         /// <param name="message">Error Message</param>
         /// <param name="innerException">Reference to the Inner Exception</param>
-        public EntityConcurrencyException(string message = null, Exception? innerException = null)
+        public EntityConcurrencyException(string message = "EntityConcurrencyFailure", Exception? innerException = null)
             : base(message, innerException)
         {
         }

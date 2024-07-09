@@ -1,9 +1,8 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using ElasticsearchFulltextExample.Api.Infrastructure.Errors;
 using ElasticsearchFulltextExample.Api.Infrastructure.Exceptions;
-using GitClub.Infrastructure.Logging;
-using GitClub.Models;
+using ElasticsearchFulltextExample.Api.Infrastructure.Logging;
+using ElasticsearchFulltextExample.Api.Models;
 
 namespace ElasticsearchFulltextExample.Api.Infrastructure.Errors.Translators
 {

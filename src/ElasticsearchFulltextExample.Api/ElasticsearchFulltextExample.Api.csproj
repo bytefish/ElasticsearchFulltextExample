@@ -29,6 +29,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\ElasticsearchFulltextExample.Database\ElasticsearchFulltextExample.Database.csproj" />
+        <ProjectReference Include="..\ElasticsearchFulltextExample.Shared\ElasticsearchFulltextExample.Shared.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,15 +1,15 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using GitClub.Infrastructure.Logging;
 using Microsoft.Extensions.Options;
 using Npgsql.Replication.PgOutput.Messages;
 using Npgsql.Replication.PgOutput;
 using Npgsql.Replication;
 using Npgsql;
 using System.Runtime.CompilerServices;
-using GitClub.Database.Models;
 using System.Text.Json;
 using NodaTime;
+using ElasticsearchFulltextExample.Database.Model;
+using ElasticsearchFulltextExample.Api.Infrastructure.Logging;
 
 namespace GitClub.Infrastructure.Outbox.Postgres
 {

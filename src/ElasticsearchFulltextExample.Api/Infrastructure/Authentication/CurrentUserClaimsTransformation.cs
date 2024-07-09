@@ -1,6 +1,6 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using GitClub.Services;
+using ElasticsearchFulltextExample.Api.Services;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 

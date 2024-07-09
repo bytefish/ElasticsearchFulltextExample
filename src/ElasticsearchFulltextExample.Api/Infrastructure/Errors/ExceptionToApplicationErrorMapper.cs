@@ -3,14 +3,7 @@
 using ElasticsearchFulltextExample.Api.Infrastructure.Exceptions;
 using ElasticsearchFulltextExample.Api.Infrastructure.Logging;
 using ElasticsearchFulltextExample.Api.Models;
-using GitClub.Infrastructure.Logging;
-using GitClub.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ElasticsearchFulltextExample.Api.Infrastructure.Errors
 {

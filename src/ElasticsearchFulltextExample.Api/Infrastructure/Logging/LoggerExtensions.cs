@@ -68,7 +68,7 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Logging
             return logger.IsEnabled(LogLevel.Warning);
         }
 
-        public static void TraceMethodEntry(this ILogger logger, [CallerFilePath] string callerFilePath = null, [CallerLineNumber] int? callerLineNumber = null, [CallerMemberName] string callerMemberName = "")
+        public static void TraceMethodEntry(this ILogger logger, [CallerFilePath] string? callerFilePath = null, [CallerLineNumber] int? callerLineNumber = null, [CallerMemberName] string callerMemberName = "")
         {
             if (logger.IsTraceEnabled())
             {
@@ -77,7 +77,7 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Logging
             }
         }
 
-        public static void TraceMethodEntry<TLoggerType>(this ILogger<TLoggerType> logger, [CallerFilePath] string callerFilePath = null, [CallerLineNumber] int? callerLineNumber = null, [CallerMemberName] string callerMemberName = "")
+        public static void TraceMethodEntry<TLoggerType>(this ILogger<TLoggerType> logger, [CallerFilePath] string? callerFilePath = null, [CallerLineNumber] int? callerLineNumber = null, [CallerMemberName] string callerMemberName = "")
         {
             if (logger.IsTraceEnabled())
             {

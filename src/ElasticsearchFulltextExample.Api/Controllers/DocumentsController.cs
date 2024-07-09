@@ -1,21 +1,26 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using ElasticsearchFulltextExample.Api.Logging;
+using ElasticsearchFulltextExample.Api.Infrastructure.Errors;
+using ElasticsearchFulltextExample.Api.Infrastructure.Exceptions;
+using ElasticsearchFulltextExample.Api.Infrastructure.Logging;
 using ElasticsearchFulltextExample.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ElasticsearchFulltextExample.Api.Controllers
 {
-    public class DocumentsController : Controller
+    [Route("[controller]")]
+    public class DocumentsController : ControllerBase
     {
         private readonly ILogger<DocumentsController> _logger;
-        
-        private readonly DocumentService _documentService;
 
-        public DocumentsController(ILogger<DocumentsController> logger, DocumentService documentService)
+        private readonly DocumentService _documentService;
+        private readonly ExceptionToApplicationErrorMapper _exceptionToApplicationErrorMapper;
+
+        public DocumentsController(ILogger<DocumentsController> logger, DocumentService documentService, ExceptionToApplicationErrorMapper exceptionToApplicationErrorMapper)
         {
             _logger = logger;
             _documentService = documentService;
+            _exceptionToApplicationErrorMapper = exceptionToApplicationErrorMapper;
         }
 
         [HttpPost("upload")]
@@ -26,19 +31,36 @@ namespace ElasticsearchFulltextExample.Api.Controllers
             [FromForm(Name = "data")] IFormFile data,
             CancellationToken cancellationToken)
         {
-            var document = new Database.Model.Document
+            _logger.TraceMethodEntry();
+
+            try
             {
-                Title = title,
-                Filename = data.FileName,
-                Data = await GetBytesAsync(data),
-                LastEditedBy = Constants.Users.DataConversionUserId
-            };
+                if (!ModelState.IsValid)
+                {
+                    throw new InvalidModelStateException
+                    {
+                        ModelStateDictionary = ModelState
+                    };
+                }
 
-            await _documentService
-                .CreateDocumentAsync(document, suggestions, keywords, cancellationToken)
-                .ConfigureAwait(false);
+                var document = new Database.Model.Document
+                {
+                    Title = title,
+                    Filename = data.FileName,
+                    Data = await GetBytesAsync(data),
+                    LastEditedBy = Constants.Users.DataConversionUserId
+                };
 
-            return Ok();
+                await _documentService
+                    .CreateDocumentAsync(document, suggestions, keywords, cancellationToken)
+                    .ConfigureAwait(false);
+
+                return Created();
+            }
+            catch (Exception exception)
+            {
+                return _exceptionToApplicationErrorMapper.CreateApplicationErrorResult(HttpContext, exception);
+            }
         }
 
         private async Task<byte[]> GetBytesAsync(IFormFile formFile)
@@ -51,20 +73,36 @@ namespace ElasticsearchFulltextExample.Api.Controllers
             }
         }
 
-
         [HttpGet("{documentId}")]
         public async Task<IActionResult> GetFileById([FromRoute(Name = "documentId")] int documentId, CancellationToken cancellationToken)
         {
-            if (_logger.IsDebugEnabled())
+            _logger.TraceMethodEntry();
+
+            try
             {
-                _logger.LogDebug($"Downloading File with Document ID '{documentId}'");
+                if (!ModelState.IsValid)
+                {
+                    throw new InvalidModelStateException
+                    {
+                        ModelStateDictionary = ModelState
+                    };
+                }
+
+                if (_logger.IsDebugEnabled())
+                {
+                    _logger.LogDebug($"Downloading File with Document ID '{documentId}'");
+                }
+
+                var fileInformation = await _documentService
+                    .GetFileInformationByDocumentIdAsync(documentId, cancellationToken)
+                    .ConfigureAwait(false);
+
+                return File(fileContents: fileInformation.Data, contentType: fileInformation.ContentType, fileDownloadName: fileInformation.Filename);
             }
-
-            var fileInformation = await _documentService
-                .GetFileInformationByDocumentIdAsync(documentId, cancellationToken)
-                .ConfigureAwait(false);
-
-            return File(fileContents: fileInformation.Data, contentType: fileInformation.ContentType, fileDownloadName: fileInformation.Filename);
+            catch (Exception exception)
+            {
+                return _exceptionToApplicationErrorMapper.CreateApplicationErrorResult(HttpContext, exception);
+            }
         }
     }
 }

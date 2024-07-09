@@ -12,7 +12,6 @@ using ElasticsearchCodeSearch.Shared.Elasticsearch;
 using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Models;
 using Elastic.Clients.Elasticsearch.Ingest;
 using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Constants;
-using Elastic.Clients.Elasticsearch.Nodes;
 
 namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
 {

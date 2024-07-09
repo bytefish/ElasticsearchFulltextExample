@@ -1,22 +1,14 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Elastic.Clients.Elasticsearch;
-using Elastic.Clients.Elasticsearch.Core.Search;
 using ElasticsearchFulltextExample.Api.Configuration;
-using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch;
-using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Models;
 using ElasticsearchFulltextExample.Api.Infrastructure.Exceptions;
 using ElasticsearchFulltextExample.Api.Infrastructure.Outbox.Messages;
-using ElasticsearchFulltextExample.Api.Logging;
-using ElasticsearchFulltextExample.Api.Models;
 using ElasticsearchFulltextExample.Database;
 using ElasticsearchFulltextExample.Database.Model;
 using GitClub.Infrastructure.Outbox;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System.Globalization;
 
 namespace ElasticsearchFulltextExample.Api.Services
 {
