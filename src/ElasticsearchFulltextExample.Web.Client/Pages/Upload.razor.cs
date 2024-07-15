@@ -16,11 +16,13 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
 
             public string? Name { get; set; }
 
+            public List<string> Keywords { get; set; } = new();
+
+            public List<string> Suggestions { get; set; } = new();
+
             public string? Filename { get; set; }
 
-            public long? Size { get; set; }
-
-            public Stream? File { get; set; }
+            public Stream? Data { get; set; }
         }
 
         public UploadModel CurrentUpload = new UploadModel();
@@ -45,8 +47,7 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
             }
 
             CurrentUpload.Filename = file.Name;
-            CurrentUpload.Size = file.Size;
-            CurrentUpload.File = new StreamContent(file.Stream);
+            CurrentUpload.Data = file.Stream;
 
             return Task.CompletedTask;
         }
@@ -59,19 +60,31 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
         {
             MultipartFormDataContent multipartFormDataContent = new MultipartFormDataContent();
 
-            multipartFormDataContent.Add(new StringContent(CurrentUpload.Title), FileUploadNames.Title);
-            multipartFormDataContent.Add(new StreamContent(CurrentUpload.File!, "", CurrentUpload.Filename!);
-
-            await ElasticsearchCodeSearchService.IndexGitRepositoryAsync(CurrentGitRepository, default);
-
-            CurrentGitRepository = new GitRepositoryMetadataDto
+            if (CurrentUpload.Title != null) 
             {
-                Branch = string.Empty,
-                Name = string.Empty,
-                CloneUrl = string.Empty,
-                Owner = string.Empty,
-                Source = SourceSystems.GitHub,
-            };
+                multipartFormDataContent.Add(new StringContent(CurrentUpload.Title), FileUploadNames.Title);
+            }
+
+            if (CurrentUpload.Filename != null && CurrentUpload.Data != null) 
+            {
+                multipartFormDataContent.Add(new StreamContent(CurrentUpload.Data), FileUploadNames.Data, CurrentUpload.Filename);
+            }
+
+            if (CurrentUpload.Suggestions.Any()) 
+            {
+                for(var suggestionIdx = 0; suggestionIdx < CurrentUpload.Suggestions.Count; suggestionIdx++)
+                {
+                    multipartFormDataContent.Add(new StringContent(CurrentUpload.Suggestions[suggestionIdx]), $"{FileUploadNames.Suggestions}[{suggestionIdx}]");
+                }
+            }
+
+            if (CurrentUpload.Keywords.Any())
+            {
+                for (var keywordIdx = 0; keywordIdx < CurrentUpload.Keywords.Count; keywordIdx++)
+                {
+                    multipartFormDataContent.Add(new StringContent(CurrentUpload.Keywords[keywordIdx]), $"{FileUploadNames.Keywords}.[{keywordIdx}]");
+                }
+            }
         }
 
         /// <summary>
@@ -80,14 +93,7 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
         /// <returns>An awaitable <see cref="Task"/></returns>
         private Task HandleDiscardAsync()
         {
-            CurrentGitRepository = new GitRepositoryMetadataDto
-            {
-                Branch = string.Empty,
-                Name = string.Empty,
-                CloneUrl = string.Empty,
-                Owner = string.Empty,
-                Source = SourceSystems.GitHub
-            };
+            CurrentUpload = new UploadModel();
 
             return Task.CompletedTask;
         }
@@ -97,50 +103,14 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
         /// </summary>
         /// <param name="repository">Item to validate</param>
         /// <returns>The list of validation errors for the EditContext model fields</returns>
-        private IEnumerable<ValidationError> ValidateGitRepository(GitRepositoryMetadataDto repository)
+        private IEnumerable<ValidationError> ValidateCurrentUpload(UploadModel upload)
         {
-            if (string.IsNullOrWhiteSpace(repository.Owner))
+            if (string.IsNullOrWhiteSpace(upload.Name))
             {
                 yield return new ValidationError
                 {
-                    PropertyName = nameof(repository.Owner),
-                    ErrorMessage = Loc.GetString("Validation_IsRequired", nameof(repository.Owner))
-                };
-            }
-
-            if (string.IsNullOrWhiteSpace(repository.Name))
-            {
-                yield return new ValidationError
-                {
-                    PropertyName = nameof(repository.Name),
-                    ErrorMessage = Loc.GetString("Validation_IsRequired", nameof(repository.Name))
-                };
-            }
-
-            if (string.IsNullOrWhiteSpace(repository.Branch))
-            {
-                yield return new ValidationError
-                {
-                    PropertyName = nameof(repository.Branch),
-                    ErrorMessage = Loc.GetString("Validation_IsRequired", nameof(repository.Branch))
-                };
-            }
-
-            if (string.IsNullOrWhiteSpace(repository.CloneUrl))
-            {
-                yield return new ValidationError
-                {
-                    PropertyName = nameof(repository.CloneUrl),
-                    ErrorMessage = Loc.GetString("Validation_IsRequired", nameof(repository.CloneUrl))
-                };
-            }
-
-            if (string.IsNullOrWhiteSpace(repository.Source))
-            {
-                yield return new ValidationError
-                {
-                    PropertyName = nameof(repository.Source),
-                    ErrorMessage = Loc.GetString("Validation_IsRequired", nameof(repository.Source))
+                    PropertyName = nameof(upload.Name),
+                    ErrorMessage = Loc.GetString("Validation_IsRequired", nameof(upload.Name))
                 };
             }
         }

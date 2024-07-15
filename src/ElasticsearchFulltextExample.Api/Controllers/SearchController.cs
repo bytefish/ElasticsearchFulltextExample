@@ -3,16 +3,15 @@
 using ElasticsearchFulltextExample.Api.Configuration;
 using ElasticsearchFulltextExample.Api.Infrastructure.Errors;
 using ElasticsearchFulltextExample.Api.Infrastructure.Exceptions;
-using ElasticsearchFulltextExample.Api.Infrastructure.Logging;
 using ElasticsearchFulltextExample.Api.Models;
 using ElasticsearchFulltextExample.Api.Services;
+using ElasticsearchFulltextExample.Shared.Infrastructure;
 using ElasticsearchFulltextExample.Web.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace ElasticsearchFulltextExample.Api.Controllers
 {
-    [Route("[controller]")]
     public class SearchController : ControllerBase
     {
         private readonly ILogger<SearchController> _logger;
@@ -30,7 +29,7 @@ namespace ElasticsearchFulltextExample.Api.Controllers
         }
 
         [HttpGet]
-        [Route("/api/search")]
+        [Route("/search")]
         public async Task<IActionResult> Query([FromQuery(Name = "q")] string query, CancellationToken cancellationToken)
         {
             try
@@ -91,7 +90,7 @@ namespace ElasticsearchFulltextExample.Api.Controllers
         }
 
         [HttpGet]
-        [Route("/api/suggest")]
+        [Route("/suggest")]
         public async Task<IActionResult> Suggest([FromQuery(Name = "q")] string query, CancellationToken cancellationToken)
         {
             try

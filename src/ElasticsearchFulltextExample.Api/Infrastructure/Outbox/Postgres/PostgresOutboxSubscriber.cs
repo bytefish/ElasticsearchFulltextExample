@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using NodaTime;
 using ElasticsearchFulltextExample.Database.Model;
-using ElasticsearchFulltextExample.Api.Infrastructure.Logging;
+using ElasticsearchFulltextExample.Shared.Infrastructure;
 
 namespace GitClub.Infrastructure.Outbox.Postgres
 {

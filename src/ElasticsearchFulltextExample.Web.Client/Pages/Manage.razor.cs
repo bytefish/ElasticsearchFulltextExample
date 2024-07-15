@@ -1,9 +1,9 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using ElasticsearchCodeSearch.Shared.Services;
 using ElasticsearchCodeSearch.Shared.Dto;
 using ElasticsearchCodeSearch.Web.Client.Infrastructure;
 using Microsoft.Extensions.Localization;
+using ElasticsearchFulltextExample.Shared.Client;
 
 namespace ElasticsearchCodeSearch.Web.Client.Pages
 {
@@ -15,8 +15,8 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
         /// <returns>An awaitable <see cref="Task"/></returns>
         private async Task HandleRecreateSearchIndexAsync()
         {
-            await ElasticsearchCodeSearchService.DeleteSearchIndexAsync(default);
-            await ElasticsearchCodeSearchService.CreateSearchIndexAsync(default);
+            await SearchClient.DeleteSearchIndexAsync(default);
+            await SearchClient.CreateSearchIndexAsync(default);
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
         /// <returns>An awaitable <see cref="Task"/></returns>
         private async Task HandleCreateSearchIndexAsync()
         {
-            await ElasticsearchCodeSearchService.CreateSearchIndexAsync(default);
+            await SearchClient.CreateSearchIndexAsync(default);
         }
         
         /// <summary>
@@ -34,7 +34,7 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
         /// <returns>An awaitable <see cref="Task"/></returns>
         private async Task HandleDeleteSearchIndexAsync()
         {
-            await ElasticsearchCodeSearchService.DeleteSearchIndexAsync(default);
+            await SearchClient.DeleteSearchIndexAsync(default);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
         /// <returns>An awaitable <see cref="Task"/></returns>
         private async Task HandleDeleteAllDocumentsAsync()
         {
-            await ElasticsearchCodeSearchService.DeleteAllDocumentsAsync(default);
+            await SearchClient.DeleteAllDocumentsAsync(default);
         }
     }
 }

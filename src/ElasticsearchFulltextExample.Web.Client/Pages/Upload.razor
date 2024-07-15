@@ -1,14 +1,14 @@
 ﻿@page "/IndexGitRepository"
 
-@using ElasticsearchCodeSearch.Web.Client.Components
-@using ElasticsearchCodeSearch.Web.Client.Extensions;
-@using ElasticsearchCodeSearch.Web.Client.Infrastructure;
-@using ElasticsearchCodeSearch.Models
-@using ElasticsearchCodeSearch.Shared.Constants
-@using ElasticsearchCodeSearch.Shared.Dto;
-@using ElasticsearchCodeSearch.Shared.Services
+@    using ElasticsearchCodeSearch.Web.Client.Components
+@    using ElasticsearchCodeSearch.Web.Client.Extensions;
+@    using ElasticsearchCodeSearch.Web.Client.Infrastructure;
+@    using ElasticsearchCodeSearch.Models
+@    using ElasticsearchCodeSearch.Shared.Constants
+@    using ElasticsearchCodeSearch.Shared.Dto;
+@    using ElasticsearchCodeSearch.Shared.Services
 
-@inject ElasticsearchCodeSearchService ElasticsearchCodeSearchService
+@inject SearchClient ElasticsearchCodeSearchService
 @inject IStringLocalizer<SharedResource> Loc
 
 <PageTitle>Index Git Repository</PageTitle>

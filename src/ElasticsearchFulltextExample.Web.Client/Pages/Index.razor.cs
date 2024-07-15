@@ -4,9 +4,9 @@ using ElasticsearchCodeSearch.Web.Client.Infrastructure;
 using ElasticsearchCodeSearch.Web.Client.Localization;
 using ElasticsearchCodeSearch.Web.Client.Models;
 using ElasticsearchCodeSearch.Shared.Dto;
-using ElasticsearchCodeSearch.Shared.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
+using ElasticsearchFulltextExample.Shared.Client;
 
 namespace ElasticsearchCodeSearch.Web.Client.Pages
 {
@@ -16,7 +16,7 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
         /// Elasticsearch Search Client.
         /// </summary>
         [Inject]
-        public ElasticsearchCodeSearchService ElasticsearchCodeSearchService { get; set; } = default!;
+        public SearchClient ElasticsearchCodeSearchService { get; set; } = default!;
 
         /// <summary>
         /// Shared String Localizer.

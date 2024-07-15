@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch;
-using ElasticsearchFulltextExample.Api.Infrastructure.Logging;
+using ElasticsearchFulltextExample.Shared.Infrastructure;
 
 namespace ElasticsearchFulltextExample.Api.Hosting
 {

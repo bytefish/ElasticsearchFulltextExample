@@ -3,9 +3,9 @@
 using ElasticsearchFulltextExample.Api.Constants;
 using ElasticsearchFulltextExample.Api.Infrastructure.Authentication;
 using ElasticsearchFulltextExample.Api.Infrastructure.Exceptions;
-using ElasticsearchFulltextExample.Api.Infrastructure.Logging;
 using ElasticsearchFulltextExample.Database;
 using ElasticsearchFulltextExample.Database.Model;
+using ElasticsearchFulltextExample.Shared.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 

@@ -1,8 +1,8 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using ElasticsearchFulltextExample.Api.Infrastructure.Exceptions;
-using ElasticsearchFulltextExample.Api.Infrastructure.Logging;
 using ElasticsearchFulltextExample.Api.Models;
+using ElasticsearchFulltextExample.Shared.Infrastructure;
 using Microsoft.Extensions.Options;
 
 namespace ElasticsearchFulltextExample.Api.Infrastructure.Errors

@@ -2,8 +2,8 @@
 
 using ElasticsearchFulltextExample.Api.Infrastructure.Errors;
 using ElasticsearchFulltextExample.Api.Infrastructure.Exceptions;
-using ElasticsearchFulltextExample.Api.Infrastructure.Logging;
 using ElasticsearchFulltextExample.Api.Services;
+using ElasticsearchFulltextExample.Shared.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ElasticsearchFulltextExample.Api.Controllers

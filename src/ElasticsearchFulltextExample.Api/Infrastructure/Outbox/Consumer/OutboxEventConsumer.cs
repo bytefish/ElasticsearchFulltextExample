@@ -1,10 +1,10 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using ElasticsearchFulltextExample.Api.Infrastructure.Logging;
 using ElasticsearchFulltextExample.Api.Infrastructure.Outbox.Consumer;
 using ElasticsearchFulltextExample.Api.Infrastructure.Outbox.Messages;
 using ElasticsearchFulltextExample.Api.Services;
 using ElasticsearchFulltextExample.Database.Model;
+using ElasticsearchFulltextExample.Shared.Infrastructure;
 
 namespace GitClub.Infrastructure.Outbox.Consumer
 {

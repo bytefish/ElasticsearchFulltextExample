@@ -7,11 +7,11 @@ using Elastic.Clients.Elasticsearch.Cluster;
 using Elastic.Clients.Elasticsearch.Core.Search;
 using Elastic.Transport;
 using Microsoft.Extensions.Options;
-using ElasticsearchFulltextExample.Api.Infrastructure.Logging;
 using ElasticsearchCodeSearch.Shared.Elasticsearch;
 using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Models;
 using Elastic.Clients.Elasticsearch.Ingest;
 using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Constants;
+using ElasticsearchFulltextExample.Shared.Infrastructure;
 
 namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
 {

@@ -50,10 +50,11 @@
 
     <ItemGroup>
         <ProjectReference Include="..\ElasticsearchCodeSearch.Shared\ElasticsearchCodeSearch.Shared.csproj" />
+        <ProjectReference Include="..\ElasticsearchFulltextExample.Shared\ElasticsearchFulltextExample.Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <Content Update="Pages\GitRepositoryCodeIndex.razor">
+      <Content Update="Pages\Upload.razor">
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       </Content>
       <Content Update="wwwroot\appsettings.json">

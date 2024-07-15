@@ -3,10 +3,10 @@
 using ElasticsearchCodeSearch.Web.Client.Infrastructure;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components;
-using ElasticsearchCodeSearch.Shared.Services;
 using ElasticsearchCodeSearch.Web.Client.Components;
 using ElasticsearchCodeSearch.Web.Client.Models;
 using ElasticsearchCodeSearch.Shared.Dto;
+using ElasticsearchFulltextExample.Shared.Client;
 
 namespace ElasticsearchCodeSearch.Web.Client.Pages
 {
@@ -16,7 +16,7 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
         /// Elasticsearch Search Client.
         /// </summary>
         [Inject]
-        public ElasticsearchCodeSearchService ElasticsearchCodeSearchService { get; set; } = default!;
+        public SearchClient ElasticsearchCodeSearchService { get; set; } = default!;
 
         /// <summary>
         /// The current Query String to send to the Server (Elasticsearch QueryString format).

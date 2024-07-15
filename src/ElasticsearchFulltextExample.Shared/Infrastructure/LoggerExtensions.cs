@@ -1,10 +1,9 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using ElasticsearchFulltextExample.Api.Infrastructure.Logging;
 using Microsoft.Extensions.Logging;
 using System.Runtime.CompilerServices;
 
-namespace ElasticsearchFulltextExample.Api.Infrastructure.Logging
+namespace ElasticsearchFulltextExample.Shared.Infrastructure
 {
     public static class LoggerExtensions
     {
