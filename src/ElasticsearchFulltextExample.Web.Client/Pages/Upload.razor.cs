@@ -1,28 +1,55 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using ElasticsearchCodeSearch.Shared.Services;
-using ElasticsearchCodeSearch.Shared.Dto;
 using ElasticsearchCodeSearch.Web.Client.Infrastructure;
+using ElasticsearchFulltextExample.Shared.Constants;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Localization;
-using ElasticsearchCodeSearch.Shared.Constants;
+using Microsoft.FluentUI.AspNetCore.Components;
 
 namespace ElasticsearchCodeSearch.Web.Client.Pages
 {
-    public partial class GitRepositoryCodeIndex
+    public partial class Upload
     {
-        /// <summary>
-        /// GitHub Repositories.
-        /// </summary>
-        private GitRepositoryMetadataDto CurrentGitRepository = new GitRepositoryMetadataDto
+        public class UploadModel
         {
-            Owner = string.Empty,
-            Name = string.Empty,
-            Branch = string.Empty,
-            CloneUrl = string.Empty,
-            Language = string.Empty,
-            Source = SourceSystems.GitHub,
-        };
+            public string? Title { get; set; }
 
+            public string? Name { get; set; }
+
+            public string? Filename { get; set; }
+
+            public long? Size { get; set; }
+
+            public Stream? File { get; set; }
+        }
+
+        public UploadModel CurrentUpload = new UploadModel();
+
+        private Task OnCompletedAsync(IEnumerable<FluentInputFileEventArgs> files)
+        {
+            if(files == null)
+            {
+                return Task.CompletedTask;
+            }
+
+            var file = files.FirstOrDefault();
+
+            if(file == null)
+            {
+                return Task.CompletedTask;
+            }
+
+            if(file.Stream == null)
+            {
+                return Task.CompletedTask;
+            }
+
+            CurrentUpload.Filename = file.Name;
+            CurrentUpload.Size = file.Size;
+            CurrentUpload.File = new StreamContent(file.Stream);
+
+            return Task.CompletedTask;
+        }
 
         /// <summary>
         /// Submits the Form and reloads the updated data.
@@ -30,6 +57,11 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
         /// <returns>An awaitable <see cref="Task"/></returns>
         private async Task HandleValidSubmitAsync()
         {
+            MultipartFormDataContent multipartFormDataContent = new MultipartFormDataContent();
+
+            multipartFormDataContent.Add(new StringContent(CurrentUpload.Title), FileUploadNames.Title);
+            multipartFormDataContent.Add(new StreamContent(CurrentUpload.File!, "", CurrentUpload.Filename!);
+
             await ElasticsearchCodeSearchService.IndexGitRepositoryAsync(CurrentGitRepository, default);
 
             CurrentGitRepository = new GitRepositoryMetadataDto

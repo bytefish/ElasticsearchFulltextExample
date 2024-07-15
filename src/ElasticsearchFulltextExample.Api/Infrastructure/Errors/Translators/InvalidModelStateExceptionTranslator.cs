@@ -40,7 +40,7 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Errors.Translators
             {
                 Code = ErrorCodes.ValidationFailed,
                 Message = "One or more validation errors occured",
-                Details = GetODataErrorDetails(exception.ModelStateDictionary),
+                Details = GetApplicationErrorDetails(exception.ModelStateDictionary),
             };
 
             // Create the Inner Error
@@ -95,7 +95,7 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Errors.Translators
             return null;
         }
 
-        private List<ApplicationErrorDetail> GetODataErrorDetails(ModelStateDictionary modelStateDictionary)
+        private List<ApplicationErrorDetail> GetApplicationErrorDetails(ModelStateDictionary modelStateDictionary)
         {
             _logger.TraceMethodEntry();
 
