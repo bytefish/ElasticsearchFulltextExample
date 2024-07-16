@@ -4,6 +4,7 @@ WORKDIR /source
 
 # COPY Project Files:
 COPY ../src/ElasticsearchFulltextExample.Api/*.csproj ./ElasticsearchFulltextExample.Api/
+COPY ../src/ElasticsearchFulltextExample.Database/*.csproj ./ElasticsearchFulltextExample.Database/
 COPY ../src/ElasticsearchFulltextExample.Shared/*.csproj ./ElasticsearchFulltextExample.Shared/
 
 # And restore the NuGet Packages:
@@ -11,6 +12,7 @@ RUN dotnet restore "ElasticsearchFulltextExample.Api/ElasticsearchFulltextExampl
 
 # COPY 
 COPY ../src/ElasticsearchFulltextExample.Api/. ./src/ElasticsearchFulltextExample.Api/
+COPY ../src/ElasticsearchFulltextExample.Database/. ./src/ElasticsearchFulltextExample.Database/
 COPY ../src/ElasticsearchFulltextExample.Shared/. ./src/ElasticsearchFulltextExample.Shared/
 
 RUN dotnet publish ./src/ElasticsearchFulltextExample.Api/ElasticsearchFulltextExample.Api.csproj -c release -o /app
