@@ -9,9 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElasticsearchFulltextExampl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElasticsearchFulltextExample.Web.Client", "src\ElasticsearchFulltextExample.Web.Client\ElasticsearchFulltextExample.Web.Client.csproj", "{757702B0-EE3C-4919-8AC4-9A919816EEED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElasticsearchFulltextExample.Web.Server.csproj", "src\ElasticsearchFulltextExample.Web.Server\ElasticsearchFulltextExample.Web.Server.csproj.csproj", "{6B2BD10F-DF9B-412D-9B06-B98ABDDE5BD8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElasticsearchFulltextExample.Database", "src\ElasticsearchFulltextExample.Database\ElasticsearchFulltextExample.Database.csproj", "{5F9FA1DA-A186-4495-8BE0-972EA624F53A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElasticsearchFulltextExample.Web.Server", "src\ElasticsearchFulltextExample.Web.Server\ElasticsearchFulltextExample.Web.Server.csproj", "{C1EB93D4-20AC-4635-A7B6-1454E7350787}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,14 +31,14 @@ Global
 		{757702B0-EE3C-4919-8AC4-9A919816EEED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{757702B0-EE3C-4919-8AC4-9A919816EEED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{757702B0-EE3C-4919-8AC4-9A919816EEED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6B2BD10F-DF9B-412D-9B06-B98ABDDE5BD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B2BD10F-DF9B-412D-9B06-B98ABDDE5BD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6B2BD10F-DF9B-412D-9B06-B98ABDDE5BD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6B2BD10F-DF9B-412D-9B06-B98ABDDE5BD8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5F9FA1DA-A186-4495-8BE0-972EA624F53A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5F9FA1DA-A186-4495-8BE0-972EA624F53A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F9FA1DA-A186-4495-8BE0-972EA624F53A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F9FA1DA-A186-4495-8BE0-972EA624F53A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1EB93D4-20AC-4635-A7B6-1454E7350787}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1EB93D4-20AC-4635-A7B6-1454E7350787}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1EB93D4-20AC-4635-A7B6-1454E7350787}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1EB93D4-20AC-4635-A7B6-1454E7350787}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

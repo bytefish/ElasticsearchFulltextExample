@@ -33,7 +33,7 @@
         <div>
             <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center">
                 <div>
-                    <FluentTextField Style="@("width: 300px;")" Name="keywordr" @bind-Value="CurrentUpload.Keyword" Label="Suggestion" Required />
+                    <FluentTextField Style="@("width: 300px;")" Name="keyword" @bind-Value="CurrentUpload.Keyword" Label="Suggestion" Required />
                     <FluentButton OnClick="OnAddKeyword"></FluentButton>
                 </div>
                 <FluentValidationMessage For="@(() => CurrentUpload.Keyword)" />
