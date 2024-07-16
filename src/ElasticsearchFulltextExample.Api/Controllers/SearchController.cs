@@ -1,8 +1,6 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Elastic.Clients.Elasticsearch;
 using ElasticsearchFulltextExample.Api.Configuration;
-using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Converters;
 using ElasticsearchFulltextExample.Api.Infrastructure.Errors;
 using ElasticsearchFulltextExample.Api.Infrastructure.Exceptions;
 using ElasticsearchFulltextExample.Api.Models;
