@@ -2,7 +2,7 @@
 
 using Microsoft.FluentUI.AspNetCore.Components;
 
-namespace ElasticsearchCodeSearch.Web.Client.Components;
+namespace ElasticsearchFulltextExample.Web.Client.Components;
 
 public partial class SiteSettings
 {

@@ -2,7 +2,7 @@
 
 using Microsoft.AspNetCore.Components;
 
-namespace ElasticsearchCodeSearch.Web.Client.Infrastructure
+namespace ElasticsearchFulltextExample.Web.Client.Infrastructure
 {
     public sealed class EventCallbackSubscribable<T>
     {

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
 using ElasticsearchFulltextExample.Shared.Client;
 using ElasticsearchFulltextExample.Web.Client;
+using ElasticsearchFulltextExample.Web.Client.Infrastructure;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -17,7 +18,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddHttpClient<SearchClient>((services, client) =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["ElasticsearchCodeSearchApi:BaseAddress"]!);
+    client.BaseAddress = new Uri(builder.Configuration["SearchService:BaseAddress"]!);
 });
 
 builder.Services.AddLocalization();

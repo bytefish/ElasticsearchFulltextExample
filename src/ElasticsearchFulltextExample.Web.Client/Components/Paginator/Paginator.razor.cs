@@ -1,8 +1,8 @@
-﻿using ElasticsearchCodeSearch.Web.Client.Infrastructure;
+﻿using ElasticsearchFulltextExample.Web.Client.Infrastructure;
 using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
 
-namespace ElasticsearchCodeSearch.Web.Client.Components
+namespace ElasticsearchFulltextExample.Web.Client.Components
 {
     /// <summary>
     /// A component that provides a user interface for <see cref="PaginationState"/>.

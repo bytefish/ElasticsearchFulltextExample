@@ -261,6 +261,54 @@ namespace ElasticsearchFulltextExample.Api.Controllers
         }
 
         [HttpPost]
+        [Route("/delete-index")]
+        public async Task<IActionResult> DeleteIndex(CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            try
+            {
+                await _elasticsearchService.DeleteIndexAsync(cancellationToken);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                if (_logger.IsErrorEnabled())
+                {
+                    _logger.LogError(e, "Failed to delete index");
+                }
+
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPost]
+        [Route("/delete-all-documents")]
+        public async Task<IActionResult> DeleteAllDocuments(CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            try
+            {
+                await _elasticsearchService.DeleteAllAsync(cancellationToken);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                if (_logger.IsErrorEnabled())
+                {
+                    _logger.LogError(e, "An unhandeled exception occured");
+                }
+
+                return StatusCode(500, "An internal Server Error occured");
+            }
+        }
+
+
+
+        [HttpPost]
         [Route("/create-index")]
         public async Task<IActionResult> CreateIndex(CancellationToken cancellationToken)
         {
@@ -280,7 +328,7 @@ namespace ElasticsearchFulltextExample.Api.Controllers
                 }
 
                 await _elasticsearchService
-                    .(query, cancellationToken)
+                    .CreateIndexAsync(cancellationToken)
                     .ConfigureAwait(false);
 
                 return Ok();

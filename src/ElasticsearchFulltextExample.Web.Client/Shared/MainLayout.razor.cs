@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
-namespace ElasticsearchCodeSearch.Web.Client.Shared
+namespace ElasticsearchFulltextExample.Web.Client.Shared
 {
     public partial class MainLayout
     {

@@ -40,6 +40,20 @@ namespace ElasticsearchFulltextExample.Api.Services
             await _elasticsearchSearchClient.CreateIndexAsync(cancellationToken);
         }
 
+        public async Task DeleteAllAsync(CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            await _elasticsearchSearchClient.DeleteAllAsync(cancellationToken);
+        }
+
+        public async Task DeleteIndexAsync(CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            await _elasticsearchSearchClient.DeleteIndexAsync(cancellationToken);
+        }
+
         public async Task IndexDocumentAsync(int documentId, CancellationToken cancellationToken)
         {
             _logger.TraceMethodEntry();

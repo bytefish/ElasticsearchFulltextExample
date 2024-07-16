@@ -20,6 +20,46 @@ namespace ElasticsearchFulltextExample.Shared.Client
             _logger = logger;
         }
 
+        public async Task DeleteSearchIndexAsync(CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            var response = await _httpClient
+                .PostAsync("delete-index", null, cancellationToken)
+                .ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApiException(string.Format(CultureInfo.InvariantCulture,
+                    "HTTP Request failed with Status: '{0}' ({1})",
+                    (int)response.StatusCode,
+                    response.StatusCode))
+                {
+                    StatusCode = response.StatusCode
+                };
+            }
+        }
+
+        public async Task DeleteAllDocumentsAsync(CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            var response = await _httpClient
+                .PostAsync("delete-all-documents", null, cancellationToken)
+                .ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApiException(string.Format(CultureInfo.InvariantCulture,
+                    "HTTP Request failed with Status: '{0}' ({1})",
+                    (int)response.StatusCode,
+                    response.StatusCode))
+                {
+                    StatusCode = response.StatusCode
+                };
+            }
+        }
+
         public async Task<SearchResultsDto?> SearchAsync(string query, CancellationToken cancellationToken)
         {
             _logger.TraceMethodEntry();
@@ -123,46 +163,6 @@ namespace ElasticsearchFulltextExample.Shared.Client
 
             var response = await _httpClient
                 .PostAsync("create-index", null, cancellationToken)
-                .ConfigureAwait(false);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApiException(string.Format(CultureInfo.InvariantCulture,
-                    "HTTP Request failed with Status: '{0}' ({1})",
-                    (int)response.StatusCode,
-                    response.StatusCode))
-                {
-                    StatusCode = response.StatusCode
-                };
-            }
-        }
-
-        public async Task DeleteSearchIndexAsync(CancellationToken cancellationToken)
-        {
-            _logger.TraceMethodEntry();
-
-            var response = await _httpClient
-                .PostAsync("delete-index", null, cancellationToken)
-                .ConfigureAwait(false);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApiException(string.Format(CultureInfo.InvariantCulture,
-                    "HTTP Request failed with Status: '{0}' ({1})",
-                    (int)response.StatusCode,
-                    response.StatusCode))
-                {
-                    StatusCode = response.StatusCode
-                };
-            }
-        }
-
-        public async Task DeleteAllDocumentsAsync(CancellationToken cancellationToken)
-        {
-            _logger.TraceMethodEntry();
-
-            var response = await _httpClient
-                .PostAsync("delete-all-documents", null, cancellationToken)
                 .ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)

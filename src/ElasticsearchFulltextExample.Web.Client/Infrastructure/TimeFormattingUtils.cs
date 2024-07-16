@@ -2,7 +2,7 @@
 
 using System.Globalization;
 
-namespace ElasticsearchCodeSearch.Web.Client.Infrastructure
+namespace ElasticsearchFulltextExample.Web.Client.Infrastructure
 {
     public static class TimeFormattingUtils
     {

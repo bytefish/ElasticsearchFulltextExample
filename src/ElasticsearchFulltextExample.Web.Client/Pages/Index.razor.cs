@@ -1,8 +1,8 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using ElasticsearchCodeSearch.Web.Client.Infrastructure;
-using ElasticsearchCodeSearch.Web.Client.Localization;
-using ElasticsearchCodeSearch.Web.Client.Models;
+using ElasticsearchFulltextExample.Web.Client.Infrastructure;
+using ElasticsearchFulltextExample.Web.Client.Localization;
+using ElasticsearchFulltextExample.Web.Client.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using ElasticsearchFulltextExample.Shared.Client;

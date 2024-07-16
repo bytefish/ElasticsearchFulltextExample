@@ -1,6 +1,6 @@
-﻿using ElasticsearchCodeSearch.Web.Client.Infrastructure;
+﻿using ElasticsearchFulltextExample.Web.Client.Infrastructure;
 
-namespace ElasticsearchCodeSearch.Web.Client.Components
+namespace ElasticsearchFulltextExample.Web.Client.Components
 {
     /// <summary>
     /// Holds state to represent pagination in a <see cref="FluentDataGrid{TGridItem}"/>.

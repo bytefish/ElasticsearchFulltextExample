@@ -1,13 +1,10 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using ElasticsearchCodeSearch.Shared.Dto;
-using ElasticsearchCodeSearch.Web.Client.Infrastructure;
-using Microsoft.Extensions.Localization;
 using ElasticsearchFulltextExample.Shared.Client;
 
-namespace ElasticsearchCodeSearch.Web.Client.Pages
+namespace ElasticsearchFulltextExample.Web.Client.Pages
 {
-    public partial class ManageSearchIndex
+    public partial class Manage
     {
         /// <summary>
         /// Recreates the Search Index.
@@ -27,7 +24,7 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
         {
             await SearchClient.CreateSearchIndexAsync(default);
         }
-        
+
         /// <summary>
         /// Deletes the Search Index.
         /// </summary>

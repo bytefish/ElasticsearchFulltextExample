@@ -1,13 +1,11 @@
 ﻿@page "/ManageSearchIndex"
 
-@    using ElasticsearchCodeSearch.Web.Client.Components
-@    using ElasticsearchCodeSearch.Web.Client.Extensions;
-@    using ElasticsearchCodeSearch.Web.Client.Infrastructure;
-@    using ElasticsearchCodeSearch.Models
-@    using ElasticsearchCodeSearch.Shared.Dto;
-@    using ElasticsearchCodeSearch.Shared.Services
+@using ElasticsearchFulltextExample.Web.Client.Components
+@using ElasticsearchFulltextExample.Web.Client.Extensions;
+@using ElasticsearchFulltextExample.Web.Client.Infrastructure;
+@using ElasticsearchFulltextExample.Shared.Client
 
-@inject SearchClient ElasticsearchCodeSearchService
+@inject SearchClient SearchClient
 @inject IStringLocalizer<SharedResource> Loc
 
 <PageTitle>Manage Search Index (Debugging)</PageTitle>

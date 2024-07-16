@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using Microsoft.FluentUI.AspNetCore.Components;
-using ElasticsearchCodeSearch.Web.Client.Localization;
+using ElasticsearchFulltextExample.Web.Client.Localization;
 
 namespace ElasticsearchFulltextExample.Web.Client.Infrastructure
 {

@@ -2,7 +2,7 @@
 
 using Microsoft.Extensions.Localization;
 
-namespace ElasticsearchCodeSearch.Web.Client.Extensions
+namespace ElasticsearchFulltextExample.Web.Client.Extensions
 {
     public static class StringLocalizerExtensions
     {

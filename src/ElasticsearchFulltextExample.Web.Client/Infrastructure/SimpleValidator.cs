@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
 using System.Reflection.Metadata;
 
-namespace ElasticsearchCodeSearch.Web.Client.Infrastructure
+namespace ElasticsearchFulltextExample.Web.Client.Infrastructure
 {
     /// <summary>
     /// Validation Error for a Property
