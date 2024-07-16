@@ -1,6 +1,7 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using ElasticsearchFulltextExample.Shared.Infrastructure;
+using ElasticsearchFulltextExample.Shared.Models;
 using ElasticsearchFulltextExample.Web.Contracts;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
@@ -71,6 +72,51 @@ namespace ElasticsearchFulltextExample.Shared.Client
                 .ConfigureAwait(false);
         }
 
+        public async Task<List<SearchStatisticsDto>?> GetStatisticsAsync(CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+
+            var response = await _httpClient
+                .GetAsync($"statistics", cancellationToken)
+                .ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApiException(string.Format(CultureInfo.InvariantCulture,
+                    "HTTP Request failed with Status: '{0}' ({1})",
+                    (int)response.StatusCode,
+                    response.StatusCode))
+                {
+                    StatusCode = response.StatusCode
+                };
+            }
+
+            return await response.Content
+                .ReadFromJsonAsync<List<SearchStatisticsDto>>(cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        public async Task UploadAsync(MultipartFormDataContent multipartFormData, CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            var response = await _httpClient
+                .PostAsync($"upload", multipartFormData, cancellationToken)
+                .ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApiException(string.Format(CultureInfo.InvariantCulture,
+                    "HTTP Request failed with Status: '{0}' ({1})",
+                    (int)response.StatusCode,
+                    response.StatusCode))
+                {
+                    StatusCode = response.StatusCode
+                };
+            }
+        }
+
         public async Task CreateSearchIndexAsync(CancellationToken cancellationToken)
         {
             _logger.TraceMethodEntry();
@@ -131,87 +177,7 @@ namespace ElasticsearchFulltextExample.Shared.Client
             }
         }
 
-        public async Task IndexGitRepositoryAsync(GitRepositoryMetadataDto repositoryMetadata, CancellationToken cancellationToken)
-        {
-            _logger.TraceMethodEntry();
-
-            var response = await _httpClient
-                .PostAsJsonAsync("index-git-repository", repositoryMetadata, cancellationToken)
-                .ConfigureAwait(false);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApiException(string.Format(CultureInfo.InvariantCulture,
-                    "HTTP Request failed with Status: '{0}' ({1})",
-                    (int)response.StatusCode,
-                    response.StatusCode))
-                {
-                    StatusCode = response.StatusCode
-                };
-            }
-        }
-
-        public async Task IndexGitHubOrganizationAsync(IndexGitHubOrganizationRequestDto indexOrganizationRequest, CancellationToken cancellationToken)
-        {
-            _logger.TraceMethodEntry();
-
-            var response = await _httpClient
-                .PostAsJsonAsync("index-github-organization", indexOrganizationRequest, cancellationToken)
-                .ConfigureAwait(false);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApiException(string.Format(CultureInfo.InvariantCulture,
-                    "HTTP Request failed with Status: '{0}' ({1})",
-                    (int)response.StatusCode,
-                    response.StatusCode))
-                {
-                    StatusCode = response.StatusCode
-                };
-            }
-        }
-
-        public async Task IndexGitHubRepositoryAsync(IndexGitHubRepositoryRequestDto indexRepositoryRequest, CancellationToken cancellationToken)
-        {
-            _logger.TraceMethodEntry();
-
-            var response = await _httpClient
-                .PostAsJsonAsync("index-github-repository", indexRepositoryRequest, cancellationToken)
-                .ConfigureAwait(false);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApiException(string.Format(CultureInfo.InvariantCulture,
-                    "HTTP Request failed with Status: '{0}' ({1})",
-                    (int)response.StatusCode,
-                    response.StatusCode))
-                {
-                    StatusCode = response.StatusCode
-                };
-            }
-        }
-
-        public async Task IndexDocumentsAsync(List<CodeSearchDocumentDto> documents, CancellationToken cancellationToken)
-        {
-            _logger.TraceMethodEntry();
-
-            var response = await _httpClient
-                .PostAsJsonAsync("index-documents", documents, cancellationToken)
-                .ConfigureAwait(false);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApiException(string.Format(CultureInfo.InvariantCulture,
-                    "HTTP Request failed with Status: '{0}' ({1})",
-                    (int)response.StatusCode,
-                    response.StatusCode))
-                {
-                    StatusCode = response.StatusCode
-                };
-            }
-        }
-
-        public async Task<List<CodeSearchStatisticsDto>?> SearchStatisticsAsync(CancellationToken cancellationToken)
+        public async Task<List<SearchStatisticsDto>?> SearchStatisticsAsync(CancellationToken cancellationToken)
         {
             _logger.TraceMethodEntry();
 
@@ -231,7 +197,7 @@ namespace ElasticsearchFulltextExample.Shared.Client
             }
 
             return await response.Content
-                .ReadFromJsonAsync<List<CodeSearchStatisticsDto>>(cancellationToken: cancellationToken)
+                .ReadFromJsonAsync<List<SearchStatisticsDto>>(cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace ElasticsearchCodeSearch.Web.Client
+﻿namespace ElasticsearchFulltextExample.Web.Client
 {
     public partial class App
     {

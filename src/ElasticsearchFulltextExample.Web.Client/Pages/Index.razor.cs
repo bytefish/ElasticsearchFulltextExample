@@ -3,12 +3,12 @@
 using ElasticsearchCodeSearch.Web.Client.Infrastructure;
 using ElasticsearchCodeSearch.Web.Client.Localization;
 using ElasticsearchCodeSearch.Web.Client.Models;
-using ElasticsearchCodeSearch.Shared.Dto;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using ElasticsearchFulltextExample.Shared.Client;
+using ElasticsearchFulltextExample.Shared.Models;
 
-namespace ElasticsearchCodeSearch.Web.Client.Pages
+namespace ElasticsearchFulltextExample.Web.Client.Pages
 {
     public partial class Index
     {
@@ -16,7 +16,7 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
         /// Elasticsearch Search Client.
         /// </summary>
         [Inject]
-        public SearchClient ElasticsearchCodeSearchService { get; set; } = default!;
+        public SearchClient SearchClient { get; set; } = default!;
 
         /// <summary>
         /// Shared String Localizer.
@@ -31,14 +31,14 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            var codeSearchStatistics = await ElasticsearchCodeSearchService.SearchStatisticsAsync(default);
+            var codeSearchStatistics = await SearchClient.SearchStatisticsAsync(default);
 
             _elasticsearchIndexMetrics = ConvertToElasticsearchIndexMetric(codeSearchStatistics);
         }
 
-        private List<ElasticsearchIndexMetrics> ConvertToElasticsearchIndexMetric(List<CodeSearchStatisticsDto>? codeSearchStatistics)
+        private List<ElasticsearchIndexMetrics> ConvertToElasticsearchIndexMetric(List<SearchStatisticsDto>? codeSearchStatistics)
         {
-            if(codeSearchStatistics == null)
+            if (codeSearchStatistics == null)
             {
                 return new List<ElasticsearchIndexMetrics>();
             }
@@ -52,7 +52,7 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
 
         }
 
-        private List<ElasticsearchMetric> ConvertToElasticsearchMetrics(CodeSearchStatisticsDto codeSearchStatistic)
+        private List<ElasticsearchMetric> ConvertToElasticsearchMetrics(SearchStatisticsDto codeSearchStatistic)
         {
             return new List<ElasticsearchMetric>()
             {

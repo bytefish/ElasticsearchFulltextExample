@@ -1,11 +1,14 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Elastic.Clients.Elasticsearch;
 using ElasticsearchFulltextExample.Api.Configuration;
+using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Converters;
 using ElasticsearchFulltextExample.Api.Infrastructure.Errors;
 using ElasticsearchFulltextExample.Api.Infrastructure.Exceptions;
 using ElasticsearchFulltextExample.Api.Models;
 using ElasticsearchFulltextExample.Api.Services;
 using ElasticsearchFulltextExample.Shared.Infrastructure;
+using ElasticsearchFulltextExample.Shared.Models;
 using ElasticsearchFulltextExample.Web.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -17,15 +20,150 @@ namespace ElasticsearchFulltextExample.Api.Controllers
         private readonly ILogger<SearchController> _logger;
 
         private readonly ApplicationOptions _applicationOptions;
+        private readonly DocumentService _documentService;
         private readonly ElasticsearchService _elasticsearchService;
         private readonly ExceptionToApplicationErrorMapper _exceptionToApplicationErrorMapper;
 
-        public SearchController(ILogger<SearchController> logger, IOptions<ApplicationOptions> applicationOptions, ElasticsearchService elasticsearchService, ExceptionToApplicationErrorMapper exceptionToApplicationErrorMapper)
+        public SearchController(ILogger<SearchController> logger, IOptions<ApplicationOptions> applicationOptions, DocumentService documentService, ElasticsearchService elasticsearchService, ExceptionToApplicationErrorMapper exceptionToApplicationErrorMapper)
         {
             _logger = logger;
             _applicationOptions = applicationOptions.Value;
+            _documentService = documentService;
             _elasticsearchService = elasticsearchService;
             _exceptionToApplicationErrorMapper = exceptionToApplicationErrorMapper;
+        }
+
+        [HttpGet("/files/{documentId}")]
+        public async Task<IActionResult> GetFileById([FromRoute(Name = "documentId")] int documentId, CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new InvalidModelStateException
+                    {
+                        ModelStateDictionary = ModelState
+                    };
+                }
+
+                if (_logger.IsDebugEnabled())
+                {
+                    _logger.LogDebug($"Downloading File with Document ID '{documentId}'");
+                }
+
+                var fileInformation = await _documentService
+                    .GetFileInformationByDocumentIdAsync(documentId, cancellationToken)
+                    .ConfigureAwait(false);
+
+                return File(fileContents: fileInformation.Data, contentType: fileInformation.ContentType, fileDownloadName: fileInformation.Filename);
+            }
+            catch (Exception exception)
+            {
+                return _exceptionToApplicationErrorMapper.CreateApplicationErrorResult(HttpContext, exception);
+            }
+        }
+
+        [HttpPost("/upload")]
+        public async Task<IActionResult> Upload(
+            [FromForm(Name = "title")] string title,
+            [FromForm(Name = "suggestions")] List<string>? suggestions,
+            [FromForm(Name = "keywords")] List<string>? keywords,
+            [FromForm(Name = "data")] IFormFile data,
+            CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new InvalidModelStateException
+                    {
+                        ModelStateDictionary = ModelState
+                    };
+                }
+
+                var document = new Database.Model.Document
+                {
+                    Title = title,
+                    Filename = data.FileName,
+                    Data = await GetBytesAsync(data),
+                    LastEditedBy = Constants.Users.DataConversionUserId
+                };
+
+                await _documentService
+                    .CreateDocumentAsync(document, suggestions, keywords, cancellationToken)
+                    .ConfigureAwait(false);
+
+                return Created();
+            }
+            catch (Exception exception)
+            {
+                return _exceptionToApplicationErrorMapper.CreateApplicationErrorResult(HttpContext, exception);
+            }
+        }
+
+        private async Task<byte[]> GetBytesAsync(IFormFile formFile)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await formFile.CopyToAsync(memoryStream);
+
+                return memoryStream.ToArray();
+            }
+        }
+
+        [HttpGet]
+        [Route("/statistics")]
+        public async Task<IActionResult> GetSearchStatistics(CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            try
+            {
+                var searchStatistics = await _elasticsearchService.GetSearchStatisticsAsync(cancellationToken);
+
+                var searchStatisticsDto = Convert(searchStatistics);
+
+                return Ok(searchStatisticsDto);
+            }
+            catch (Exception e)
+            {
+                if (_logger.IsErrorEnabled())
+                {
+                    _logger.LogError(e, "An unhandeled exception occured");
+                }
+
+                return StatusCode(500, "An internal Server Error occured");
+            }
+        }
+
+        private List<SearchStatisticsDto> Convert(List<SearchStatistics> source)
+        {
+            return source
+                .Select(x => Convert(x))
+                .ToList();
+        }
+
+        private SearchStatisticsDto Convert(SearchStatistics source)
+        {
+            return new SearchStatisticsDto
+            {
+                IndexName = source.IndexName,
+                IndexSizeInBytes = source.IndexSizeInBytes,
+                NumberOfDocumentsCurrentlyBeingIndexed = source.NumberOfDocumentsCurrentlyBeingIndexed,
+                NumberOfFetchesCurrentlyInProgress = source.NumberOfFetchesCurrentlyInProgress,
+                NumberOfQueriesCurrentlyInProgress = source.NumberOfQueriesCurrentlyInProgress,
+                TotalNumberOfDocumentsIndexed = source.TotalNumberOfDocumentsIndexed,
+                TotalNumberOfQueries = source.TotalNumberOfQueries,
+                TotalNumberOfFetches = source.TotalNumberOfFetches,
+                TotalTimeSpentBulkIndexingDocumentsInMilliseconds = source.TotalTimeSpentBulkIndexingDocumentsInMilliseconds,
+                TotalTimeSpentIndexingDocumentsInMilliseconds = source.TotalTimeSpentIndexingDocumentsInMilliseconds,
+                TotalTimeSpentOnFetchesInMilliseconds = source.TotalTimeSpentOnFetchesInMilliseconds,
+                TotalTimeSpentOnQueriesInMilliseconds = source.TotalTimeSpentOnQueriesInMilliseconds
+            };
         }
 
         [HttpGet]
@@ -121,6 +259,38 @@ namespace ElasticsearchFulltextExample.Api.Controllers
                 return _exceptionToApplicationErrorMapper.CreateApplicationErrorResult(HttpContext, exception);
             }
         }
+
+        [HttpPost]
+        [Route("/create-index")]
+        public async Task<IActionResult> CreateIndex(CancellationToken cancellationToken)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new InvalidModelStateException
+                    {
+                        ModelStateDictionary = ModelState
+                    };
+                }
+
+                if (_logger.IsDebugEnabled())
+                {
+                    _logger.LogDebug("Creating Search Index");
+                }
+
+                await _elasticsearchService
+                    .(query, cancellationToken)
+                    .ConfigureAwait(false);
+
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                return _exceptionToApplicationErrorMapper.CreateApplicationErrorResult(HttpContext, exception);
+            }
+        }
+
 
         private SearchSuggestionsDto Convert(SearchSuggestions source)
         {

@@ -2,6 +2,7 @@
 
 using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.Core.Search;
+using Elastic.Clients.Elasticsearch.IndexManagement;
 using ElasticsearchFulltextExample.Api.Configuration;
 using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch;
 using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Models;
@@ -32,8 +33,17 @@ namespace ElasticsearchFulltextExample.Api.Services
             _elasticsearchSearchClient = elasticsearchClient;
         }
 
+        public async Task CreateIndexAsync(CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            await _elasticsearchSearchClient.CreateIndexAsync(cancellationToken);
+        }
+
         public async Task IndexDocumentAsync(int documentId, CancellationToken cancellationToken)
         {
+            _logger.TraceMethodEntry();
+
             using var context = await _dbContextFactory
                 .CreateDbContextAsync(cancellationToken)
                 .ConfigureAwait(false);
@@ -88,6 +98,8 @@ namespace ElasticsearchFulltextExample.Api.Services
         /// <returns>List of Suggestions associated with a Document</returns>
         private async Task<List<Suggestion>> GetSuggestionsByDocumentId(ApplicationDbContext context, int documentId, CancellationToken cancellationToken)
         {
+            _logger.TraceMethodEntry();
+
             // Join Documents, DocumentSuggestions and Suggestions
             var suggestionQueryable = from document in context.Documents
                               join documentSuggestion in context.DocumentSuggestions
@@ -114,6 +126,8 @@ namespace ElasticsearchFulltextExample.Api.Services
         /// <returns>List of Keywords associated with a given Document</returns>
         private async Task<List<Keyword>> GetKeywordsByDocumentId(ApplicationDbContext context, int documentId, CancellationToken cancellationToken)
         {
+            _logger.TraceMethodEntry();
+
             // Join Documents, DocumentKeywords and Keywords
             var keywordQueryable = from document in context.Documents
                                    join documentKeyword in context.DocumentKeywords
@@ -139,6 +153,8 @@ namespace ElasticsearchFulltextExample.Api.Services
         /// <returns>Search Results found for the given query</returns>
         public async Task<SearchResults> SearchAsync(string query, CancellationToken cancellationToken)
         {
+            _logger.TraceMethodEntry();
+
             var searchResponse = await _elasticsearchSearchClient
                 .SearchAsync(query, cancellationToken)
                 .ConfigureAwait(false);
@@ -156,6 +172,8 @@ namespace ElasticsearchFulltextExample.Api.Services
         /// <returns>Suggestions found for the given query</returns>
         public async Task<SearchSuggestions> SuggestAsync(string query, CancellationToken cancellationToken)
         {
+            _logger.TraceMethodEntry();
+
             var suggestResponse = await _elasticsearchSearchClient
                 .SuggestAsync(query, cancellationToken)
                 .ConfigureAwait(false);
@@ -163,6 +181,48 @@ namespace ElasticsearchFulltextExample.Api.Services
             var searchSuggestions = ConvertToSearchSuggestions(query, suggestResponse);
 
             return searchSuggestions;
+        }
+
+        public async Task<List<SearchStatistics>> GetSearchStatisticsAsync(CancellationToken cancellationToken)
+        {
+            var indicesStatsResponse = await _elasticsearchSearchClient
+                .GetSearchStatistics(cancellationToken)
+                .ConfigureAwait(false);
+
+            var searchStatistics = ConvertToSearchStatistics(indicesStatsResponse);
+
+            return searchStatistics;
+        }
+
+        public static List<SearchStatistics> ConvertToSearchStatistics(IndicesStatsResponse indicesStatsResponse)
+        {
+            if (indicesStatsResponse.Indices == null)
+            {
+                throw new Exception("No statistics available");
+            }
+
+            return indicesStatsResponse.Indices
+                .Select(x => ConvertToSearchStatistics(x.Key, x.Value))
+                .ToList();
+        }
+
+        public static SearchStatistics ConvertToSearchStatistics(string indexName, IndicesStats indexStats)
+        {
+            return new SearchStatistics
+            {
+                IndexName = indexName,
+                IndexSizeInBytes = indexStats.Total?.Store?.SizeInBytes,
+                TotalNumberOfDocumentsIndexed = indexStats.Total?.Docs?.Count,
+                NumberOfDocumentsCurrentlyBeingIndexed = indexStats.Total?.Indexing?.IndexCurrent,
+                TotalNumberOfFetches = indexStats.Total?.Search?.FetchTotal,
+                NumberOfFetchesCurrentlyInProgress = indexStats.Total?.Search?.FetchCurrent,
+                TotalNumberOfQueries = indexStats.Total?.Search?.QueryTotal,
+                NumberOfQueriesCurrentlyInProgress = indexStats.Total?.Search?.QueryCurrent,
+                TotalTimeSpentBulkIndexingDocumentsInMilliseconds = indexStats.Total?.Bulk?.TotalTimeInMillis,
+                TotalTimeSpentIndexingDocumentsInMilliseconds = indexStats.Total?.Bulk?.TotalTimeInMillis,
+                TotalTimeSpentOnFetchesInMilliseconds = indexStats.Total?.Search?.FetchTimeInMillis,
+                TotalTimeSpentOnQueriesInMilliseconds = indexStats.Total?.Search?.QueryTimeInMillis,
+            };
         }
 
         /// <summary>
@@ -173,6 +233,8 @@ namespace ElasticsearchFulltextExample.Api.Services
         /// <returns>The Delete Reponse from Elasticsearch</returns>
         public async Task<DeleteResponse> DeleteDocumentAsync(int documentId, CancellationToken cancellationToken)
         {
+            _logger.TraceMethodEntry();
+
             return await _elasticsearchSearchClient
                 .DeleteAsync(documentId.ToString(CultureInfo.InvariantCulture), cancellationToken);
         }
@@ -185,6 +247,8 @@ namespace ElasticsearchFulltextExample.Api.Services
         /// <returns>The Delete Reponse from Elasticsearch</returns>
         public async Task<DeleteResponse> UpdateDocumentAsync(int documentId, CancellationToken cancellationToken)
         {
+            _logger.TraceMethodEntry();
+
             return await _elasticsearchSearchClient
                 .DeleteAsync(documentId.ToString(CultureInfo.InvariantCulture), cancellationToken);
         }
@@ -196,6 +260,8 @@ namespace ElasticsearchFulltextExample.Api.Services
         /// <returns>Ping Response from Elasticsearch</returns>
         public async Task<PingResponse> PingAsync(CancellationToken cancellationToken)
         {
+            _logger.TraceMethodEntry();
+
             return await _elasticsearchSearchClient.PingAsync(cancellationToken: cancellationToken);
         }
 
@@ -207,6 +273,8 @@ namespace ElasticsearchFulltextExample.Api.Services
         /// <returns>Converted Search Suggestions</returns>
         private SearchSuggestions ConvertToSearchSuggestions(string query, SearchResponse<ElasticsearchDocument> searchResponse)
         {
+            _logger.TraceMethodEntry();
+
             return new SearchSuggestions
             {
                 Query = query,
@@ -221,6 +289,8 @@ namespace ElasticsearchFulltextExample.Api.Services
         /// <returns>Lust of Suggestions</returns>
         private List<SearchSuggestion> GetSuggestions(SearchResponse<ElasticsearchDocument> searchResponse)
         {
+            _logger.TraceMethodEntry();
+
             if (searchResponse == null)
             {
                 return [];
@@ -286,8 +356,10 @@ namespace ElasticsearchFulltextExample.Api.Services
         /// <param name="length">Length</param>
         /// <param name="replace">Replacement Value</param>
         /// <returns></returns>
-        public static string ReplaceAt(string str, int index, int length, string replace)
+        public string ReplaceAt(string str, int index, int length, string replace)
         {
+            _logger.TraceMethodEntry();
+
             return str
                 .Remove(index, Math.Min(length, str.Length - index))
                 .Insert(index, replace);
@@ -301,6 +373,8 @@ namespace ElasticsearchFulltextExample.Api.Services
         /// <returns>Search Results for a given Query</returns>
         private SearchResults ConvertToSearchResults(string query, SearchResponse<ElasticsearchDocument> searchResponse)
         {
+            _logger.TraceMethodEntry();
+
             var hits = searchResponse.Hits;
 
             if(hits.Count == 0)
@@ -347,7 +421,9 @@ namespace ElasticsearchFulltextExample.Api.Services
         
         private List<string> GetMatches(IReadOnlyDictionary<string, IReadOnlyCollection<string>>? highlight)
         {
-            if(highlight == null)
+            _logger.TraceMethodEntry();
+
+            if (highlight == null)
             {
                 return [];
             }
@@ -357,6 +433,8 @@ namespace ElasticsearchFulltextExample.Api.Services
 
         private List<string> GetMatchesForField(IReadOnlyDictionary<string, IReadOnlyCollection<string>> highlight, string field)
         {
+            _logger.TraceMethodEntry();
+
             if (highlight == null)
             {
                 return [];

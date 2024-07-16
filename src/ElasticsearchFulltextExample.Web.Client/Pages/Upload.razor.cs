@@ -2,11 +2,10 @@
 
 using ElasticsearchCodeSearch.Web.Client.Infrastructure;
 using ElasticsearchFulltextExample.Shared.Constants;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Localization;
 using Microsoft.FluentUI.AspNetCore.Components;
 
-namespace ElasticsearchCodeSearch.Web.Client.Pages
+namespace ElasticsearchFulltextExample.Web.Client.Pages
 {
     public partial class Upload
     {
@@ -16,7 +15,11 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
 
             public string? Name { get; set; }
 
+            public string? Keyword { get; set; }
+
             public List<string> Keywords { get; set; } = new();
+
+            public string? Suggestion { get; set; }
 
             public List<string> Suggestions { get; set; } = new();
 
@@ -29,19 +32,19 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
 
         private Task OnCompletedAsync(IEnumerable<FluentInputFileEventArgs> files)
         {
-            if(files == null)
+            if (files == null)
             {
                 return Task.CompletedTask;
             }
 
             var file = files.FirstOrDefault();
 
-            if(file == null)
+            if (file == null)
             {
                 return Task.CompletedTask;
             }
 
-            if(file.Stream == null)
+            if (file.Stream == null)
             {
                 return Task.CompletedTask;
             }
@@ -52,6 +55,26 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
             return Task.CompletedTask;
         }
 
+        private void OnAddSuggestion()
+        {
+            var suggestion = CurrentUpload.Suggestion;
+
+            if (suggestion != null)
+            {
+                CurrentUpload.Suggestions.Add(suggestion);
+            }
+        }
+
+        private void OnAddKeyword()
+        {
+            var keyword = CurrentUpload.Keyword;
+
+            if (keyword != null)
+            {
+                CurrentUpload.Keywords.Add(keyword);
+            }
+        }
+
         /// <summary>
         /// Submits the Form and reloads the updated data.
         /// </summary>
@@ -60,19 +83,19 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
         {
             MultipartFormDataContent multipartFormDataContent = new MultipartFormDataContent();
 
-            if (CurrentUpload.Title != null) 
+            if (CurrentUpload.Title != null)
             {
                 multipartFormDataContent.Add(new StringContent(CurrentUpload.Title), FileUploadNames.Title);
             }
 
-            if (CurrentUpload.Filename != null && CurrentUpload.Data != null) 
+            if (CurrentUpload.Filename != null && CurrentUpload.Data != null)
             {
                 multipartFormDataContent.Add(new StreamContent(CurrentUpload.Data), FileUploadNames.Data, CurrentUpload.Filename);
             }
 
-            if (CurrentUpload.Suggestions.Any()) 
+            if (CurrentUpload.Suggestions.Any())
             {
-                for(var suggestionIdx = 0; suggestionIdx < CurrentUpload.Suggestions.Count; suggestionIdx++)
+                for (var suggestionIdx = 0; suggestionIdx < CurrentUpload.Suggestions.Count; suggestionIdx++)
                 {
                     multipartFormDataContent.Add(new StringContent(CurrentUpload.Suggestions[suggestionIdx]), $"{FileUploadNames.Suggestions}[{suggestionIdx}]");
                 }
@@ -85,6 +108,10 @@ namespace ElasticsearchCodeSearch.Web.Client.Pages
                     multipartFormDataContent.Add(new StringContent(CurrentUpload.Keywords[keywordIdx]), $"{FileUploadNames.Keywords}.[{keywordIdx}]");
                 }
             }
+
+            await SearchClient
+                .UploadAsync(multipartFormDataContent, default)
+                .ConfigureAwait(false);
         }
 
         /// <summary>

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.FluentUI.AspNetCore.Components;
 using ElasticsearchCodeSearch.Web.Client.Localization;
 
-namespace ElasticsearchCodeSearch.Web.Client.Infrastructure
+namespace ElasticsearchFulltextExample.Web.Client.Infrastructure
 {
     public class ApplicationErrorMessageService
     {
@@ -13,7 +13,6 @@ namespace ElasticsearchCodeSearch.Web.Client.Infrastructure
         private readonly ApplicationErrorTranslator _applicationErrorTranslator;
         private readonly IMessageService _messageService;
         private readonly NavigationManager _navigationManager;
-
 
         public ApplicationErrorMessageService(IStringLocalizer<SharedResource> sharedLocalizer, IMessageService messageService, NavigationManager navigationManager, ApplicationErrorTranslator applicationErrorTranslator)
         {

@@ -1,11 +1,10 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using ElasticsearchCodeSearch.Web.Client;
-using ElasticsearchCodeSearch.Web.Client.Infrastructure;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
 using ElasticsearchFulltextExample.Shared.Client;
+using ElasticsearchFulltextExample.Web.Client;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

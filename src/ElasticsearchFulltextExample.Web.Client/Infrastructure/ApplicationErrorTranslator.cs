@@ -3,7 +3,7 @@
 using ElasticsearchCodeSearch.Web.Client.Localization;
 using Microsoft.Extensions.Localization;
 
-namespace ElasticsearchCodeSearch.Web.Client.Infrastructure
+namespace ElasticsearchFulltextExample.Web.Client.Infrastructure
 {
     public class ApplicationErrorTranslator
     {
