@@ -226,14 +226,6 @@ CREATE TABLE IF NOT EXISTS fts.user_history (
     LIKE fts.user
 );
 
-CREATE TABLE IF NOT EXISTS fts.job_history (
-    LIKE fts.job
-);
-
-CREATE TABLE IF NOT EXISTS fts.job_status_history (
-    LIKE fts.job_status
-);
-
 CREATE TABLE IF NOT EXISTS fts.keyword_history (
     LIKE fts.keyword
 );
@@ -265,18 +257,6 @@ FOR EACH ROW EXECUTE PROCEDURE fts.versioning(
   'sys_period', 'fts.document_suggestion_history', true
 );
 
-CREATE OR REPLACE TRIGGER job_versioning_trigger
-BEFORE INSERT OR UPDATE OR DELETE ON fts.job
-FOR EACH ROW EXECUTE PROCEDURE fts.versioning(
-  'sys_period', 'fts.job_history', true
-);
-
-CREATE OR REPLACE TRIGGER job_status_versioning_trigger
-BEFORE INSERT OR UPDATE OR DELETE ON fts.job_status
-FOR EACH ROW EXECUTE PROCEDURE fts.versioning(
-  'sys_period', 'fts.job_status_history', true
-);
-
 CREATE OR REPLACE TRIGGER keyword_versioning_trigger
 BEFORE INSERT OR UPDATE OR DELETE ON fts.keyword
 FOR EACH ROW EXECUTE PROCEDURE fts.versioning(
@@ -290,9 +270,9 @@ FOR EACH ROW EXECUTE PROCEDURE fts.versioning(
 );
 
 CREATE OR REPLACE TRIGGER user_versioning_trigger
-BEFORE INSERT OR UPDATE OR DELETE ON gitclub.user
-FOR EACH ROW EXECUTE PROCEDURE gitclub.versioning(
-  'sys_period', 'gitclub.user_history', true
+BEFORE INSERT OR UPDATE OR DELETE ON fts.user
+FOR EACH ROW EXECUTE PROCEDURE fts.versioning(
+  'sys_period', 'fts.user_history', true
 );
 
 CREATE OR REPLACE TRIGGER outbox_event_versioning_trigger

@@ -11,6 +11,12 @@ CREATE SEQUENCE IF NOT EXISTS fts.user_seq
     increment 1
     NO MAXVALUE
     CACHE 1;
+
+CREATE SEQUENCE IF NOT EXISTS fts.outbox_event_seq
+    start 38187
+    increment 1
+    NO MAXVALUE
+    CACHE 1;
     
 CREATE SEQUENCE IF NOT EXISTS fts.document_seq
     start 38187
@@ -91,7 +97,7 @@ CREATE TABLE IF NOT EXISTS fts.keyword (
 );
 
 CREATE TABLE IF NOT EXISTS fts.suggestion (
-    suggestion_id integer default nextval('fts.suggestion_seq'),,
+    suggestion_id integer default nextval('fts.suggestion_seq'),
     name varchar(255) not null,
     last_edited_by integer not null,
     sys_period tstzrange not null default tstzrange(current_timestamp, null),
@@ -103,7 +109,7 @@ CREATE TABLE IF NOT EXISTS fts.suggestion (
 );
 
 CREATE TABLE IF NOT EXISTS fts.document_keyword (
-    document_keyword_id integer default nextval('fts.document_keyword_seq'),,
+    document_keyword_id integer default nextval('fts.document_keyword_seq'),
     document_id int not null,
     keyword_id int not null,
     last_edited_by integer not null,
@@ -122,56 +128,20 @@ CREATE TABLE IF NOT EXISTS fts.document_keyword (
 );
 
 CREATE TABLE IF NOT EXISTS fts.document_suggestion (
-    document_suggestion_id integer default nextval('fts.document_suggestion_seq'),,
+    document_suggestion_id integer default nextval('fts.document_suggestion_seq'),
     document_id int not null,
     suggestion_id int not null,
     last_edited_by integer not null,
     sys_period tstzrange not null default tstzrange(current_timestamp, null),
-    CONSTRAINT document_keyword_pkey
-        PRIMARY KEY (document_keyword_id),
+    CONSTRAINT document_suggestion_pkey
+        PRIMARY KEY (document_suggestion_id),
     CONSTRAINT document_suggestion_document_id_fkey 
         FOREIGN KEY (document_id)
         REFERENCES fts.document(document_id),
     CONSTRAINT document_suggestion_suggestion_id_fkey 
         FOREIGN KEY (suggestion_id)
-        REFERENCES fts.suggestion(keyword_id),
+        REFERENCES fts.suggestion(suggestion_id),
     CONSTRAINT document_suggestion_last_edited_by_fkey 
-        FOREIGN KEY (last_edited_by)
-        REFERENCES fts.user(user_id)
-);
-
-CREATE TABLE IF NOT EXISTS fts.job_status(
-    job_status_id integer,
-    name varchar(255) not null,
-    last_edited_by integer not null,
-    sys_period tstzrange not null default tstzrange(current_timestamp, null),
-    CONSTRAINT job_status_pkey
-        PRIMARY KEY (job_id),
-    CONSTRAINT job_status_last_edited_by_fkey 
-        FOREIGN KEY (last_edited_by)
-        REFERENCES fts.user(user_id)
-);
-
-CREATE TABLE IF NOT EXISTS fts.job (
-    job_id integer default nextval('fts.job_seq'),,
-    document_id int not null,
-    correlation_id_1 varchar(2000) null,
-    correlation_id_2 varchar(2000) null,
-    correlation_id_3 varchar(2000) null,
-    correlation_id_4 varchar(2000) null,
-    created_at timestamptz default current_timestamp,
-    job_status_id int not null,
-    last_edited_by integer not null,
-    sys_period tstzrange not null default tstzrange(current_timestamp, null),
-    CONSTRAINT job_pkey
-        PRIMARY KEY (job_id),
-    CONSTRAINT job_document_id_fkey 
-        FOREIGN KEY (document_id)
-        REFERENCES fts.document(document_id),
-    CONSTRAINT job_status_id_fkey 
-        FOREIGN KEY (job_status_id)
-        REFERENCES fts.job_status(job_status_id),
-    CONSTRAINT job_last_edited_by_fkey 
         FOREIGN KEY (last_edited_by)
         REFERENCES fts.user(user_id)
 );
@@ -196,8 +166,11 @@ CREATE TABLE IF NOT EXISTS fts.outbox_event (
 );
 
 -- Indexes
-CREATE UNIQUE INDEX IF NOT EXISTS job_status_name_key 
-    ON fts.job_status(name);
+CREATE UNIQUE INDEX IF NOT EXISTS suggestion_name_key 
+    ON fts.suggestion(name);
+
+CREATE UNIQUE INDEX IF NOT EXISTS keyword_name_key 
+    ON fts.keyword(name);
 
 END;
 $$ LANGUAGE plpgsql;

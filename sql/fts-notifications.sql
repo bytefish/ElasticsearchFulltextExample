@@ -57,19 +57,11 @@ AFTER INSERT OR UPDATE OR DELETE ON fts.suggestion
 FOR EACH ROW EXECUTE PROCEDURE notify_trigger('core_db_event');
 
 CREATE OR REPLACE TRIGGER document_keyword_notify_trigger
-AFTER INSERT OR UPDATE OR DELETE ON fts.document_keyword_role
+AFTER INSERT OR UPDATE OR DELETE ON fts.document_keyword
 FOR EACH ROW EXECUTE PROCEDURE notify_trigger('core_db_event');
 
 CREATE OR REPLACE TRIGGER document_suggestion_notify_trigger
 AFTER INSERT OR UPDATE OR DELETE ON fts.document_suggestion
-FOR EACH ROW EXECUTE PROCEDURE notify_trigger('core_db_event');
-
-CREATE OR REPLACE TRIGGER job_notify_trigger
-AFTER INSERT OR UPDATE OR DELETE ON fts.job
-FOR EACH ROW EXECUTE PROCEDURE notify_trigger('core_db_event');
-
-CREATE OR REPLACE TRIGGER job_status_notify_trigger
-AFTER INSERT OR UPDATE OR DELETE ON fts.job_status
 FOR EACH ROW EXECUTE PROCEDURE notify_trigger('core_db_event');
 
 CREATE OR REPLACE TRIGGER user_notify_trigger
