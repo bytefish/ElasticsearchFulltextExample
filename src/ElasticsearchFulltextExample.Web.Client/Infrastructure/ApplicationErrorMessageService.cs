@@ -28,7 +28,7 @@ namespace ElasticsearchFulltextExample.Web.Client.Infrastructure
 
             _messageService.ShowMessageBar(options =>
             {
-                options.Section = App.MESSAGES_TOP;
+                options.Section = Routes.MESSAGES_TOP;
                 options.Intent = MessageIntent.Error;
                 options.ClearAfterNavigation = false;
                 options.Title = _sharedLocalizer["Message_Error_Title"];

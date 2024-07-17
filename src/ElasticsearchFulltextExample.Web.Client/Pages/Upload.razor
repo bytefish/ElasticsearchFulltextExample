@@ -1,4 +1,4 @@
-﻿@page "/IndexGitRepository"
+﻿@page "/Upload"
 
 @using ElasticsearchFulltextExample.Web.Client.Components
 @using ElasticsearchFulltextExample.Web.Client.Extensions;
@@ -10,6 +10,8 @@
 
 <PageTitle>Index Git Repository</PageTitle>
 
+<FluentButton Name="Test" OnClick="() => OnAddKeyword())">Add Keyword</FluentButton>
+@* 
 <EditForm Model="@CurrentUpload" OnValidSubmit="@(async () => await HandleValidSubmitAsync())" FormName="upload_form" novalidate>
     <SimpleValidator TModel=UploadModel ValidationFunc="ValidateCurrentUpload" />
     <FluentStack Orientation="Orientation.Vertical">
@@ -25,7 +27,7 @@
             <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center">
                 <div>
                     <FluentTextField Style="@("width: 300px;")" Name="suggestion" @bind-Value="CurrentUpload.Suggestion" Label="Suggestion" Required />
-                    <FluentButton OnClick="OnAddSuggestion"></FluentButton>
+                    <FluentButton Type="ButtonType.Button" OnClick="@OnAddSuggestion">Add Suggestion</FluentButton>
                 </div>
                 <FluentValidationMessage For="@(() => CurrentUpload.Suggestion)" />
             </FluentStack>
@@ -33,8 +35,8 @@
         <div>
             <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center">
                 <div>
-                    <FluentTextField Style="@("width: 300px;")" Name="keyword" @bind-Value="CurrentUpload.Keyword" Label="Suggestion" Required />
-                    <FluentButton OnClick="OnAddKeyword"></FluentButton>
+                    <FluentTextField Style="@("width: 300px;")" Name="keyword" @bind-Value="CurrentUpload.Keyword" Label="Keyword" Required />
+                    <FluentButton Type="ButtonType.Button" OnClick="@OnAddKeyword">Add Keyword</FluentButton>
                 </div>
                 <FluentValidationMessage For="@(() => CurrentUpload.Keyword)" />
             </FluentStack>
@@ -50,4 +52,4 @@
             <FluentValidationSummary />
         </div>
     </FluentStack>
-</EditForm>
+</EditForm> *@

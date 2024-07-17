@@ -1,9 +1,14 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using ElasticsearchFulltextExample.Web.Server;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+builder.Services.AddRazorComponents()
+    .AddInteractiveWebAssemblyComponents();
 
 var app = builder.Build();
 
@@ -19,11 +24,12 @@ else
 }
 
 app.UseHttpsRedirection();
-app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
+app.MapRazorComponents<App>()
+        .AddInteractiveWebAssemblyRenderMode()
+       .AddAdditionalAssemblies(typeof(ElasticsearchFulltextExample.Web.Client._Imports).Assembly);
 
 app.UseRouting();
-
-app.MapFallbackToPage("/_Host");
+app.UseAntiforgery();
 
 app.Run();

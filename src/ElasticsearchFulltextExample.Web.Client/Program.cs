@@ -8,8 +8,6 @@ using ElasticsearchFulltextExample.Web.Client;
 using ElasticsearchFulltextExample.Web.Client.Infrastructure;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.RootComponents.Add<App>("#app");
-builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped<ApplicationErrorTranslator>();
 builder.Services.AddScoped<ApplicationErrorMessageService>();

@@ -55,7 +55,7 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
             return Task.CompletedTask;
         }
 
-        private void OnAddSuggestion()
+        public async Task OnAddSuggestion()
         {
             var suggestion = CurrentUpload.Suggestion;
 
@@ -65,7 +65,7 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
             }
         }
 
-        private void OnAddKeyword()
+        public async Task OnAddKeyword()
         {
             var keyword = CurrentUpload.Keyword;
 

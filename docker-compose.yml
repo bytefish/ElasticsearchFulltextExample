@@ -13,7 +13,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
     volumes:
-      - "./volumes/postgres/postgres.conf:/usr/local/etc/postgres/postgres.conf"
+      - ./docker/postgres/postgres.conf:/usr/local/etc/postgres/postgres.conf
       - ./sql/fts.sql:/docker-entrypoint-initdb.d/1-fts.sql
       - ./sql/fts-versioning.sql:/docker-entrypoint-initdb.d/2-fts-versioning.sql
       - ./sql/fts-notifications.sql:/docker-entrypoint-initdb.d/3-fts-notifications.sql
@@ -26,6 +26,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    profiles:  ["postgres", "dev"]
   
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-8.14.1}
