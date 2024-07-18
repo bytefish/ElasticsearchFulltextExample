@@ -20,12 +20,12 @@ namespace ElasticsearchFulltextExample.Api.Services
         private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly FileExtensionContentTypeProvider _fileExtensionContentTypeProvider;
 
-        public DocumentService(ILogger<ElasticsearchService> logger, IOptions<ApplicationOptions> options, IDbContextFactory<ApplicationDbContext> dbContextFactory, FileExtensionContentTypeProvider fileExtensionContentTypeProvider)
+        public DocumentService(ILogger<ElasticsearchService> logger, IOptions<ApplicationOptions> options, IDbContextFactory<ApplicationDbContext> dbContextFactory)
         {
             _logger = logger;
             _options = options.Value;
             _dbContextFactory = dbContextFactory;
-            _fileExtensionContentTypeProvider = fileExtensionContentTypeProvider;
+            _fileExtensionContentTypeProvider = new FileExtensionContentTypeProvider();
         }
 
         public async Task CreateDocumentAsync(Document document, List<string>? suggestions, List<string>? keywords, CancellationToken cancellationToken)

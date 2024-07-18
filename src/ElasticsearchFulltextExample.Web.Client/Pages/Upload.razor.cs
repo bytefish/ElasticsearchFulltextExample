@@ -4,6 +4,7 @@ using ElasticsearchFulltextExample.Web.Client.Infrastructure;
 using ElasticsearchFulltextExample.Shared.Constants;
 using Microsoft.Extensions.Localization;
 using Microsoft.FluentUI.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace ElasticsearchFulltextExample.Web.Client.Pages
 {
@@ -25,8 +26,10 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
 
             public string? Filename { get; set; }
 
-            public Stream? Data { get; set; }
+            public Stream? File { get; set; }
         }
+
+        FluentInputFile? myFileUploader = default!;
 
         public UploadModel CurrentUpload = new UploadModel();
 
@@ -50,29 +53,71 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
             }
 
             CurrentUpload.Filename = file.Name;
-            CurrentUpload.Data = file.Stream;
+            CurrentUpload.File = file.Stream;
 
             return Task.CompletedTask;
         }
 
-        public async Task OnAddSuggestion()
+        public void OnKeywordEnter(KeyboardEventArgs e)
         {
-            var suggestion = CurrentUpload.Suggestion;
-
-            if (suggestion != null)
+            if(e.Code == "Enter" || e.Code == "NumpadEnter")
             {
-                CurrentUpload.Suggestions.Add(suggestion);
+                OnAddKeyword();
             }
         }
 
-        public async Task OnAddKeyword()
+        public void OnAddKeyword()
         {
             var keyword = CurrentUpload.Keyword;
 
-            if (keyword != null)
+            if(keyword == null)
             {
-                CurrentUpload.Keywords.Add(keyword);
+                return;
             }
+
+            if (CurrentUpload.Keywords.Contains(keyword))
+            {
+                return;
+            }
+            
+            CurrentUpload.Keywords.Add(keyword);
+        }
+
+        public void RemoveKeyword(string keyword)
+        {
+            CurrentUpload.Keywords.Remove(keyword);
+        }
+
+        public void OnSuggestionEnter(KeyboardEventArgs e)
+        {
+            if (e.Code == "Enter" || e.Code == "NumpadEnter")
+            {
+                OnAddSuggestion();
+            }
+
+        }
+
+        public void OnAddSuggestion()
+        {
+            var suggestion = CurrentUpload.Suggestion;
+
+            if (suggestion == null)
+            {
+                return;
+            }
+
+            if (CurrentUpload.Suggestions.Contains(suggestion))
+            {
+                return;
+            }
+
+            CurrentUpload.Suggestions.Add(suggestion);
+        }
+
+
+        public void RemoveSuggestion(string suggestion)
+        {
+            CurrentUpload.Suggestions.Remove(suggestion);
         }
 
         /// <summary>
@@ -88,9 +133,9 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
                 multipartFormDataContent.Add(new StringContent(CurrentUpload.Title), FileUploadNames.Title);
             }
 
-            if (CurrentUpload.Filename != null && CurrentUpload.Data != null)
+            if (CurrentUpload.Filename != null && CurrentUpload.File != null)
             {
-                multipartFormDataContent.Add(new StreamContent(CurrentUpload.Data), FileUploadNames.Data, CurrentUpload.Filename);
+                multipartFormDataContent.Add(new StreamContent(CurrentUpload.File), FileUploadNames.Data, CurrentUpload.Filename);
             }
 
             if (CurrentUpload.Suggestions.Any())
@@ -132,12 +177,12 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
         /// <returns>The list of validation errors for the EditContext model fields</returns>
         private IEnumerable<ValidationError> ValidateCurrentUpload(UploadModel upload)
         {
-            if (string.IsNullOrWhiteSpace(upload.Name))
+            if (string.IsNullOrWhiteSpace(upload.Title))
             {
                 yield return new ValidationError
                 {
-                    PropertyName = nameof(upload.Name),
-                    ErrorMessage = Loc.GetString("Validation_IsRequired", nameof(upload.Name))
+                    PropertyName = nameof(upload.Title),
+                    ErrorMessage = Loc.GetString("Validation_IsRequired", nameof(upload.Title))
                 };
             }
         }

@@ -22,6 +22,8 @@ using ElasticsearchFulltextExample.Api.Hosting;
 using ElasticsearchFulltextExample.Api.Configuration;
 using ElasticsearchFulltextExample.Database;
 using ElasticsearchFulltextExample.Api.Services;
+using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch;
+using ElasticsearchCodeSearch.Shared.Elasticsearch;
 
 // We will log to %LocalAppData%/GitClub to store the Logs, so it doesn't need to be configured 
 // to a different path, when you run it on your machine.
@@ -139,12 +141,14 @@ try
     // Application Services
     builder.Services.AddSingleton<DocumentService>();
     builder.Services.AddSingleton<ElasticsearchService>();
+    builder.Services.AddSingleton<UserService>();
+
+    builder.Services.Configure<ElasticsearchSearchClientOptions>(builder.Configuration.GetSection("Elasticsearch"));
+    builder.Services.AddSingleton<ElasticsearchSearchClient>();
+
 
     // Route Constraints
-    builder.Services.Configure<RouteOptions>(options =>
-    {
-        options.ConstraintMap.Add("JobStatusEnum", typeof(EnumRouteConstraint<JobStatusEnum>));
-    });
+    // ...
 
     // Controllers
     builder.Services

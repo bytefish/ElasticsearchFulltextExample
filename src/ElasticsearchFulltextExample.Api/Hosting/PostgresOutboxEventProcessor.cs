@@ -66,7 +66,7 @@ namespace ElasticsearchFulltextExample.Api.Hosting
 
                     // Probably add some better Retry options ...
                     await Task
-                        .Delay(200)
+                        .Delay(30_000) // Reconnect every 30 Seconds
                         .ConfigureAwait(false);
                 }
             }

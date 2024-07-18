@@ -14,10 +14,6 @@ namespace ElasticsearchFulltextExample.Database
         
         public DbSet<Document> Documents { get; set; }
 
-        public DbSet<Job> Jobs { get; set; }
-        
-        public DbSet<JobStatus> JobStatus { get; set; }
-
         public DbSet<Suggestion> Suggestions { get; set; }
 
         public DbSet<Keyword> Keywords { get; set; }
@@ -42,14 +38,6 @@ namespace ElasticsearchFulltextExample.Database
                 .IncrementsBy(1);
 
             modelBuilder.HasSequence<int>("document_suggestion_seq", schema: "fts")
-                .StartsAt(38187)
-                .IncrementsBy(1);
-
-            modelBuilder.HasSequence<int>("job_seq", schema: "fts")
-                .StartsAt(38187)
-                .IncrementsBy(1);
-
-            modelBuilder.HasSequence<int>("job_status_seq", schema: "fts")
                 .StartsAt(38187)
                 .IncrementsBy(1);
 
@@ -246,6 +234,14 @@ namespace ElasticsearchFulltextExample.Database
                     .HasColumnName("sys_period")
                     .IsRequired(false)
                     .ValueGeneratedOnAddOrUpdate();
+
+                entity
+                    .HasMany<DocumentSuggestion>()
+                    .WithOne();
+
+                entity
+                    .HasMany<DocumentKeyword>()
+                    .WithOne();
             });
 
             modelBuilder.Entity<Keyword>(entity =>
@@ -284,6 +280,10 @@ namespace ElasticsearchFulltextExample.Database
                     .HasColumnName("sys_period")
                     .IsRequired(false)
                     .ValueGeneratedOnAddOrUpdate();
+
+                entity
+                    .HasMany<DocumentKeyword>()
+                    .WithOne();
             });
 
             modelBuilder.Entity<Suggestion>(entity =>
@@ -322,114 +322,11 @@ namespace ElasticsearchFulltextExample.Database
                     .HasColumnName("sys_period")
                     .IsRequired(false)
                     .ValueGeneratedOnAddOrUpdate();
+
+                entity
+                    .HasMany<DocumentSuggestion>()
+                    .WithOne();
             });
-
-            modelBuilder.Entity<Job>(entity =>
-            {
-                entity.ToTable("job", "fts");
-
-                entity.HasKey(e => e.Id);
-
-                entity.Property(e => e.Id)
-                    .HasColumnType("INT")
-                    .UseHiLo("suggestion_seq", "fts")
-                    .HasColumnName("suggestion_id")
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(e => e.CorrelationId1)
-                    .HasColumnType("varchar(2000)")
-                    .HasColumnName("correlation_id_1")
-                    .HasMaxLength(2000)
-                    .IsRequired(false);
-
-                entity.Property(e => e.CorrelationId2)
-                    .HasColumnType("varchar(2000)")
-                    .HasColumnName("correlation_id_2")
-                    .HasMaxLength(2000)
-                    .IsRequired(false);
-
-                entity.Property(e => e.CorrelationId3)
-                    .HasColumnType("varchar(2000)")
-                    .HasColumnName("correlation_id_3")
-                    .HasMaxLength(2000)
-                    .IsRequired(false);
-
-                entity.Property(e => e.CorrelationId4)
-                    .HasColumnType("varchar(2000)")
-                    .HasColumnName("correlation_id_4")
-                    .HasMaxLength(2000)
-                    .IsRequired(false);
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("timestamptz")
-                    .HasColumnName("event_time")
-                    .IsRequired(false)
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(e => e.RowVersion)
-                    .HasColumnType("xid")
-                    .HasColumnName("xmin")
-                    .IsRowVersion()
-                    .IsConcurrencyToken()
-                    .IsRequired(false)
-                    .ValueGeneratedOnAddOrUpdate();
-
-                entity.Property(e => e.LastEditedBy)
-                    .HasColumnType("integer")
-                    .HasColumnName("last_edited_by")
-                    .IsRequired(true);
-
-                entity.Property(e => e.SysPeriod)
-                    .HasColumnType("tstzrange")
-                    .HasColumnName("sys_period")
-                    .IsRequired(false)
-                    .ValueGeneratedOnAddOrUpdate();
-            });
-
-            modelBuilder.Entity<JobStatus>(entity =>
-            {
-                entity.ToTable("job_status", "fts");
-
-                entity.HasKey(e => e.Id);
-
-                entity.Property(e => e.Id)
-                    .HasColumnType("INT")
-                    .UseHiLo("job_status_seq", "fts")
-                    .HasColumnName("job_status_id")
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(e => e.Name)
-                    .HasColumnType("varchar(255)")
-                    .HasColumnName("name")
-                    .HasMaxLength(255)
-                    .IsRequired(true);
-                
-                entity.Property(e => e.Description)
-                    .HasColumnType("varchar(2000)")
-                    .HasColumnName("description")
-                    .HasMaxLength(2000)
-                    .IsRequired(true);
-
-                entity.Property(e => e.RowVersion)
-                    .HasColumnType("xid")
-                    .HasColumnName("xmin")
-                    .IsRowVersion()
-                    .IsConcurrencyToken()
-                    .IsRequired(false)
-                    .ValueGeneratedOnAddOrUpdate();
-
-                entity.Property(e => e.LastEditedBy)
-                    .HasColumnType("integer")
-                    .HasColumnName("last_edited_by")
-                    .IsRequired(true);
-
-                entity.Property(e => e.SysPeriod)
-                    .HasColumnType("tstzrange")
-                    .HasColumnName("sys_period")
-                    .IsRequired(false)
-                    .ValueGeneratedOnAddOrUpdate();
-            });
-
 
             modelBuilder.Entity<DocumentKeyword>(entity =>
             {
@@ -450,7 +347,7 @@ namespace ElasticsearchFulltextExample.Database
 
                 entity.Property(e => e.KeywordId)
                     .HasColumnType("int")
-                    .HasColumnName("keyowrd_id")
+                    .HasColumnName("keyword_id")
                     .IsRequired(true);
 
                 entity.Property(e => e.RowVersion)
@@ -471,6 +368,18 @@ namespace ElasticsearchFulltextExample.Database
                     .HasColumnName("sys_period")
                     .IsRequired(false)
                     .ValueGeneratedOnAddOrUpdate();
+
+
+                entity
+                    .HasOne<Keyword>()
+                    .WithMany()
+                    .HasForeignKey(x => x.KeywordId);
+
+
+                entity
+                    .HasOne<Document>()
+                    .WithMany()
+                    .HasForeignKey(x => x.DocumentId);
             });
 
             modelBuilder.Entity<DocumentSuggestion>(entity =>
@@ -513,6 +422,18 @@ namespace ElasticsearchFulltextExample.Database
                     .HasColumnName("sys_period")
                     .IsRequired(false)
                     .ValueGeneratedOnAddOrUpdate();
+
+                entity
+                    .HasOne<Suggestion>()
+                    .WithMany()
+                    .HasForeignKey(x => x.SuggestionId);
+
+
+                entity
+                    .HasOne<Document>()
+                    .WithMany()
+                    .HasForeignKey(x => x.DocumentId);
+
             });
 
             // History Tables

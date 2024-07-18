@@ -10,38 +10,74 @@
 
 <PageTitle>Index Git Repository</PageTitle>
 
-<FluentButton Name="Test" OnClick="() => OnAddKeyword())">Add Keyword</FluentButton>
-@* 
+
 <EditForm Model="@CurrentUpload" OnValidSubmit="@(async () => await HandleValidSubmitAsync())" FormName="upload_form" novalidate>
     <SimpleValidator TModel=UploadModel ValidationFunc="ValidateCurrentUpload" />
+    
     <FluentStack Orientation="Orientation.Vertical">
-        <div>
+        <div style="width: 100%;">
             <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center">
                 <div>
-                    <FluentTextField Style="@("width: 300px;")" Name="title" @bind-Value="CurrentUpload.Title" Label="Title" Required />
+                    <FluentTextField Style="@("width: 100%;")" Name="title" @bind-Value="CurrentUpload.Title" Label="Title" Required />
                 </div>
                 <FluentValidationMessage For="@(() => CurrentUpload.Title)" />
-            </FluentStack> 
-        </div>
-        <div>
-            <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center">
-                <div>
-                    <FluentTextField Style="@("width: 300px;")" Name="suggestion" @bind-Value="CurrentUpload.Suggestion" Label="Suggestion" Required />
-                    <FluentButton Type="ButtonType.Button" OnClick="@OnAddSuggestion">Add Suggestion</FluentButton>
-                </div>
-                <FluentValidationMessage For="@(() => CurrentUpload.Suggestion)" />
             </FluentStack>
         </div>
-        <div>
+        <div style="width: 100%;">
             <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center">
-                <div>
-                    <FluentTextField Style="@("width: 300px;")" Name="keyword" @bind-Value="CurrentUpload.Keyword" Label="Keyword" Required />
-                    <FluentButton Type="ButtonType.Button" OnClick="@OnAddKeyword">Add Keyword</FluentButton>
+                <div style="width: 100%">
+                    <FluentTextField Label="Suggestion" Style="@("width: 100%;")" @bind-Value="CurrentUpload.Suggestion" @oninput="@(e => CurrentUpload.Suggestion = e.Value as string)" @onkeydown="OnSuggestionEnter"></FluentTextField>
                 </div>
-                <FluentValidationMessage For="@(() => CurrentUpload.Keyword)" />
+                <FluentButton OnClick="OnAddSuggestion">Add Suggestion</FluentButton>
             </FluentStack>
         </div>
+        <div style="width: 100%;">
+            <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="4" VerticalAlignment="VerticalAlignment.Center">
+                <FluentLabel>Suggestions: </FluentLabel>
 
+                @for (int i = 0; i < CurrentUpload.Suggestions.Count; i++)
+                {
+                    var suggestion = CurrentUpload.Suggestions[i];
+
+                    <FluentBadge Appearance="Appearance.Neutral" OnDismissClick="@((e) => RemoveSuggestion(suggestion))">@suggestion</FluentBadge>
+                }
+            </FluentStack>
+        </div>
+        <div style="width: 100%;">
+            <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center">
+                <div style="width: 100%">
+                    <FluentTextField Label="Keyword" Style="@("width: 100%;")" @bind-Value="CurrentUpload.Keyword" @oninput="@(e => CurrentUpload.Keyword = e.Value as string)" @onkeydown="OnKeywordEnter"></FluentTextField>
+                </div>
+                <FluentButton OnClick="OnAddKeyword">Add Keyword</FluentButton>
+            </FluentStack>
+        </div>
+        <div style="width: 100%;">
+            <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="4" VerticalAlignment="VerticalAlignment.Center">
+                <FluentLabel>Keywords: </FluentLabel>
+                @for (int i = 0; i < CurrentUpload.Keywords.Count; i++)
+                {
+                    var keyword = CurrentUpload.Keywords[i];
+
+                    <FluentBadge Appearance="Appearance.Neutral" OnDismissClick="@((e) => RemoveKeyword(keyword))">@keyword</FluentBadge>
+                }
+            </FluentStack>
+        </div>
+        <div style="width: 100%;">
+            <FluentLabel>Select File:</FluentLabel>
+
+            <FluentInputFile @ref="@myFileUploader"
+                             DragDropZoneVisible="false"
+                             Mode="InputFileMode.Stream"
+                             Multiple="true"
+                             AnchorId="MyUploadButton"
+                             MaximumFileSize="@(100 * 1024 * 1024)"
+                             Accept="*.*"
+                             OnCompleted="@OnCompletedAsync" />
+
+            <FluentButton Style="@("width: 100%;")"  Id="MyUploadButton" Appearance="Appearance.Accent">
+                Select Document ...
+            </FluentButton>
+        </div>
         <div>
             <FluentStack Orientation="Orientation.Horizontal">
                 <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Submit Repository to Index</FluentButton>
@@ -49,7 +85,10 @@
             </FluentStack>
         </div>
         <div>
+
+        </div>
+        <div>
             <FluentValidationSummary />
         </div>
     </FluentStack>
-</EditForm> *@
+</EditForm>
