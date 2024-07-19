@@ -10,31 +10,69 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
 {
     public partial class Upload
     {
+        /// <summary>
+        /// Holds the EditForm Data.
+        /// </summary>
         public class UploadModel
         {
+            /// <summary>
+            /// Title of the Document.
+            /// </summary>
             public string? Title { get; set; }
 
-            public string? Name { get; set; }
-
+            /// <summary>
+            /// Current Keyword.
+            /// </summary>
             public string? Keyword { get; set; }
 
+            /// <summary>
+            /// Lists of Keywords, that have been added.
+            /// </summary>
             public List<string> Keywords { get; set; } = new();
 
+            /// <summary>
+            /// Current Suggestion.
+            /// </summary>
             public string? Suggestion { get; set; }
 
+            /// <summary>
+            /// List of Suggestions, that have been added.
+            /// </summary>
             public List<string> Suggestions { get; set; } = new();
 
+            /// <summary>
+            /// Document Filename to be uploaded.
+            /// </summary>
             public string? Filename { get; set; }
 
+            /// <summary>
+            /// File Stream, which is going to be uploaded.
+            /// </summary>
             public Stream? File { get; set; }
         }
 
+        /// <summary>
+        /// We need to prevent the form from submitting, when Enter is 
+        /// pressed for Keywords and Suggestions. We simply toggle this 
+        /// value.
+        /// </summary>
         bool canSubmitForm = false;
 
+        /// <summary>
+        /// The Reference to the File Uploader Element.
+        /// </summary>
         FluentInputFile? myFileUploader = default!;
 
+        /// <summary>
+        /// The Current Upload Model representing the Form State.
+        /// </summary>
         public UploadModel CurrentUpload = new UploadModel();
 
+        /// <summary>
+        /// When the Upload is done, this method is called.
+        /// </summary>
+        /// <param name="files">Files to be uploaded</param>
+        /// <returns>An awaitable Task</returns>
         private Task OnCompletedAsync(IEnumerable<FluentInputFileEventArgs> files)
         {
             if (files == null)
@@ -60,6 +98,9 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Handles the Keydown Event for the Keyword.
+        /// </summary>
         public void OnKeywordEnter(KeyboardEventArgs e)
         {
             if(e.Code == "Enter" || e.Code == "NumpadEnter")
@@ -70,6 +111,9 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
             }
         }
 
+        /// <summary>
+        /// Adds a Keyword to the current list of Keywords.
+        /// </summary>
         public void OnAddKeyword()
         {
             var keyword = CurrentUpload.Keyword;
@@ -87,11 +131,19 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
             CurrentUpload.Keywords.Add(keyword);
         }
 
+        /// <summary>
+        /// Removes a Keyword.
+        /// </summary>
+        /// <param name="keyword">Keyword to remove</param>
         public void RemoveKeyword(string keyword)
         {
             CurrentUpload.Keywords.Remove(keyword);
         }
 
+        /// <summary>
+        /// Handles the Keydown Event for the Suggestion.
+        /// </summary>
+        /// <param name="e"></param>
         public void OnSuggestionEnter(KeyboardEventArgs e)
         {
             if (e.Code == "Enter" || e.Code == "NumpadEnter")
@@ -102,6 +154,9 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
             }
         }
 
+        /// <summary>
+        /// Adds a suggestion to the list of suggestions.
+        /// </summary>
         public void OnAddSuggestion()
         {
             var suggestion = CurrentUpload.Suggestion;
@@ -120,6 +175,10 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
         }
 
 
+        /// <summary>
+        /// Removes a suggestion.
+        /// </summary>
+        /// <param name="suggestion">Suggestion to remove</param>
         public void RemoveSuggestion(string suggestion)
         {
             CurrentUpload.Suggestions.Remove(suggestion);
@@ -139,18 +198,22 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
                 return;
             }
 
+            // The Multipart Content, we are going to upload.
             MultipartFormDataContent multipartFormDataContent = new MultipartFormDataContent();
 
+            // If there's a Title, add it as StringContent.
             if (CurrentUpload.Title != null)
             {
                 multipartFormDataContent.Add(new StringContent(CurrentUpload.Title), FileUploadNames.Title);
             }
 
+            // If there's a Filename and a File, we add it as StreamContent.
             if (CurrentUpload.Filename != null && CurrentUpload.File != null)
             {
                 multipartFormDataContent.Add(new StreamContent(CurrentUpload.File), FileUploadNames.Data, CurrentUpload.Filename);
             }
 
+            // Suggestions will be added as suggestion[0], suggestion[1], ... so the ASP.NET Core Binder turns them into a list
             if (CurrentUpload.Suggestions.Any())
             {
                 for (var suggestionIdx = 0; suggestionIdx < CurrentUpload.Suggestions.Count; suggestionIdx++)
@@ -159,6 +222,7 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
                 }
             }
 
+            // Keywords will be added as keyword[0], keyword[1], ... so the ASP.NET Core Binder turns them into a list
             if (CurrentUpload.Keywords.Any())
             {
                 for (var keywordIdx = 0; keywordIdx < CurrentUpload.Keywords.Count; keywordIdx++)
@@ -167,6 +231,7 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
                 }
             }
 
+            // Upload the MultipartFormData to the Server.
             await SearchClient
                 .UploadAsync(multipartFormDataContent, default)
                 .ConfigureAwait(false);
