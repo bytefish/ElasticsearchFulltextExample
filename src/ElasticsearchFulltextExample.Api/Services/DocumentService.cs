@@ -28,7 +28,7 @@ namespace ElasticsearchFulltextExample.Api.Services
             _fileExtensionContentTypeProvider = new FileExtensionContentTypeProvider();
         }
 
-        public async Task CreateDocumentAsync(Document document, List<string>? suggestions, List<string>? keywords, CancellationToken cancellationToken)
+        public async Task CreateDocumentAsync(string title, string filename, byte[] data, List<string>? suggestions, List<string>? keywords, int lastEditedBy, CancellationToken cancellationToken)
         {
             using var context = await _dbContextFactory
                 .CreateDbContextAsync(cancellationToken)
@@ -38,6 +38,14 @@ namespace ElasticsearchFulltextExample.Api.Services
                 .BeginTransactionAsync(cancellationToken)
                 .ConfigureAwait(false))
             {
+                var document = new Document
+                {
+                    Title = title,
+                    Filename = filename,
+                    Data = data,
+                    LastEditedBy = lastEditedBy,
+                };
+
                 await context
                     .AddAsync(document, cancellationToken)
                     .ConfigureAwait(false);
@@ -57,7 +65,7 @@ namespace ElasticsearchFulltextExample.Api.Services
                             suggestion = new Suggestion
                             {
                                 Name = s,
-                                LastEditedBy = Constants.Users.DataConversionUserId
+                                LastEditedBy = lastEditedBy
                             };
 
                             await context
@@ -69,7 +77,7 @@ namespace ElasticsearchFulltextExample.Api.Services
                         {
                             DocumentId = document.Id,
                             SuggestionId = suggestion.Id,
-                            LastEditedBy = Constants.Users.DataConversionUserId
+                            LastEditedBy = lastEditedBy
                         };
 
                         await context
@@ -93,7 +101,7 @@ namespace ElasticsearchFulltextExample.Api.Services
                             keyword = new Keyword
                             {
                                 Name = k,
-                                LastEditedBy = Constants.Users.DataConversionUserId
+                                LastEditedBy = lastEditedBy
                             };
 
                             await context
@@ -105,7 +113,7 @@ namespace ElasticsearchFulltextExample.Api.Services
                         {
                             DocumentId = document.Id,
                             KeywordId = keyword.Id,
-                            LastEditedBy = Constants.Users.DataConversionUserId
+                            LastEditedBy = lastEditedBy
                         };
 
                         await context
@@ -119,7 +127,7 @@ namespace ElasticsearchFulltextExample.Api.Services
                 var outboxEvent = OutboxEventUtils.Create(new DocumentCreatedMessage
                 {
                     DocumentId = document.Id
-                }, Constants.Users.DataConversionUserId);
+                }, lastEditedBy);
 
                 await context
                     .AddAsync(outboxEvent, cancellationToken)

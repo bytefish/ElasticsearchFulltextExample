@@ -83,16 +83,10 @@ namespace ElasticsearchFulltextExample.Api.Controllers
                     };
                 }
 
-                var document = new Database.Model.Document
-                {
-                    Title = title,
-                    Filename = data.FileName,
-                    Data = await GetBytesAsync(data),
-                    LastEditedBy = Constants.Users.DataConversionUserId
-                };
+                var fileBytes = await GetBytesAsync(data).ConfigureAwait(false);
 
                 await _documentService
-                    .CreateDocumentAsync(document, suggestions, keywords, cancellationToken)
+                    .CreateDocumentAsync(title, data.FileName, fileBytes, suggestions, keywords, Constants.Users.DataConversionUserId, cancellationToken)
                     .ConfigureAwait(false);
 
                 return Created();
