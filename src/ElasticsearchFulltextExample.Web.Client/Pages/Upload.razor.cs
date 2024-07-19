@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace ElasticsearchFulltextExample.Web.Client.Pages
 {
+    /// <summary>
+    /// Code-Behind for the Upload.
+    /// </summary>
     public partial class Upload
     {
         /// <summary>
@@ -227,7 +230,7 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
             {
                 for (var keywordIdx = 0; keywordIdx < CurrentUpload.Keywords.Count; keywordIdx++)
                 {
-                    multipartFormDataContent.Add(new StringContent(CurrentUpload.Keywords[keywordIdx]), $"{FileUploadNames.Keywords}.[{keywordIdx}]");
+                    multipartFormDataContent.Add(new StringContent(CurrentUpload.Keywords[keywordIdx]), $"{FileUploadNames.Keywords}[{keywordIdx}]");
                 }
             }
 

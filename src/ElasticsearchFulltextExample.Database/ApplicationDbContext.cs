@@ -369,12 +369,10 @@ namespace ElasticsearchFulltextExample.Database
                     .IsRequired(false)
                     .ValueGeneratedOnAddOrUpdate();
 
-
                 entity
                     .HasOne<Keyword>()
                     .WithMany()
                     .HasForeignKey(x => x.KeywordId);
-
 
                 entity
                     .HasOne<Document>()

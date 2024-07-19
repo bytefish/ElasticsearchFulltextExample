@@ -343,7 +343,9 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
             _logger.TraceMethodEntry();
 
             var indexResponse = await _client
-                .IndexAsync<ElasticsearchDocument>(document, cancellationToken)
+                .IndexAsync<ElasticsearchDocument>(document: document, idx => idx
+                    .Index(_indexName)
+                    .OpType(OpType.Index), cancellationToken)
                 .ConfigureAwait(false);
 
             if (_logger.IsDebugEnabled())

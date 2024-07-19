@@ -87,6 +87,9 @@ try
             .UseNpgsql(dataSource, options => options.UseNodaTime());
     });
 
+    // Elasticsearch
+    builder.Services.AddHostedService<ElasticsearchInitializerBackgroundService>();
+
     // Configures the Postgres Outbox Event Settings.
     builder.Services.AddSingleton<OutboxEventConsumer>();
 
