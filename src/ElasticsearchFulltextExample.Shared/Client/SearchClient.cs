@@ -182,7 +182,7 @@ namespace ElasticsearchFulltextExample.Shared.Client
             _logger.TraceMethodEntry();
 
             var response = await _httpClient
-                .GetAsync("search-statistics", cancellationToken)
+                .GetAsync("statistics", cancellationToken)
                 .ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
