@@ -172,7 +172,7 @@ namespace ElasticsearchFulltextExample.Api.Controllers
                     };
                 }
 
-                if(_logger.IsDebugEnabled())
+                if (_logger.IsDebugEnabled())
                 {
                     _logger.LogDebug("Executing SearchQuery '{SearchQuery}'", query);
                 }
