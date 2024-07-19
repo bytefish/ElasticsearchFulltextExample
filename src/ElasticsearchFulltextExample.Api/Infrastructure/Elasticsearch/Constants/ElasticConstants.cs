@@ -2,6 +2,11 @@
 {
     public static class ElasticConstants
     {
+        public static class Pipelines
+        {
+            public const string Attachments = "attachments";
+        }
+
         public static class DocumentNames
         {
             public const string Id = "id";

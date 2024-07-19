@@ -74,12 +74,12 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
 
         public async Task<PutPipelineResponse> CreatePipelineAsync(CancellationToken cancellationToken)
         {
-            var putPipelineResponse = await _client.Ingest.PutPipelineAsync("attachments", p => p
+            var putPipelineResponse = await _client.Ingest.PutPipelineAsync(ElasticConstants.Pipelines.Attachments, p => p
                 .Description("Document attachment pipeline")
                 .Processors(pr => pr
                     .Attachment<ElasticsearchDocument>(a => a
-                        .Field(new Field("data"))
-                        .TargetField(new Field("attachment"))
+                        .Field(new Field(ElasticConstants.DocumentNames.Data))
+                        .TargetField(new Field(ElasticConstants.DocumentNames.Attachment))
                     .RemoveBinary(true))), cancellationToken).ConfigureAwait(false);
 
             if (_logger.IsDebugEnabled())
@@ -103,7 +103,7 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
                     .Date(ElasticConstants.DocumentNames.IndexedOn)
                     .Keyword(ElasticConstants.DocumentNames.Keywords)
                     .Completion(ElasticConstants.DocumentNames.Suggestions)
-                    .Object(ElasticConstants.DocumentNames.Attachment, attachment => attachment
+                    .Nested(ElasticConstants.DocumentNames.Attachment, attachment => attachment
                             .Properties(attachmentProperties => attachmentProperties
                                 .Text(ElasticConstants.AttachmentNames.Content)
                                 .Text(ElasticConstants.AttachmentNames.Title)
@@ -330,6 +330,7 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
 
             var bulkResponse = await _client.BulkAsync(b => b
                 .Index(_indexName)
+                .Pipeline(ElasticConstants.Pipelines.Attachments)
                 .IndexMany(documents), cancellationToken)
                 .ConfigureAwait(false);
 
@@ -348,6 +349,7 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
             var indexResponse = await _client
                 .IndexAsync<ElasticsearchDocument>(document: document, idx => idx
                     .Index(_indexName)
+                    .Pipeline(ElasticConstants.Pipelines.Attachments)
                     .OpType(OpType.Index), cancellationToken)
                 .ConfigureAwait(false);
 
