@@ -29,6 +29,8 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
             public Stream? File { get; set; }
         }
 
+        bool canSubmitForm = false;
+
         FluentInputFile? myFileUploader = default!;
 
         public UploadModel CurrentUpload = new UploadModel();
@@ -62,6 +64,8 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
         {
             if(e.Code == "Enter" || e.Code == "NumpadEnter")
             {
+                canSubmitForm = false;
+
                 OnAddKeyword();
             }
         }
@@ -92,9 +96,10 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
         {
             if (e.Code == "Enter" || e.Code == "NumpadEnter")
             {
+                canSubmitForm = false;
+
                 OnAddSuggestion();
             }
-
         }
 
         public void OnAddSuggestion()
@@ -126,6 +131,14 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
         /// <returns>An awaitable <see cref="Task"/></returns>
         private async Task HandleValidSubmitAsync()
         {
+            // We came from an Enter, do not submit yet ...
+            if(!canSubmitForm)
+            {
+                canSubmitForm = true;
+
+                return;
+            }
+
             MultipartFormDataContent multipartFormDataContent = new MultipartFormDataContent();
 
             if (CurrentUpload.Title != null)
