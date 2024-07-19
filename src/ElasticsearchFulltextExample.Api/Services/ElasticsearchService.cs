@@ -165,15 +165,15 @@ namespace ElasticsearchFulltextExample.Api.Services
         /// <param name="query">Query Text</param>
         /// <param name="cancellationToken">Cancellation Token</param>
         /// <returns>Search Results found for the given query</returns>
-        public async Task<SearchResults> SearchAsync(string query, CancellationToken cancellationToken)
+        public async Task<SearchResults> SearchAsync(string query, int from, int size, CancellationToken cancellationToken)
         {
             _logger.TraceMethodEntry();
 
             var searchResponse = await _elasticsearchSearchClient
-                .SearchAsync(query, cancellationToken)
+                .SearchAsync(query, from, size, cancellationToken)
                 .ConfigureAwait(false);
 
-            var searchResults = ConvertToSearchResults(query, searchResponse);
+            var searchResults = ConvertToSearchResults(query, from, size, searchResponse);
 
             return searchResults;
         }
@@ -385,7 +385,7 @@ namespace ElasticsearchFulltextExample.Api.Services
         /// <param name="query">Original Query</param>
         /// <param name="searchResponse">Search Response from Elasticsearch</param>
         /// <returns>Search Results for a given Query</returns>
-        private SearchResults ConvertToSearchResults(string query, SearchResponse<ElasticsearchDocument> searchResponse)
+        private SearchResults ConvertToSearchResults(string query, int from, int size, SearchResponse<ElasticsearchDocument> searchResponse)
         {
             _logger.TraceMethodEntry();
 
@@ -396,6 +396,10 @@ namespace ElasticsearchFulltextExample.Api.Services
                 return new SearchResults
                 {
                     Query = query,
+                    From = from,
+                    Size = size,
+                    Total = 0,
+                    TookInMilliseconds = searchResponse.Took,
                     Results = []
                 };
             }
@@ -420,7 +424,7 @@ namespace ElasticsearchFulltextExample.Api.Services
                     Title = hit.Source.Title,
                     Keywords = hit.Source.Keywords.ToList(),
                     Matches = GetMatches(hit.Highlight),
-                    Url = $"{_options.BaseUri}/api/files/{hit.Source.Id}"
+                    Url = $"{_options.BaseUri}/documents/{hit.Source.Id}"
                 };
 
                 searchResults.Add(searchResult);
@@ -429,6 +433,10 @@ namespace ElasticsearchFulltextExample.Api.Services
             return new SearchResults
             {
                 Query = query,
+                From = from,
+                Size = size,
+                Total = searchResponse.Total,
+                TookInMilliseconds = searchResponse.Took,
                 Results = searchResults
             };
         }

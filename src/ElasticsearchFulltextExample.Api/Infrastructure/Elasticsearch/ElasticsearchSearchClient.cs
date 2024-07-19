@@ -133,11 +133,13 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
             return createIndexResponse;
         }
 
-        public Task<SearchResponse<ElasticsearchDocument>> SearchAsync(string query, CancellationToken cancellationToken)
+        public Task<SearchResponse<ElasticsearchDocument>> SearchAsync(string query, int from, int size, CancellationToken cancellationToken)
         {
             return _client.SearchAsync<ElasticsearchDocument>(document => document
                 // Query this Index:
                 .Index(_indexName)
+                // Paginate
+                .From(from).Size(size)
                 // Setup the Highlighters:
                 .Highlight(highlight => highlight
                     .Fields(fields => fields
@@ -164,6 +166,7 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
         public Task<SearchResponse<ElasticsearchDocument>> SuggestAsync(string query, CancellationToken cancellationToken)
         {
             return _client.SearchAsync<ElasticsearchDocument>(q => q
+                // Index to Search:
                 .Index(_indexName)
                 // Suggest Titles:
                 .Suggest(suggest => suggest.Suggesters(suggesters => suggesters
@@ -171,7 +174,7 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
                         .Text(query)
                         .Completion(c => c
                             .SkipDuplicates(true)
-                            .Field(x => x.Suggestions))))), cancellationToken);
+                            .Field(new Field(ElasticConstants.DocumentNames.Suggestions)))))), cancellationToken);
         }
 
         public async Task<IndicesStatsResponse> GetSearchStatisticsAsync(CancellationToken cancellationToken)

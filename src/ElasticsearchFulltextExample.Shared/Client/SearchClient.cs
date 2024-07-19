@@ -60,14 +60,14 @@ namespace ElasticsearchFulltextExample.Shared.Client
             }
         }
 
-        public async Task<SearchResultsDto?> SearchAsync(string query, CancellationToken cancellationToken)
+        public async Task<SearchResultsDto?> SearchAsync(string query, int from, int size, CancellationToken cancellationToken)
         {
             _logger.TraceMethodEntry();
 
             var escapedQuery = Uri.EscapeDataString(query);
 
             var response = await _httpClient
-                .GetAsync($"search?q={escapedQuery}", cancellationToken)
+                .GetAsync($"search?q={escapedQuery}&from={from}&size={size}", cancellationToken)
                 .ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)

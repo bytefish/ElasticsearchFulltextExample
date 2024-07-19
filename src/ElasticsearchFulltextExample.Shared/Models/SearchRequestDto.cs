@@ -5,25 +5,15 @@ using System.Text.Json.Serialization;
 
 namespace ElasticsearchFulltextExample.Web.Contracts
 {
-    public class SearchResultsDto
+    public class SearchRequestDto
     {
         [JsonPropertyName("query")]
         public required string Query { get; set; }
 
         [JsonPropertyName("from")]
         public required int From { get; set; }
-        
-        [JsonPropertyName("size")]
-        public required int Size { get; set; }
 
-        [JsonPropertyName("tookInMilliseconds")]
-        public required long TookInMilliseconds { get; set; }
-        
-        [JsonPropertyName("total")]
-        public required long Total { get; set; }
-
-        [JsonPropertyName("results")]
-        public List<SearchResultDto> Results { get; set; } = [];
-
+        [JsonPropertyName("to")]
+        public required int To { get; set; }
     }
 }

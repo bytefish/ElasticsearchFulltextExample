@@ -1,9 +1,11 @@
-﻿@* @page "/CodeSearch"
+﻿@page "/Search"
 
+@using ElasticsearchFulltextExample.Shared.Client
 @using ElasticsearchFulltextExample.Web.Client.Components
 @using ElasticsearchFulltextExample.Web.Client.Extensions;
 @using ElasticsearchFulltextExample.Web.Client.Infrastructure;
-@using ElasticsearchFulltextExample.Shared.Dto;
+
+@inject SearchClient SearchClient 
 
 <PageTitle>Elasticsearch Code Search Experiments</PageTitle>
 
@@ -13,20 +15,18 @@
         <div class="search-box">
             <FluentSearch @bind-Value="_queryString" @onkeyup="@EnterSubmit" Class="w-100" />
             <FluentButton @onclick=@QueryAsync>Search</FluentButton>
-            <SortOptionSelector SortOptions="_sortOptions" @bind-SortOption="_selectedSortOption">
-            </SortOptionSelector>
         </div>
     </div>
     <div class="search-results-total">
         <span>@_totalItemCount Results (@_tookInSeconds seconds)</span>
     </div>
     <div class="search-results">
-        @foreach (var searchResult in _codeSearchResults)
+@*         @foreach (var searchResult in _codeSearchResults)
         {
             <SearchResult Item="@searchResult"></SearchResult>
         }
-    </div>
+ *@    </div>
     <div class="search-paginator">
         <Paginator State="@_pagination"></Paginator>
     </div>
-</div> *@
+</div>

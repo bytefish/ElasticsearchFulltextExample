@@ -160,7 +160,7 @@ namespace ElasticsearchFulltextExample.Api.Controllers
 
         [HttpGet]
         [Route("/search")]
-        public async Task<IActionResult> Query([FromQuery(Name = "q")] string query, CancellationToken cancellationToken)
+        public async Task<IActionResult> Query([FromQuery(Name = "q")] string query, [FromQuery(Name = "from")] int from, [FromQuery(Name = "size")] int size, CancellationToken cancellationToken)
         {
             try
             {
@@ -178,7 +178,7 @@ namespace ElasticsearchFulltextExample.Api.Controllers
                 }
 
                 var searchResults = await _elasticsearchService
-                    .SearchAsync(query, cancellationToken)
+                    .SearchAsync(query, from, size, cancellationToken)
                     .ConfigureAwait(false);
 
                 var searchResultsDto = Convert(searchResults);
@@ -196,6 +196,10 @@ namespace ElasticsearchFulltextExample.Api.Controllers
             return new SearchResultsDto
             {
                 Query = source.Query,
+                From = source.From,
+                Size = source.Size,
+                TookInMilliseconds = source.TookInMilliseconds,
+                Total = source.Total,
                 Results = Convert(source.Results)
             };
         }
