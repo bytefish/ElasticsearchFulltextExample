@@ -14,6 +14,7 @@ using ElasticsearchFulltextExample.Shared.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Globalization;
+using System.Web;
 
 namespace ElasticsearchFulltextExample.Api.Services
 {
@@ -37,7 +38,18 @@ namespace ElasticsearchFulltextExample.Api.Services
         {
             _logger.TraceMethodEntry();
 
-            await _elasticsearchSearchClient.CreateIndexAsync(cancellationToken);
+            await _elasticsearchSearchClient
+                .CreateIndexAsync(cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        public async Task CreatePipelineAsync(CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            await _elasticsearchSearchClient
+                .CreatePipelineAsync(cancellationToken)
+                .ConfigureAwait(false);
         }
 
         public async Task DeleteAllAsync(CancellationToken cancellationToken)
@@ -52,6 +64,13 @@ namespace ElasticsearchFulltextExample.Api.Services
             _logger.TraceMethodEntry();
 
             await _elasticsearchSearchClient.DeleteIndexAsync(cancellationToken);
+        }
+
+        public async Task DeletePipelineAsync(string pipeline, CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            await _elasticsearchSearchClient.DeletePipelineAsync(pipeline, cancellationToken);
         }
 
         public async Task IndexDocumentAsync(int documentId, CancellationToken cancellationToken)
@@ -468,7 +487,8 @@ namespace ElasticsearchFulltextExample.Api.Services
                 return [];
             }
 
-            return matches.ToList();
+            return matches
+                .ToList();
         }
     }
 }

@@ -12,6 +12,8 @@ using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Models;
 using Elastic.Clients.Elasticsearch.Ingest;
 using ElasticsearchFulltextExample.Shared.Infrastructure;
 using ElasticsearchFulltextExample.Shared.Constants;
+using Elastic.Clients.Elasticsearch.Analysis;
+using Elastic.Clients.Elasticsearch.Mapping;
 
 namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
 {
@@ -95,34 +97,75 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
             _logger.TraceMethodEntry();
 
             var createIndexResponse = await _client.Indices.CreateAsync(_indexName, descriptor => descriptor
-                .Mappings(mapping => mapping.Properties<ElasticsearchDocument>(properties => properties
-                    .Text(ElasticConstants.DocumentNames.Id)
-                    .Text(ElasticConstants.DocumentNames.Title)
-                    .Text(ElasticConstants.DocumentNames.Filename)
-                    .Binary(ElasticConstants.DocumentNames.Data)
-                    .Date(ElasticConstants.DocumentNames.IndexedOn)
-                    .Keyword(ElasticConstants.DocumentNames.Keywords)
-                    .Completion(ElasticConstants.DocumentNames.Suggestions)
-                    .Nested(ElasticConstants.DocumentNames.Attachment, attachment => attachment
-                            .Properties(attachmentProperties => attachmentProperties
-                                .Text(ElasticConstants.AttachmentNames.Content)
-                                .Text(ElasticConstants.AttachmentNames.Title)
-                                .Text(ElasticConstants.AttachmentNames.Author)
-                                .Date(ElasticConstants.AttachmentNames.Date)
-                                .Text(ElasticConstants.AttachmentNames.Keywords)
-                                .Text(ElasticConstants.AttachmentNames.ContentType)
-                                .LongNumber(ElasticConstants.AttachmentNames.ContentLength)
-                                .Text(ElasticConstants.AttachmentNames.Language)
-                                .Text(ElasticConstants.AttachmentNames.Modified)
-                                .Text(ElasticConstants.AttachmentNames.Format)
-                                .Text(ElasticConstants.AttachmentNames.Identifier)
-                                .Text(ElasticConstants.AttachmentNames.Contributor)
-                                .Text(ElasticConstants.AttachmentNames.Coverage)
-                                .Text(ElasticConstants.AttachmentNames.Modifier)
-                                .Text(ElasticConstants.AttachmentNames.CreatorTool)
-                                .Text(ElasticConstants.AttachmentNames.Publisher)
-                                .Text(ElasticConstants.AttachmentNames.Relation)
-                                .Text(ElasticConstants.AttachmentNames.Rights)))))
+                .Settings(settings => settings
+                    .Codec("best_compression")
+                    .Analysis(analysis => analysis
+                         .Tokenizers(tokenizers => tokenizers
+                            .PathHierarchy("custom_hierarchy", tokenizer => tokenizer
+                                .Delimiter("/"))
+                            .PathHierarchy("custom_hierarchy_reversed", tokenizer => tokenizer
+                                .Reverse(true).Delimiter("/"))
+                        )
+                        .TokenFilters(filters => filters
+                            .WordDelimiterGraph("word_delimiter_graph_filter", filter => filter
+                                .PreserveOriginal(true)
+                            )
+                        )
+                        .Analyzers(analyzers => analyzers
+                            .Custom("fts_analyzer", custom => custom
+                                .Tokenizer("whitespace").Filter(new[]
+                                {
+                                    "word_delimiter_graph_filter",
+                                    "flatten_graph",
+                                    "lowercase",
+                                    "asciifolding",
+                                    "remove_duplicates"
+                                })
+                            )
+                            .Custom("custom_path_tree", custom => custom
+                                .Tokenizer("custom_hierarchy")
+                            )
+                            .Custom("custom_path_tree_reversed", custom => custom
+                                .Tokenizer("custom_hierarchy_reversed")))))
+                .Mappings(mapping => mapping
+                    .Properties<ElasticsearchDocument>(properties => properties
+                        .Text(ElasticConstants.DocumentNames.Id)
+                        .Text(ElasticConstants.DocumentNames.Title, c => c
+                            .Analyzer("fts_analyzer")
+                            .Store(true))
+                        .Text(ElasticConstants.DocumentNames.Filename)
+                        .Binary(ElasticConstants.DocumentNames.Data)
+                        .Date(ElasticConstants.DocumentNames.IndexedOn)
+                        .Keyword(ElasticConstants.DocumentNames.Keywords)
+                        .Completion(ElasticConstants.DocumentNames.Suggestions)
+                        .Object(ElasticConstants.DocumentNames.Attachment, attachment => attachment
+                                .Properties(attachmentProperties => attachmentProperties
+                                    .Text(ElasticConstants.AttachmentNames.Content, c => c
+                                        .IndexOptions(IndexOptions.Positions)
+                                        .Analyzer("fts_analyzer")
+                                        .TermVector(TermVectorOption.WithPositionsOffsetsPayloads)
+                                        .Store(true))
+                                    .Text(ElasticConstants.AttachmentNames.Title, c => c
+                                        .Analyzer("fts_analyzer")
+                                        .Store(true))
+                                    .Text(ElasticConstants.AttachmentNames.Author, c => c
+                                        .Analyzer("fts_analyzer")
+                                        .Store(true))
+                                    .Date(ElasticConstants.AttachmentNames.Date)
+                                    .Text(ElasticConstants.AttachmentNames.Keywords)
+                                    .Text(ElasticConstants.AttachmentNames.ContentType)
+                                    .LongNumber(ElasticConstants.AttachmentNames.ContentLength)
+                                    .Text(ElasticConstants.AttachmentNames.Language)
+                                    .Text(ElasticConstants.AttachmentNames.Modified)
+                                    .Text(ElasticConstants.AttachmentNames.Format)
+                                    .Text(ElasticConstants.AttachmentNames.Identifier)
+                                    .Text(ElasticConstants.AttachmentNames.Contributor)
+                                    .Text(ElasticConstants.AttachmentNames.Coverage)
+                                    .Text(ElasticConstants.AttachmentNames.Modifier)
+                                    .Text(ElasticConstants.AttachmentNames.CreatorTool)
+                                    .Text(ElasticConstants.AttachmentNames.Publisher)
+                                    .Text(ElasticConstants.AttachmentNames.Relation)
+                                    .Text(ElasticConstants.AttachmentNames.Rights)))))
             , cancellationToken);
 
             if (_logger.IsDebugEnabled())
@@ -139,10 +182,9 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
                 // Query this Index:
                 .Index(_indexName)
                 // Paginate
-                .From(from).Size(size)
+                //.From(from).Size(size)
                 // Setup the Highlighters:
                 .Highlight(highlight => highlight
-                    .NumberOfFragments(5)
                     .Fields(fields => fields
                         .Add(new Field($"{ElasticConstants.DocumentNames.Attachment}.{ElasticConstants.AttachmentNames.Content}"), hf => hf
                             .Fragmenter(HighlighterFragmenter.Span)
@@ -240,6 +282,22 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
             }
 
             return deleteIndexResponse;
+        }
+
+        public async Task<DeletePipelineResponse> DeletePipelineAsync(string pipeline, CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            var deletePipelineResponse = await _client.Ingest
+                .DeletePipelineAsync(pipeline)
+                .ConfigureAwait(false);
+
+            if (_logger.IsDebugEnabled())
+            {
+                _logger.LogDebug("DeletePipelineResponse DebugInformation: {DebugInformation}", deletePipelineResponse.DebugInformation);
+            }
+
+            return deletePipelineResponse;
         }
 
         public async Task<IndicesStatsResponse> GetSearchStatistics(CancellationToken cancellationToken)

@@ -32,8 +32,4 @@
         <ProjectReference Include="..\ElasticsearchFulltextExample.Shared\ElasticsearchFulltextExample.Shared.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Infrastructure\Elasticsearch\Constants\" />
-    </ItemGroup>
-
 </Project>

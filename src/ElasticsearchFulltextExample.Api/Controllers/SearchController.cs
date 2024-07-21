@@ -265,7 +265,6 @@ namespace ElasticsearchFulltextExample.Api.Controllers
             try
             {
                 await _elasticsearchService.DeleteIndexAsync(cancellationToken);
-
                 return Ok();
             }
             catch (Exception e)
@@ -273,6 +272,29 @@ namespace ElasticsearchFulltextExample.Api.Controllers
                 if (_logger.IsErrorEnabled())
                 {
                     _logger.LogError(e, "Failed to delete index");
+                }
+
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPost]
+        [Route("/delete-pipeline/{pipeline}")]
+        public async Task<IActionResult> DeletePipeline([FromRoute(Name = "pipeline")] string pipeline, CancellationToken cancellationToken)
+        {
+            _logger.TraceMethodEntry();
+
+            try
+            {
+                await _elasticsearchService.DeletePipelineAsync(pipeline, cancellationToken);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                if (_logger.IsErrorEnabled())
+                {
+                    _logger.LogError(e, "Failed to delete pipeline");
                 }
 
                 return StatusCode(500);
@@ -301,8 +323,6 @@ namespace ElasticsearchFulltextExample.Api.Controllers
                 return StatusCode(500, "An internal Server Error occured");
             }
         }
-
-
 
         [HttpPost]
         [Route("/create-index")]
@@ -335,6 +355,36 @@ namespace ElasticsearchFulltextExample.Api.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("/create-pipeline")]
+        public async Task<IActionResult> CreatePipeline(CancellationToken cancellationToken)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new InvalidModelStateException
+                    {
+                        ModelStateDictionary = ModelState
+                    };
+                }
+
+                if (_logger.IsDebugEnabled())
+                {
+                    _logger.LogDebug("Creating Search Pipeline");
+                }
+
+                await _elasticsearchService
+                    .CreatePipelineAsync(cancellationToken)
+                    .ConfigureAwait(false);
+
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                return _exceptionToApplicationErrorMapper.CreateApplicationErrorResult(HttpContext, exception);
+            }
+        }
 
         private SearchSuggestionsDto Convert(SearchSuggestions source)
         {

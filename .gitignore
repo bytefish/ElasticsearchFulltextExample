@@ -201,4 +201,5 @@ FakesAssemblies/
 # Database Project
 *.jfm
 elastic-data
+elastic-data2
 search-data

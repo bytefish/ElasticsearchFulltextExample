@@ -12,6 +12,17 @@
             /// </summary>
             public const string Attachments = "attachments";
         }
+        
+        /// <summary>
+        /// Pipeline Processor Constants, such as Names.
+        /// </summary>
+        public static class PipelineProcessors
+        {
+            /// <summary>
+            /// Name of the Attachments Processor Pipeline.
+            /// </summary>
+            public const string HtmlStrip = "html_strip";
+        }
 
         /// <summary>
         /// Constants for Highlighters.

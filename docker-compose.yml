@@ -62,7 +62,7 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - ./docker/elasticsearch/elastic-data:/usr/share/elasticsearch/data
+      - ./docker/elasticsearch/elastic-data2:/usr/share/elasticsearch/data
       - ./docker/elasticsearch/elastic-cert:/usr/share/elasticsearch/config/cert
     ports:
       - "9200:9200"
