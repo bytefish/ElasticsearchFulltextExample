@@ -32,9 +32,9 @@
     /// </summary>
     public List<MarkupString> HtmlMatches { get; set; } = new();
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
-        HtmlMatches.Clear();
+        HtmlMatches = new();
 
         foreach(var match in Item.Matches)
         {
@@ -46,6 +46,6 @@
             var markupString = new MarkupString(htmlString);
 
             HtmlMatches.Add(markupString);
-        }
+       }
     }
 }

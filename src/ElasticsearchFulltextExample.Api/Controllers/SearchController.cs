@@ -30,7 +30,7 @@ namespace ElasticsearchFulltextExample.Api.Controllers
             _exceptionToApplicationErrorMapper = exceptionToApplicationErrorMapper;
         }
 
-        [HttpGet("/files/{documentId}")]
+        [HttpGet("/raw/{documentId}")]
         public async Task<IActionResult> GetFileById([FromRoute(Name = "documentId")] int documentId, CancellationToken cancellationToken)
         {
             _logger.TraceMethodEntry();

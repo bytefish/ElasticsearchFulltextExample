@@ -444,7 +444,7 @@ namespace ElasticsearchFulltextExample.Api.Services
                     Filename = hit.Source.Filename,
                     Keywords = hit.Source.Keywords.ToList(),
                     Matches = GetMatches(hit.Highlight),
-                    Url = $"{_options.BaseUri}/documents/{hit.Source.Id}"
+                    Url = $"{_options.BaseUri}/raw/{hit.Source.Id}"
                 };
 
                 searchResults.Add(searchResult);

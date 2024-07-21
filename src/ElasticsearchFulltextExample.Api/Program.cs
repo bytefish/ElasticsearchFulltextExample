@@ -146,6 +146,9 @@ try
     builder.Services.AddSingleton<ElasticsearchService>();
     builder.Services.AddSingleton<UserService>();
 
+
+    builder.Services.Configure<ApplicationOptions>(builder.Configuration.GetSection("Application"));
+
     builder.Services.Configure<ElasticsearchSearchClientOptions>(builder.Configuration.GetSection("Elasticsearch"));
     builder.Services.AddSingleton<ElasticsearchSearchClient>();
 
