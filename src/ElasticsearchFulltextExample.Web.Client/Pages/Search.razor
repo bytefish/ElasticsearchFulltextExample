@@ -21,11 +21,11 @@
         <span>@_totalItemCount Results (@_tookInSeconds seconds)</span>
     </div>
     <div class="search-results">
-@*         @foreach (var searchResult in _codeSearchResults)
+        @foreach (var searchResult in _searchResults)
         {
             <SearchResult Item="@searchResult"></SearchResult>
         }
- *@    </div>
+    </div>
     <div class="search-paginator">
         <Paginator State="@_pagination"></Paginator>
     </div>

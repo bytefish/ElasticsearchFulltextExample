@@ -10,8 +10,8 @@ using Microsoft.Extensions.Options;
 using ElasticsearchCodeSearch.Shared.Elasticsearch;
 using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Models;
 using Elastic.Clients.Elasticsearch.Ingest;
-using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Constants;
 using ElasticsearchFulltextExample.Shared.Infrastructure;
+using ElasticsearchFulltextExample.Shared.Constants;
 
 namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
 {

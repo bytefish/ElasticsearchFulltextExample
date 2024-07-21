@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 
-using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Constants;
+using ElasticsearchFulltextExample.Shared.Constants;
 using System.Text.Json.Serialization;
 
 namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Models

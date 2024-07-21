@@ -3,7 +3,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace ElasticsearchFulltextExample.Web.Contracts
+namespace ElasticsearchFulltextExample.Shared.Models
 {
     public class SearchResultDto
     {
@@ -13,11 +13,14 @@ namespace ElasticsearchFulltextExample.Web.Contracts
         [JsonPropertyName("title")]
         public required string Title { get; set; }
 
+        [JsonPropertyName("filename")]
+        public required string Filename { get; set; }
+
         [JsonPropertyName("matches")]
-        public List<string> Matches { get; set; } = [];
+        public List<string> Matches { get; set; } = new();
 
         [JsonPropertyName("keywords")]
-        public List<string> Keywords { get; set; } = [];
+        public List<string> Keywords { get; set; } = new();
 
         [JsonPropertyName("url")]
         public required string? Url { get; set; }

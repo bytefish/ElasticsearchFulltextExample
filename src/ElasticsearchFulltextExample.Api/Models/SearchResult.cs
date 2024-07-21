@@ -8,6 +8,8 @@ namespace ElasticsearchFulltextExample.Api.Models
         public required string Identifier { get; set; }
 
         public required string Title { get; set; }
+        
+        public required string Filename { get; set; }
 
         public List<string> Matches { get; set; } = new();
 

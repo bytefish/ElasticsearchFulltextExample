@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 using ElasticsearchFulltextExample.Web.Client.Components;
 using ElasticsearchFulltextExample.Web.Client.Models;
 using ElasticsearchFulltextExample.Shared.Client;
-using ElasticsearchFulltextExample.Web.Contracts;
+using ElasticsearchFulltextExample.Shared.Models;
 
 namespace ElasticsearchFulltextExample.Web.Client.Pages
 {

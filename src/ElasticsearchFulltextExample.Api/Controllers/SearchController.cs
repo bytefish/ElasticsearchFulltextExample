@@ -7,7 +7,6 @@ using ElasticsearchFulltextExample.Api.Models;
 using ElasticsearchFulltextExample.Api.Services;
 using ElasticsearchFulltextExample.Shared.Infrastructure;
 using ElasticsearchFulltextExample.Shared.Models;
-using ElasticsearchFulltextExample.Web.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -217,6 +216,7 @@ namespace ElasticsearchFulltextExample.Api.Controllers
             {
                 Identifier = source.Identifier,
                 Title = source.Title,
+                Filename = source.Filename,
                 Keywords = source.Keywords,
                 Matches = source.Matches,
                 Url = source.Url
@@ -247,7 +247,7 @@ namespace ElasticsearchFulltextExample.Api.Controllers
                     .ConfigureAwait(false);
 
                 var searchSuggestionsDto = Convert(searchSuggestions);
-
+                
                 return Ok(searchSuggestions);
             }
             catch (Exception exception)

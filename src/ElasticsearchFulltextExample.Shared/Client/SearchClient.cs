@@ -2,7 +2,6 @@
 
 using ElasticsearchFulltextExample.Shared.Infrastructure;
 using ElasticsearchFulltextExample.Shared.Models;
-using ElasticsearchFulltextExample.Web.Contracts;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Net.Http.Json;

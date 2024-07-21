@@ -26,7 +26,5 @@ namespace ElasticsearchFulltextExample.Shared.Constants
         /// Data.
         /// </summary>
         public const string Data = "data";
-
-
     }
 }

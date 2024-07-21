@@ -422,6 +422,7 @@ namespace ElasticsearchFulltextExample.Api.Services
                 {
                     Identifier = hit.Source.Id,
                     Title = hit.Source.Title,
+                    Filename = hit.Source.Filename,
                     Keywords = hit.Source.Keywords.ToList(),
                     Matches = GetMatches(hit.Highlight),
                     Url = $"{_options.BaseUri}/documents/{hit.Source.Id}"

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ElasticsearchFulltextExample.Web.Contracts
+namespace ElasticsearchFulltextExample.Shared.Models
 {
     public class SearchSuggestionDto
     {
