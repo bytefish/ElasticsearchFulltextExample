@@ -101,32 +101,17 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
                     .Codec("best_compression")
                     .Analysis(analysis => analysis
                          .Tokenizers(tokenizers => tokenizers
-                            .PathHierarchy("custom_hierarchy", tokenizer => tokenizer
-                                .Delimiter("/"))
-                            .PathHierarchy("custom_hierarchy_reversed", tokenizer => tokenizer
-                                .Reverse(true).Delimiter("/"))
-                        )
+                            .EdgeNGram("fts_tokenizer", ngram => ngram
+                                .MinGram(2)
+                                .MaxGram(10)
+                                .TokenChars([TokenChar.Letter, TokenChar.Digit])))
                         .TokenFilters(filters => filters
                             .WordDelimiterGraph("word_delimiter_graph_filter", filter => filter
-                                .PreserveOriginal(true)
-                            )
-                        )
+                                .PreserveOriginal(true)))
                         .Analyzers(analyzers => analyzers
                             .Custom("fts_analyzer", custom => custom
-                                .Tokenizer("whitespace").Filter(new[]
-                                {
-                                    "word_delimiter_graph_filter",
-                                    "flatten_graph",
-                                    "lowercase",
-                                    "asciifolding",
-                                    "remove_duplicates"
-                                })
-                            )
-                            .Custom("custom_path_tree", custom => custom
-                                .Tokenizer("custom_hierarchy")
-                            )
-                            .Custom("custom_path_tree_reversed", custom => custom
-                                .Tokenizer("custom_hierarchy_reversed")))))
+                                .Tokenizer("fts_tokenizer")
+                                .Filter([ "lowercase", "asciifolding"])))))
                 .Mappings(mapping => mapping
                     .Properties<ElasticsearchDocument>(properties => properties
                         .Text(ElasticConstants.DocumentNames.Id)
