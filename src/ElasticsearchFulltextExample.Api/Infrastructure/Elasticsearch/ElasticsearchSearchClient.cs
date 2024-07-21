@@ -101,13 +101,7 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
                     .Codec("best_compression")
                     .Analysis(analysis => analysis
                          .Tokenizers(tokenizers => tokenizers
-                            .EdgeNGram("fts_tokenizer", ngram => ngram
-                                .MinGram(2)
-                                .MaxGram(10)
-                                .TokenChars([TokenChar.Letter, TokenChar.Digit])))
-                        .TokenFilters(filters => filters
-                            .WordDelimiterGraph("word_delimiter_graph_filter", filter => filter
-                                .PreserveOriginal(true)))
+                            .Standard("fts_tokenizer"))
                         .Analyzers(analyzers => analyzers
                             .Custom("fts_analyzer", custom => custom
                                 .Tokenizer("fts_tokenizer")
@@ -186,6 +180,7 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
                     {
                         ElasticConstants.DocumentNames.Title,
                         ElasticConstants.DocumentNames.Filename,
+                        $"{ElasticConstants.DocumentNames.Attachment}.{ElasticConstants.AttachmentNames.Author}",
                         $"{ElasticConstants.DocumentNames.Attachment}.{ElasticConstants.AttachmentNames.Content}"
                     }))), cancellationToken)
                 .ConfigureAwait(false);

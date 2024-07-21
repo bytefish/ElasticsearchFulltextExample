@@ -21,10 +21,7 @@
         display: grid;
         grid-area: code-box-content;
         grid-template-columns: 1fr;
-        overflow: auto;
-        white-space: nowrap;
         color: var(--neutral-foreground-rest);
-        font-family: "JetBrains Mono","Menlo","DejaVu Sans Mono","Liberation Mono","Consolas","Ubuntu Mono","Courier New","andale mono","lucida console",monospace;
     }
 
         .code-box .code-box-content .highlighted-line {
