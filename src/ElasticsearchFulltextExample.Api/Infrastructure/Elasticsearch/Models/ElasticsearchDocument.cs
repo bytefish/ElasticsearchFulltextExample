@@ -30,7 +30,7 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Models
         /// The Data of the Document.
         /// </summary>
         [JsonPropertyName(ElasticConstants.DocumentNames.Data)]
-        public required byte[] Data { get; set; }
+        public byte[]? Data { get; set; }
 
         /// <summary>
         /// Keywords to filter for.

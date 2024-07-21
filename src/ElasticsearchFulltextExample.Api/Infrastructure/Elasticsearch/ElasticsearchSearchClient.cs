@@ -133,21 +133,21 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
             return createIndexResponse;
         }
 
-        public Task<SearchResponse<ElasticsearchDocument>> SearchAsync(string query, int from, int size, CancellationToken cancellationToken)
+        public async Task<SearchResponse<ElasticsearchDocument>> SearchAsync(string query, int from, int size, CancellationToken cancellationToken)
         {
-            return _client.SearchAsync<ElasticsearchDocument>(document => document
+            var results = await _client.SearchAsync<ElasticsearchDocument>(document => document
                 // Query this Index:
                 .Index(_indexName)
                 // Paginate
                 .From(from).Size(size)
                 // Setup the Highlighters:
                 .Highlight(highlight => highlight
+                    .NumberOfFragments(5)
                     .Fields(fields => fields
                         .Add(new Field($"{ElasticConstants.DocumentNames.Attachment}.{ElasticConstants.AttachmentNames.Content}"), hf => hf
                             .Fragmenter(HighlighterFragmenter.Span)
                             .PreTags([ ElasticsearchConstants.HighlightStartTag ])
                             .PostTags([ ElasticsearchConstants.HighlightEndTag ])
-                            .NumberOfFragments(0)
                         )
                     )
                 )
@@ -160,7 +160,10 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
                         ElasticConstants.DocumentNames.Title,
                         ElasticConstants.DocumentNames.Filename,
                         $"{ElasticConstants.DocumentNames.Attachment}.{ElasticConstants.AttachmentNames.Content}"
-                    }))), cancellationToken);
+                    }))), cancellationToken)
+                .ConfigureAwait(false);
+
+            return results;
         }
 
         public Task<SearchResponse<ElasticsearchDocument>> SuggestAsync(string query, CancellationToken cancellationToken)
