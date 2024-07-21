@@ -53,6 +53,7 @@
     max-width: 1000px;
     margin: 0 auto;
     grid-row-gap: 20px;
+    width: 100%;
 }
 
 .search-paginator {
