@@ -11,7 +11,7 @@
 <PageTitle>Index Git Repository</PageTitle>
 
 
-<EditForm Model="@CurrentUpload" OnValidSubmit="@(async () => await HandleValidSubmitAsync())" FormName="upload_form" novalidate>
+<EditForm Model="@CurrentUpload" OnValidSubmit="@(async () => await HandleValidSubmitAsync())" novalidate>
     <SimpleValidator TModel=UploadModel ValidationFunc="ValidateCurrentUpload" />
     <div class="upload-form">
         <!-- Row 1 -->
@@ -19,7 +19,7 @@
             <label class="document-title">Title:</label>
         </div>
         <div class="upload-input w-100">
-            <FluentTextField Style="width: 400px;" Name="document-title" @bind-Value="CurrentUpload.Title" Required />
+            <FluentTextField AutoComplete="one-time-code" Style="width: 400px;" @bind-Value="CurrentUpload.Title" Required />
         </div>
         <div class="upload-validation">
             <FluentValidationMessage Class="w-100" For="@(() => CurrentUpload.Title)" />
@@ -30,7 +30,7 @@
         </div>
         <div class="upload-input w-100">
             <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="4">
-                <FluentTextField Style="width: 400px;" Class="form-input" @bind-Value="CurrentUpload.Suggestion" @oninput="@(e => CurrentUpload.Suggestion = e.Value as string)" @onkeydown="OnSuggestionEnter"></FluentTextField>
+                <FluentTextField AutoComplete="one-time-code" Style="width: 400px;" Class="form-input" @bind-Value="CurrentUpload.Suggestion" @oninput="@(e => CurrentUpload.Suggestion = e.Value as string)" @onkeydown="OnSuggestionEnter"></FluentTextField>
                 <FluentButton Type="ButtonType.Button" OnClick="OnAddSuggestion">Add Suggestion</FluentButton>
             </FluentStack>
         </div>
@@ -56,13 +56,16 @@
                 }
             }
         </div>
+        <div class="upload-validation">
+            <FluentValidationMessage Class="w-100" For="@(() => CurrentUpload.Suggestions)" />
+        </div>
         <!-- Row 4 -->
         <div class="upload-label">
             <label for="document-keyword">Keyword:</label>
         </div>
         <div class="upload-input">
             <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="4">
-                <FluentTextField Style="width: 400px;" @bind-Value="CurrentUpload.Keyword" @oninput="@(e => CurrentUpload.Keyword = e.Value as string)" @onkeydown="OnKeywordEnter"></FluentTextField>
+                <FluentTextField AutoComplete="one-time-code" Style="width: 400px;" @bind-Value="CurrentUpload.Keyword" @oninput="@(e => CurrentUpload.Keyword = e.Value as string)" @onkeydown="OnKeywordEnter"></FluentTextField>
                 <FluentButton Type="ButtonType.Button" Class="w-100" OnClick="OnAddKeyword">Add Keyword</FluentButton>
             </FluentStack>
         </div>
@@ -87,6 +90,9 @@
                     <FluentBadge Style="margin-right: 5px;" Appearance="Appearance.Neutral" OnDismissClick="@((e) => RemoveKeyword(keyword))">@keyword</FluentBadge>
                 }
             }
+        </div>
+        <div class="upload-validation">
+            <FluentValidationMessage Class="w-100" For="@(() => CurrentUpload.Keywords)" />
         </div>
         <!-- Row 6 -->
         <div class="upload-label">
@@ -117,14 +123,15 @@
                 }
             </FluentStack>
         </div>
+        <div class="upload-validation">
+            <FluentValidationMessage Class="w-100" For="@(() => CurrentUpload.Filename)" />
+        </div>
+
         <div class="upload-buttons">
             <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center">
                 <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Upload Document</FluentButton>
                 <FluentButton Appearance="Appearance.Accent" OnClick="@(async () => await HandleDiscardAsync())">Discard Changes</FluentButton>
             </FluentStack>
-        </div>
-        <div>
-            <FluentValidationSummary />
         </div>
     </div>
 </EditForm>

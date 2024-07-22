@@ -3,17 +3,23 @@
 @using ElasticsearchFulltextExample.Shared.Models
 @using System.Text
 
-<div class="code-box">
-    <div class="code-box-title">
-        <a href="@Item.Url">@Item.Filename</a>: @Item.Title
+<div class="search-result">
+    <div class="document-file-icon">
+        <img src="@ImageUrl" class="icon-size" />
     </div>
-    <div class="code-box-content">
+    <div class="document-title">
+        <strong><a href="@Item.Url">@Item.Title</a></strong>
+    </div>
+    <div class="document-highlight">
+        <p>Matches:</p>
         @foreach (var htmlMatch in HtmlMatches)
         {
             <p>@htmlMatch</p>
         }
     </div>
+    <div class="document-filename"><span class="filename">Filename: @Item.Filename</span></div>
 </div>
+
 
 @code {
 
@@ -26,22 +32,64 @@
     /// <summary>
     /// The Prepared Matches.
     /// </summary>
+    public string? ImageUrl { get; set; }
+
+    /// <summary>
+    /// The Prepared Matches.
+    /// </summary>
     public List<MarkupString> HtmlMatches { get; set; } = new();
+
+    /// <summary>
+    /// Fixed List of Icons for a File Extension. Maybe make this configurable.
+    /// </summary>
+    private static readonly IDictionary<string, string> extensionToImageUrl = new Dictionary<string, string>
+    {
+        {".jpg", "/img/extension-jpeg.png"},
+        {".jpeg", "/img/extension-jpeg.png"},
+        {".doc", "/img/extension-doc.png"},
+        {".docx", "/img/extension-doc.png"},
+        {".pdf", "/img/extension-pdf.png"},
+        {".txt", "/img/extension-txt.png"},
+        {".md", "/img/extension-txt.png"},
+        {".markdown", "/img/extension-txt.png"},
+        {".html", "/img/extension-html.png"},
+        {".htm", "/img/extension-htm.png"},
+    };
 
     protected override void OnParametersSet()
     {
-        HtmlMatches = new();
+        HtmlMatches = GetHtmlMatches(Item);
+        ImageUrl = GetImageUrl(Item);
+    }
 
-        foreach(var match in Item.Matches)
+    private static List<MarkupString> GetHtmlMatches(SearchResultDto searchResult)
+    {
+        List<MarkupString> htmlMatches = new();
+
+        foreach (var match in searchResult.Matches)
         {
             var htmlString = new StringBuilder(match)
-                .Replace(ElasticConstants.Highlighter.HighlightStartTag, "<strong>")
-                .Replace(ElasticConstants.Highlighter.HighlightEndTag, "</strong>")
+                .Replace(ElasticConstants.Highlighter.HighlightStartTag, "<mark>")
+                .Replace(ElasticConstants.Highlighter.HighlightEndTag, "</mark>")
                 .ToString();
 
             var markupString = new MarkupString(htmlString);
 
-            HtmlMatches.Add(markupString);
-       }
+            htmlMatches.Add(markupString);
+        }
+
+        return htmlMatches;
+    }
+
+    private static string GetImageUrl(SearchResultDto searchResult)
+    {
+        var extension = Path.GetExtension(searchResult.Filename);
+
+        if (!extensionToImageUrl.TryGetValue(extension, out var imageUrl))
+        {
+            return extensionToImageUrl[".txt"];
+        }
+
+        return imageUrl;
     }
 }

@@ -266,6 +266,33 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
                     ErrorMessage = Loc.GetString("Validation_IsRequired", nameof(upload.Title))
                 };
             }
+
+            if (upload.Keywords.Count == 0)
+            {
+                yield return new ValidationError
+                {
+                    PropertyName = nameof(upload.Keywords),
+                    ErrorMessage = Loc.GetString("Validation_IsRequired", nameof(upload.Keywords))
+                };
+            }
+
+            if (upload.Suggestions.Count == 0)
+            {
+                yield return new ValidationError
+                {
+                    PropertyName = nameof(upload.Suggestions),
+                    ErrorMessage = Loc.GetString("Validation_IsRequired", nameof(upload.Suggestions))
+                };
+            }
+
+            if (string.IsNullOrWhiteSpace(upload.Filename))
+            {
+                yield return new ValidationError
+                {
+                    PropertyName = nameof(upload.Filename),
+                    ErrorMessage = Loc.GetString("Validation_IsRequired", nameof(upload.Filename))
+                };
+            }
         }
     }
 }

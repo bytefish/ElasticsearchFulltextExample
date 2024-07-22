@@ -11,7 +11,6 @@
 
 <div class="search-container">
     <div class="search-header">
-
         <div class="search-box">
             <FluentSearch @bind-Value="_queryString" @onkeyup="@EnterSubmit" Class="w-100" />
             <FluentButton @onclick=@QueryAsync>Search</FluentButton>
@@ -21,10 +20,13 @@
         <span>@_totalItemCount Results (@_tookInSeconds seconds)</span>
     </div>
     <div class="search-results">
-        @foreach (var searchResult in _searchResults)
-        {
-            <SearchResult Item="@searchResult"></SearchResult>
-        }
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="10">
+            @foreach (var searchResult in _searchResults)
+            {
+                <SearchResult Item="@searchResult"></SearchResult>
+            }
+        </FluentStack>
+        
     </div>
     <div class="search-paginator">
         <Paginator State="@_pagination"></Paginator>

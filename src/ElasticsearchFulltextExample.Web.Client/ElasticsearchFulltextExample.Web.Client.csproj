@@ -43,5 +43,9 @@
         </EmbeddedResource>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\images\240\" />
+    </ItemGroup>
+
 
 </Project>
