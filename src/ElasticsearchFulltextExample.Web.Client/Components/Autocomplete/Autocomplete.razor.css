@@ -34,7 +34,13 @@
     font-weight: 400;
     text-align: inherit;
 }
+    /*Hover via mouse pointer*/
+    .autocomplete-item:hover {
+        background-color: #3ba5fc;
+        color: white;
+    }
 
+/*Hover via code (on arrow up/down)*/
 .autocomplete-item-hover {
     background-color: #3ba5fc;
     color: white;

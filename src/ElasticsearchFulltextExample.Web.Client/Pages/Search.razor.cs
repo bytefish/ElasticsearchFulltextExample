@@ -15,8 +15,7 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
         /// <summary>
         /// The current Query String to send to the Server (Elasticsearch QueryString format).
         /// </summary>
-        [Parameter]
-        public string? QueryString { get; set; }
+        public string? Query { get; set; }
 
         /// <summary>
         /// The Selected Sort Option:
@@ -65,11 +64,6 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
         private List<SearchResultDto> _searchResults { get; set; } = new();
 
         /// <summary>
-        /// The current Query String to send to the Server (Elasticsearch QueryString format).
-        /// </summary>
-        private string _queryString { get; set; } = string.Empty;
-
-        /// <summary>
         /// Total Item Count.
         /// </summary>
         private int _totalItemCount { get; set; } = 0;
@@ -87,9 +81,6 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
         /// <inheritdoc />
         protected override Task OnParametersSetAsync()
         {
-            // Set bound values, so we don't modify the parameters directly
-            _queryString = QueryString ?? string.Empty;
-
             _pagination.ItemsPerPage = PageSize ?? 10;
 
             // The associated pagination state may have been added/removed/replaced
@@ -121,7 +112,7 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
         public async Task QueryAsync()
         {
             // Do not execute empty queries ...
-            if (string.IsNullOrWhiteSpace(_queryString))
+            if (string.IsNullOrWhiteSpace(Query))
             {
                 return;
             }
@@ -139,7 +130,7 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
                 var size = _pagination.ItemsPerPage;
 
                 // Query the API
-                var results = await SearchClient.SearchAsync(_queryString, from, size, loadingCts.Token);
+                var results = await SearchClient.SearchAsync(Query, from, size, loadingCts.Token);
 
                 if (results == null)
                 {
@@ -164,7 +155,7 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
 
         private async Task HandleSearchAsync(string query)
         {
-            _queryString = query;
+            Query = query;
 
             await QueryAsync();
         }

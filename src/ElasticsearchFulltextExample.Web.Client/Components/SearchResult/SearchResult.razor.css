@@ -15,7 +15,7 @@
     }
 
     .search-result .document-file-icon img {
-        width: 75px;
+        width: 50px;
     }
 
     .search-result .document-title {
@@ -27,7 +27,13 @@
         grid-column: 2;
         grid-row: 2;
     }
-
+    
+    .search-result .document-highlight ul {
+        grid-column: 2;
+        grid-row: 2;
+        margin: 0;
+    }
+    
     .search-result .document-filename {
         grid-column: 2;
         grid-row: 3;
