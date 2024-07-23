@@ -98,6 +98,22 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
             return Task.CompletedTask;
         }
 
+        private async Task OnOptionsSearch(AutocompleteSearchEventArgs args)
+        {
+            var searchSuggestions = await SearchClient.SuggestAsync(args.Text, default);
+
+            List<string> autocompletes = [];
+
+            if (searchSuggestions != null)
+            {
+                autocompletes = searchSuggestions.Results
+                .Select(x => x.Text)
+                .ToList();
+            }
+
+            args.Items = autocompletes;
+        }
+
         /// <summary>
         /// Queries the Backend and cancels all pending requests.
         /// </summary>
@@ -146,12 +162,11 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
             StateHasChanged();
         }
 
-        private async Task EnterSubmit(KeyboardEventArgs e)
+        private async Task HandleSearchAsync(string query)
         {
-            if (e.Key == "Enter")
-            {
-                await QueryAsync();
-            }
+            _queryString = query;
+
+            await QueryAsync();
         }
 
         private static SortOptionEnum GetSortOption(string? sortOptionString, SortOptionEnum defaultValue)

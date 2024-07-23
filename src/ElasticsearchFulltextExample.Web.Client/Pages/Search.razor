@@ -9,10 +9,11 @@
 
 <PageTitle>Elasticsearch Code Search Experiments</PageTitle>
 
+
 <div class="search-container">
     <div class="search-header">
         <div class="search-box">
-            <FluentSearch @bind-Value="_queryString" @onkeyup="@EnterSubmit" Class="w-100" />
+            <Autocomplete Source="AutocompleteItems" OnOptionsSearch="OnOptionsSearch" OnSearch="HandleSearchAsync"></Autocomplete>
             <FluentButton @onclick=@QueryAsync>Search</FluentButton>
         </div>
     </div>

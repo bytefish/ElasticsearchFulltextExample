@@ -196,7 +196,7 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
                 // Suggest Titles:
                 .Suggest(suggest => suggest.Suggesters(suggesters => suggesters
                     .Add("suggest", s => s
-                        .Text(query)
+                        .Prefix(query)
                         .Completion(c => c
                             .SkipDuplicates(true)
                             .Field(new Field(ElasticConstants.DocumentNames.Suggestions)))))), cancellationToken);
