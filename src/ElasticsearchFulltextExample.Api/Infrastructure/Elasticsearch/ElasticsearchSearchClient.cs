@@ -180,6 +180,7 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
                     {
                         ElasticConstants.DocumentNames.Title,
                         ElasticConstants.DocumentNames.Filename,
+                        ElasticConstants.DocumentNames.Keywords,
                         $"{ElasticConstants.DocumentNames.Attachment}.{ElasticConstants.AttachmentNames.Author}",
                         $"{ElasticConstants.DocumentNames.Attachment}.{ElasticConstants.AttachmentNames.Content}"
                     }))), cancellationToken)

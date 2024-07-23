@@ -5,6 +5,7 @@ using ElasticsearchFulltextExample.Shared.Constants;
 using Microsoft.Extensions.Localization;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace ElasticsearchFulltextExample.Web.Client.Pages
 {
@@ -55,11 +56,9 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
         }
 
         /// <summary>
-        /// We need to prevent the form from submitting, when Enter is 
-        /// pressed for Keywords and Suggestions. We simply toggle this 
-        /// value.
+        /// The Reference to the EditForm.
         /// </summary>
-        bool canSubmitForm = false;
+        EditForm? Form { get; set; }
 
         /// <summary>
         /// The Reference to the File Uploader Element.
@@ -98,6 +97,8 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
             CurrentUpload.Filename = file.Name;
             CurrentUpload.File = file.Stream;
 
+            Form?.EditContext?.Validate();
+
             return Task.CompletedTask;
         }
 
@@ -108,8 +109,6 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
         {
             if(e.Code == "Enter" || e.Code == "NumpadEnter")
             {
-                canSubmitForm = false;
-
                 OnAddKeyword();
             }
         }
@@ -132,6 +131,8 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
             }
             
             CurrentUpload.Keywords.Add(keyword);
+
+            Form?.EditContext?.Validate();
         }
 
         /// <summary>
@@ -141,6 +142,8 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
         public void RemoveKeyword(string keyword)
         {
             CurrentUpload.Keywords.Remove(keyword);
+
+            Form?.EditContext?.Validate();
         }
 
         /// <summary>
@@ -151,8 +154,6 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
         {
             if (e.Code == "Enter" || e.Code == "NumpadEnter")
             {
-                canSubmitForm = false;
-
                 OnAddSuggestion();
             }
         }
@@ -175,6 +176,8 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
             }
 
             CurrentUpload.Suggestions.Add(suggestion);
+
+            Form?.EditContext?.Validate();
         }
 
 
@@ -185,6 +188,8 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
         public void RemoveSuggestion(string suggestion)
         {
             CurrentUpload.Suggestions.Remove(suggestion);
+
+            Form?.EditContext?.Validate();
         }
 
         /// <summary>
@@ -193,11 +198,10 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
         /// <returns>An awaitable <see cref="Task"/></returns>
         private async Task HandleValidSubmitAsync()
         {
-            // We came from an Enter, do not submit yet ...
-            if(!canSubmitForm)
-            {
-                canSubmitForm = true;
+            var validationErrors = ValidateCurrentUpload(CurrentUpload);
 
+            if(validationErrors.Any())
+            {
                 return;
             }
 

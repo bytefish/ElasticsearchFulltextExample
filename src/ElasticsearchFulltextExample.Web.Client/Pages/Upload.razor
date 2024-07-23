@@ -11,7 +11,7 @@
 <PageTitle>Index Git Repository</PageTitle>
 
 
-<EditForm Model="@CurrentUpload" OnValidSubmit="@(async () => await HandleValidSubmitAsync())" novalidate>
+<EditForm @ref=Form Model="@CurrentUpload" OnValidSubmit="@(async () => await HandleValidSubmitAsync())" novalidate>
     <SimpleValidator TModel=UploadModel ValidationFunc="ValidateCurrentUpload" />
     <div class="upload-form">
         <!-- Row 1 -->
@@ -129,7 +129,7 @@
 
         <div class="upload-buttons">
             <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center">
-                <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Upload Document</FluentButton>
+                <FluentButton Type="ButtonType.Button" Appearance="Appearance.Accent" OnClick="HandleValidSubmitAsync">Upload Document</FluentButton>
                 <FluentButton Appearance="Appearance.Accent" OnClick="@(async () => await HandleDiscardAsync())">Discard Changes</FluentButton>
             </FluentStack>
         </div>
