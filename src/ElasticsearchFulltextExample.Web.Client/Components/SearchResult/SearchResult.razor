@@ -1,4 +1,5 @@
 ﻿@namespace ElasticsearchFulltextExample.Web.Client.Components
+
 @using ElasticsearchFulltextExample.Shared.Constants
 @using ElasticsearchFulltextExample.Shared.Models
 @using System.Text
@@ -11,13 +12,15 @@
         <strong><a href="@Item.Url">@Item.Title</a></strong>
     </div>
     <div class="document-highlight">
-        <p>Matches:</p>
         @foreach (var htmlMatch in HtmlMatches)
         {
-            <p>@htmlMatch</p>
+            <ul>
+                <li>@htmlMatch</li>
+            </ul>
         }
     </div>
     <div class="document-filename"><span class="filename">Filename: @Item.Filename</span></div>
+
 </div>
 
 
@@ -66,7 +69,7 @@
     {
         List<MarkupString> htmlMatches = new();
 
-        foreach (var match in searchResult.Matches)
+        foreach (var match in searchResult.Matches.Take(1))
         {
             var htmlString = new StringBuilder(match)
                 .Replace(ElasticConstants.Highlighter.HighlightStartTag, "<mark>")

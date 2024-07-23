@@ -238,6 +238,8 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
             await SearchClient
                 .UploadAsync(multipartFormDataContent, default)
                 .ConfigureAwait(false);
+
+            CurrentUpload = new UploadModel();
         }
 
         /// <summary>

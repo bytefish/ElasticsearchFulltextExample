@@ -175,7 +175,10 @@
         }
     }
 
-    private void OnLostFocus() => InternalAutocompleteItems = [];
+    private void OnLostFocus() 
+    {
+        InternalAutocompleteItems = [];
+    }
 
     private void AutocompleteItemClick(string item)
     {
@@ -183,7 +186,10 @@
         InternalAutocompleteItems = [];
     }
 
-    private void AutocompleteMouseOver(string item) => InternalAutocompleteItems?.ForEach(d => d.IsSelected = false);
+    private void AutocompleteMouseOver(string item) 
+    {
+        InternalAutocompleteItems?.ForEach(d => d.IsSelected = false);
+    }
 
     private void SelectNextItem()
     {
