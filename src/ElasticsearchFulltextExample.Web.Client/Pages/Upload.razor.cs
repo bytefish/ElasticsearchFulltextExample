@@ -25,24 +25,9 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
             public string? Title { get; set; }
 
             /// <summary>
-            /// Current Keyword.
-            /// </summary>
-            public string? Keyword { get; set; }
-
-            /// <summary>
             /// Lists of Keywords, that have been added.
             /// </summary>
             public List<string> Keywords { get; set; } = new();
-
-            /// <summary>
-            /// Current Suggestion.
-            /// </summary>
-            public string? Suggestion { get; set; }
-
-            /// <summary>
-            /// List of Suggestions, that have been added.
-            /// </summary>
-            public List<string> Suggestions { get; set; } = new();
 
             /// <summary>
             /// Document Filename to be uploaded.
@@ -103,96 +88,6 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
         }
 
         /// <summary>
-        /// Handles the Keydown Event for the Keyword.
-        /// </summary>
-        public void OnKeywordEnter(KeyboardEventArgs e)
-        {
-            if(e.Code == "Enter" || e.Code == "NumpadEnter")
-            {
-                OnAddKeyword();
-            }
-        }
-
-        /// <summary>
-        /// Adds a Keyword to the current list of Keywords.
-        /// </summary>
-        public void OnAddKeyword()
-        {
-            var keyword = CurrentUpload.Keyword;
-
-            if(keyword == null)
-            {
-                return;
-            }
-
-            if (CurrentUpload.Keywords.Contains(keyword))
-            {
-                return;
-            }
-            
-            CurrentUpload.Keywords.Add(keyword);
-
-            Form?.EditContext?.Validate();
-        }
-
-        /// <summary>
-        /// Removes a Keyword.
-        /// </summary>
-        /// <param name="keyword">Keyword to remove</param>
-        public void RemoveKeyword(string keyword)
-        {
-            CurrentUpload.Keywords.Remove(keyword);
-
-            Form?.EditContext?.Validate();
-        }
-
-        /// <summary>
-        /// Handles the Keydown Event for the Suggestion.
-        /// </summary>
-        /// <param name="e"></param>
-        public void OnSuggestionEnter(KeyboardEventArgs e)
-        {
-            if (e.Code == "Enter" || e.Code == "NumpadEnter")
-            {
-                OnAddSuggestion();
-            }
-        }
-
-        /// <summary>
-        /// Adds a suggestion to the list of suggestions.
-        /// </summary>
-        public void OnAddSuggestion()
-        {
-            var suggestion = CurrentUpload.Suggestion;
-
-            if (suggestion == null)
-            {
-                return;
-            }
-
-            if (CurrentUpload.Suggestions.Contains(suggestion))
-            {
-                return;
-            }
-
-            CurrentUpload.Suggestions.Add(suggestion);
-
-            Form?.EditContext?.Validate();
-        }
-
-
-        /// <summary>
-        /// Removes a suggestion.
-        /// </summary>
-        /// <param name="suggestion">Suggestion to remove</param>
-        public void RemoveSuggestion(string suggestion)
-        {
-            CurrentUpload.Suggestions.Remove(suggestion);
-
-            Form?.EditContext?.Validate();
-        }
-
-        /// <summary>
         /// Submits the Form and reloads the updated data.
         /// </summary>
         /// <returns>An awaitable <see cref="Task"/></returns>
@@ -220,12 +115,12 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
                 multipartFormDataContent.Add(new StreamContent(CurrentUpload.File), FileUploadNames.Data, CurrentUpload.Filename);
             }
 
-            // Suggestions will be added as suggestion[0], suggestion[1], ... so the ASP.NET Core Binder turns them into a list
-            if (CurrentUpload.Suggestions.Any())
+            // Keywords will also be added as suggestion[0], suggestion[1], ... so the ASP.NET Core Binder turns them into a list
+            if (CurrentUpload.Keywords.Any())
             {
-                for (var suggestionIdx = 0; suggestionIdx < CurrentUpload.Suggestions.Count; suggestionIdx++)
+                for (var suggestionIdx = 0; suggestionIdx < CurrentUpload.Keywords.Count; suggestionIdx++)
                 {
-                    multipartFormDataContent.Add(new StringContent(CurrentUpload.Suggestions[suggestionIdx]), $"{FileUploadNames.Suggestions}[{suggestionIdx}]");
+                    multipartFormDataContent.Add(new StringContent(CurrentUpload.Keywords[suggestionIdx]), $"{FileUploadNames.Suggestions}[{suggestionIdx}]");
                 }
             }
 
@@ -279,15 +174,6 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
                 {
                     PropertyName = nameof(upload.Keywords),
                     ErrorMessage = Loc.GetString("Validation_IsRequired", nameof(upload.Keywords))
-                };
-            }
-
-            if (upload.Suggestions.Count == 0)
-            {
-                yield return new ValidationError
-                {
-                    PropertyName = nameof(upload.Suggestions),
-                    ErrorMessage = Loc.GetString("Validation_IsRequired", nameof(upload.Suggestions))
                 };
             }
 

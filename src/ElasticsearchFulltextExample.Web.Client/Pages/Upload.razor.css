@@ -26,19 +26,6 @@
         border-bottom: 1px solid black;
     }
 
-    .upload-form .upload-tags {
-        grid-column: 2 / 3;
-        align-content: center;
-        padding: 10px;
-        border-bottom: 1px solid black;
-    }
-
-    .upload-form .upload-file {
-        grid-column: 2 / 3;
-        padding: 10px;
-        border-bottom: 1px solid black;
-    }
-
     .upload-form .upload-buttons {
         grid-column: 1 / 4;
         padding: 10px;

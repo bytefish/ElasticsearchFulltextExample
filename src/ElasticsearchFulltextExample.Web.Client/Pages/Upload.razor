@@ -18,87 +18,27 @@
         <div class="upload-label">
             <label class="document-title">Title:</label>
         </div>
-        <div class="upload-input w-100">
+        <div class="upload-input">
             <FluentTextField AutoComplete="one-time-code" Style="width: 400px;" @bind-Value="CurrentUpload.Title" Required />
         </div>
         <div class="upload-validation">
             <FluentValidationMessage Class="w-100" For="@(() => CurrentUpload.Title)" />
         </div>
-        <!-- Row 2-->
-        <div class="upload-label">
-            <label for="document-suggestion">Suggestion:</label>
-        </div>
-        <div class="upload-input w-100">
-            <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="4">
-                <FluentTextField AutoComplete="one-time-code" Style="width: 400px;" Class="form-input" @bind-Value="CurrentUpload.Suggestion" @oninput="@(e => CurrentUpload.Suggestion = e.Value as string)" @onkeydown="OnSuggestionEnter"></FluentTextField>
-                <FluentButton Type="ButtonType.Button" OnClick="OnAddSuggestion">Add Suggestion</FluentButton>
-            </FluentStack>
-        </div>
-        <div class="upload-validation">
-            <!-- No Validation -->
-        </div>
-        <!-- Row 3 -->
-        <div class="upload-label">
-            <label for="document-suggestions">Suggestions:</label>
-        </div>
-        <div class="upload-tags w-100">
-            @if (CurrentUpload.Suggestions.Count == 0)
-            {
-                <span>Please add Document Suggestions</span>
-            }
-            else
-            {
-                @for (int i = 0; i < CurrentUpload.Suggestions.Count; i++)
-                {
-                    var suggestion = CurrentUpload.Suggestions[i];
-
-                    <FluentBadge Appearance="Appearance.Neutral" Style="margin-right: 5px;" OnDismissClick="@((e) => RemoveSuggestion(suggestion))">@suggestion</FluentBadge>
-                }
-            }
-        </div>
-        <div class="upload-validation">
-            <FluentValidationMessage Class="w-100" For="@(() => CurrentUpload.Suggestions)" />
-        </div>
-        <!-- Row 4 -->
-        <div class="upload-label">
-            <label for="document-keyword">Keyword:</label>
-        </div>
-        <div class="upload-input">
-            <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="4">
-                <FluentTextField AutoComplete="one-time-code" Style="width: 400px;" @bind-Value="CurrentUpload.Keyword" @oninput="@(e => CurrentUpload.Keyword = e.Value as string)" @onkeydown="OnKeywordEnter"></FluentTextField>
-                <FluentButton Type="ButtonType.Button" Class="w-100" OnClick="OnAddKeyword">Add Keyword</FluentButton>
-            </FluentStack>
-        </div>
-        <div class="upload-validation">
-            <!-- No Validation -->
-        </div>
-        <!-- Row 5 -->
+        <!-- Row 2 -->
         <div class="upload-label">
             <label for="document-keywords">Keywords:</label>
         </div>
-        <div class="upload-tags w-100">
-            @if (CurrentUpload.Keywords.Count == 0)
-            {
-                <span>Please add Document Keywords</span>
-            }
-            else
-            {
-                @for (int i = 0; i < CurrentUpload.Keywords.Count; i++)
-                {
-                    var keyword = CurrentUpload.Keywords[i];
-
-                    <FluentBadge Style="margin-right: 5px;" Appearance="Appearance.Neutral" OnDismissClick="@((e) => RemoveKeyword(keyword))">@keyword</FluentBadge>
-                }
-            }
+        <div class="upload-input">
+            <TokenInput Tokens="CurrentUpload.Keywords" TokensChanged="() => Form?.EditContext?.Validate()" />
         </div>
         <div class="upload-validation">
-            <FluentValidationMessage Class="w-100" For="@(() => CurrentUpload.Keywords)" />
+            <FluentValidationMessage For="@(() => CurrentUpload.Keywords)" />
         </div>
-        <!-- Row 6 -->
+        <!-- Row 3 -->
         <div class="upload-label">
             <label for="document-file">File:</label>
         </div>
-        <div class="upload-file">
+        <div class="upload-input">
             <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="4" VerticalAlignment="VerticalAlignment.Center">
                 <FluentInputFile @ref="@myFileUploader"
                                  DragDropZoneVisible="false"
@@ -124,7 +64,7 @@
             </FluentStack>
         </div>
         <div class="upload-validation">
-            <FluentValidationMessage Class="w-100" For="@(() => CurrentUpload.Filename)" />
+            <FluentValidationMessage For="@(() => CurrentUpload.Filename)" />
         </div>
 
         <div class="upload-buttons">
