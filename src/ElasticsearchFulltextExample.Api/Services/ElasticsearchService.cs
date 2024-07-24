@@ -14,7 +14,6 @@ using ElasticsearchFulltextExample.Shared.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Globalization;
-using System.Web;
 
 namespace ElasticsearchFulltextExample.Api.Services
 {
@@ -85,7 +84,7 @@ namespace ElasticsearchFulltextExample.Api.Services
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == documentId, cancellationToken);
 
-            if(document == null)
+            if (document == null)
             {
                 throw new EntityNotFoundException
                 {
@@ -119,7 +118,14 @@ namespace ElasticsearchFulltextExample.Api.Services
                 Attachment = null // Will be set after indexing ...
             };
 
-             await _elasticsearchSearchClient.IndexAsync(elasticsearchDocument, cancellationToken);
+            // Send to Elasticsearch for indexing
+            await _elasticsearchSearchClient.IndexAsync(elasticsearchDocument, cancellationToken);
+
+            // Update the IndexedAt Timestamp
+            await context.Documents
+                .Where(x => x.Id == documentId)
+                .ExecuteUpdateAsync(s => s.SetProperty(p => p.IndexedAt, DateTime.UtcNow), cancellationToken)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -135,13 +141,13 @@ namespace ElasticsearchFulltextExample.Api.Services
 
             // Join Documents, DocumentSuggestions and Suggestions
             var suggestionQueryable = from document in context.Documents
-                              join documentSuggestion in context.DocumentSuggestions
-                                  on document.Id equals documentSuggestion.DocumentId
-                              join suggestion in context.Suggestions
-                                  on documentSuggestion.SuggestionId equals suggestion.Id
-                              where
-                                document.Id == documentId
-                              select suggestion;
+                                      join documentSuggestion in context.DocumentSuggestions
+                                          on document.Id equals documentSuggestion.DocumentId
+                                      join suggestion in context.Suggestions
+                                          on documentSuggestion.SuggestionId equals suggestion.Id
+                                      where
+                                        document.Id == documentId
+                                      select suggestion;
 
             List<Suggestion> suggestions = await suggestionQueryable.AsNoTracking()
                 .ToListAsync(cancellationToken)
@@ -271,7 +277,7 @@ namespace ElasticsearchFulltextExample.Api.Services
             return await _elasticsearchSearchClient
                 .DeleteAsync(documentId.ToString(CultureInfo.InvariantCulture), cancellationToken);
         }
-        
+
         /// <summary>
         /// Updates a Document by its Document ID.
         /// </summary>
@@ -355,9 +361,9 @@ namespace ElasticsearchFulltextExample.Api.Services
                 var completionSuggest = suggestion as CompletionSuggest<ElasticsearchDocument>;
 
                 // This is not a Completion Suggest...
-                if(completionSuggest == null)
+                if (completionSuggest == null)
                 {
-                    if(_logger.IsInformationEnabled())
+                    if (_logger.IsInformationEnabled())
                     {
                         _logger.LogInformation("Suggestion {Suggestion} is no Completion Suggestion. Ignored.", suggest);
                     }
@@ -410,7 +416,7 @@ namespace ElasticsearchFulltextExample.Api.Services
 
             var hits = searchResponse.Hits;
 
-            if(hits.Count == 0)
+            if (hits.Count == 0)
             {
                 return new SearchResults
                 {
@@ -425,11 +431,11 @@ namespace ElasticsearchFulltextExample.Api.Services
 
             List<SearchResult> searchResults = [];
 
-            foreach(var hit in hits)
+            foreach (var hit in hits)
             {
-                if(hit.Source == null)
+                if (hit.Source == null)
                 {
-                    if(_logger.IsWarningEnabled()) 
+                    if (_logger.IsWarningEnabled())
                     {
                         _logger.LogWarning("Got a hit, but it has no source (Query = '{Query}', Hit = '{Hit}')", query, hit);
                     }
@@ -460,7 +466,7 @@ namespace ElasticsearchFulltextExample.Api.Services
                 Results = searchResults
             };
         }
-        
+
         private List<string> GetMatches(IReadOnlyDictionary<string, IReadOnlyCollection<string>>? highlight)
         {
             _logger.TraceMethodEntry();

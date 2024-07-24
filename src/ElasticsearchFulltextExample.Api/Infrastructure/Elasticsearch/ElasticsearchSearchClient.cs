@@ -12,7 +12,6 @@ using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Models;
 using Elastic.Clients.Elasticsearch.Ingest;
 using ElasticsearchFulltextExample.Shared.Infrastructure;
 using ElasticsearchFulltextExample.Shared.Constants;
-using Elastic.Clients.Elasticsearch.Analysis;
 using Elastic.Clients.Elasticsearch.Mapping;
 
 namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
@@ -389,7 +388,7 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch
             _logger.TraceMethodEntry();
 
             var indexResponse = await _client
-                .IndexAsync<ElasticsearchDocument>(document: document, idx => idx
+                .IndexAsync(document: document, idx => idx
                     .Index(_indexName)
                     .Pipeline(ElasticConstants.Pipelines.Attachments)
                     .OpType(OpType.Index), cancellationToken)
