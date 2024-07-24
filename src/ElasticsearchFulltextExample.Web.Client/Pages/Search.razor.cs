@@ -160,6 +160,14 @@ namespace ElasticsearchFulltextExample.Web.Client.Pages
             await QueryAsync();
         }
 
+        private async Task HandleKeywordClickedAsync(string keyword)
+        {
+            Query = keyword;
+
+            await QueryAsync();
+        }
+
+
         private static SortOptionEnum GetSortOption(string? sortOptionString, SortOptionEnum defaultValue)
         {
             if (string.IsNullOrWhiteSpace(sortOptionString))

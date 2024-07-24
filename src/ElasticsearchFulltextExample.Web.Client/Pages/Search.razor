@@ -23,7 +23,7 @@
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="10">
             @foreach (var searchResult in _searchResults)
             {
-                <SearchResult Item="@searchResult"></SearchResult>
+                <SearchResult Item="@searchResult" KeywordClicked="HandleKeywordClickedAsync"></SearchResult>
             }
         </FluentStack>
         
