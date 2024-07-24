@@ -42,3 +42,9 @@
     .search-result .document-filename .filename {
         color: seagreen;
     }
+
+    .search-result .document-keywords {
+        grid-column: 2;
+        grid-row: 4;
+        justify-content: end;
+    }

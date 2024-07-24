@@ -20,6 +20,14 @@
         }
     </div>
     <div class="document-filename"><span class="filename">Filename: @Item.Filename</span></div>
+    <div class="document-keywords">
+        <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Start">
+            @foreach (var keyword in Item.Keywords)
+            {
+                <FluentBadge Style="margin-right: 5px;" Appearance="Appearance.Neutral" OnClick="@(e => OnKeywordClicked(keyword))">@keyword</FluentBadge>
+            }
+        </FluentStack>
+    </div>
 
 </div>
 
@@ -31,6 +39,12 @@
     /// </summary>
     [Parameter]
     public required SearchResultDto Item { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback that is invoked when the text field value changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<string> KeywordClicked { get; set; }
 
     /// <summary>
     /// The Prepared Matches.
@@ -63,6 +77,11 @@
     {
         HtmlMatches = GetHtmlMatches(Item);
         ImageUrl = GetImageUrl(Item);
+    }
+
+    private async Task OnKeywordClicked(string keyword)
+    {
+        await KeywordClicked.InvokeAsync(keyword);
     }
 
     private static List<MarkupString> GetHtmlMatches(SearchResultDto searchResult)
