@@ -1,51 +1,26 @@
 # Elasticsearch Fulltext Search Example #
 
-Every project grows to a point it needs to support a Fulltext Search. In this repository I will explore how to use Elasticsearch to index files, provide a Fulltext Search on file contents and provide useful auto-completes. Please regard this repository as a work in progress and it is not finished work in any way.
+This repository implements a Fulltext Search Engine using ASP.NET Core, PostgreSQL and Elasticsearch. You can 
+use it to index documents, such as PDF, Microsoft Word, Markdown or HTML. It comes with a Blazor Frontend built 
+upon the FluentUI Component library.
 
-The Article for this repository can be found at:
+## What's included ##
 
-* [https://bytefish.de/blog/elasticsearch_fulltext_search/](https://bytefish.de/blog/elasticsearch_fulltext_search/)
 
-## What we are going to build ##
-
-### Auto-Complete Search Box ###
-
-<a href="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Frontend_Auto_Completion.png">
-    <img src="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Frontend_Auto_Completion.png" alt="Search Box with Auto Complete" width="50%" />
+<a href="https://raw.githubusercontent.com/bytefish/ElasticsearchCodeSearch/main/doc/img/ElasticsearchCodeSearch_SearchCode.jpg">
+    <img src="https://raw.githubusercontent.com/bytefish/ElasticsearchCodeSearch/main/doc/img/ElasticsearchCodeSearch_SearchCode.jpg" alt="The final Code Search with the Blazor Frontend" width="100%" />
 </a>
 
-### Full-Text Search Results ###
 
-<a href="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Frontend_Search_Results.png">
-    <img src="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Frontend_Search_Results.png" alt="Search Box with Auto Complete" width="50%" />
-</a>
+## Getting Started ##
 
-### Document Indexing ###
-
-<a href="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Frontend_AddDocument.png">
-    <img src="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Frontend_AddDocument.png" alt="Document Indexing Dialog" width="50%" />
-</a>
-
-### Document Status Tracking ###
-
-<a href="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Frontend_DocumentStatus.png">
-    <img src="https://raw.githubusercontent.com/bytefish/ElasticsearchFulltextExample/master/Screenshots/Frontend_DocumentStatus.png" alt="Document Indexing Dialog" width="50%" />
-</a>
-
-### Create Migrations ###
-
-Install the package ``Microsoft.EntityFrameworkCore.Tools``:
+Getting started is as simple as cloning this repository and running the following command:
 
 ```
-PM> Install-Package Microsoft.EntityFrameworkCore.Tools
+docker compose --profile dev up
 ```
 
-Then you can add migrations for your database like this:
-
-```
-PM> add-migration InitialCreate -Context ApplicationDbContext -OutputDir "Database/Migrations" 
-```
-
+You can then navigate to `https://localhost:5001` and start searching and indexing documents.
 
 ## License ##
 

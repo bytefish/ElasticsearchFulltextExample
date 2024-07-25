@@ -218,20 +218,24 @@ CREATE TABLE IF NOT EXISTS fts.document_history (
     LIKE fts.document
 );
 
-CREATE TABLE IF NOT EXISTS fts.document_keyword_history (
-    LIKE fts.document_keyword 
-);
-
-CREATE TABLE IF NOT EXISTS fts.user_history (
-    LIKE fts.user
-);
-
 CREATE TABLE IF NOT EXISTS fts.keyword_history (
     LIKE fts.keyword
 );
 
+CREATE TABLE IF NOT EXISTS fts.document_keyword_history (
+    LIKE fts.document_keyword 
+);
+
 CREATE TABLE IF NOT EXISTS fts.suggestion_history (
     LIKE fts.suggestion
+);
+
+CREATE TABLE IF NOT EXISTS fts.document_suggestion_history (
+    LIKE fts.document_suggestion
+);
+
+CREATE TABLE IF NOT EXISTS fts.user_history (
+    LIKE fts.user
 );
 
 CREATE TABLE IF NOT EXISTS fts.outbox_event_history (

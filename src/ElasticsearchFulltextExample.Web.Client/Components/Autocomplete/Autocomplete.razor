@@ -1,7 +1,8 @@
 ﻿@namespace ElasticsearchFulltextExample.Web.Client.Components
 @using Microsoft.FluentUI.AspNetCore.Components.Utilities
+@using System.Text
 
-@* 
+@*
 This implementation is based upon the Component by @darthmaure at:
 
     - https://github.com/darthmaure/blazor-autocomplete
@@ -23,7 +24,7 @@ All Credit goes to @darthmaure.
                      aria-haspopup="true"
                      autocomplete="off"
                      role="combobox"
-                     aria-expanded="true" >
+                     aria-expanded="true">
         <FluentIcon Value="@(new Icons.Regular.Size16.Search())" Slot="start" Color="Color.Neutral" />
     </FluentTextField>
     @if (InternalAutocompleteItems?.Any() == true)
@@ -35,7 +36,7 @@ All Credit goes to @darthmaure.
                     var className = item.IsSelected ? "autocomplete-item-hover" : "";
                     <li role="option" class="autocomplete-item @className"
                         @onmousedown="(() => AutocompleteItemClick(item.Text))"
-                        @onmouseover="(() => AutocompleteMouseOver(item.Text))">@item.Text</li>
+                        @onmouseover="(() => AutocompleteMouseOver(item.Text))">@((MarkupString) @item.Html)</li>
                 }
             </ul>
         </div>
@@ -125,19 +126,30 @@ All Credit goes to @darthmaure.
         if (Value.Length >= MinTextLength)
         {
             var args = new AutocompleteSearchEventArgs
-            {
+                {
                     Text = Value,
                     Items = [],
-            };
+                };
 
             // Invoke the supplied Callback to filter Options
             await OnOptionsSearch.InvokeAsync(args);
 
             // Set the internal list of Autocompletes
             InternalAutocompleteItems = args.Items
-                .Select(item => new AutocompleteItem { Text = item })
+                .Select(item => new AutocompleteItem
+                {
+                    Text = item,
+                    Html = GetHtmlSuggestion(Value, item)
+                })
                 .ToList();
         }
+    }
+
+    private static string GetHtmlSuggestion(string prefix, string suggest)
+    {
+        var suggestionWithoutPrefix = suggest.Replace(prefix, string.Empty);
+
+        return $"{prefix}<strong>{suggestionWithoutPrefix}</strong>";
     }
 
     /// <summary />
@@ -167,7 +179,7 @@ All Credit goes to @darthmaure.
                 Value = InternalAutocompleteItems.First(d => d.IsSelected).Text;
             }
 
-            if(OnSearch.HasDelegate)
+            if (OnSearch.HasDelegate)
             {
                 await OnSearch.InvokeAsync(Value);
             }
@@ -180,7 +192,7 @@ All Credit goes to @darthmaure.
         }
     }
 
-    private void OnLostFocus() 
+    private void OnLostFocus()
     {
         InternalAutocompleteItems = [];
     }
@@ -197,7 +209,7 @@ All Credit goes to @darthmaure.
         InternalAutocompleteItems = [];
     }
 
-    private void AutocompleteMouseOver(string item) 
+    private void AutocompleteMouseOver(string item)
     {
         InternalAutocompleteItems?.ForEach(d => d.IsSelected = false);
     }

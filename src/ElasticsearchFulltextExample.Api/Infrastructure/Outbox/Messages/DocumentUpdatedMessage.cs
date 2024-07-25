@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace ElasticsearchFulltextExample.Api.Infrastructure.Outbox.Messages
 {
     /// <summary>
-    /// A Document has been created.
+    /// A Document has been updated.
     /// </summary>
     public class DocumentUpdatedMessage
     {

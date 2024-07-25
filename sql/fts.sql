@@ -166,11 +166,20 @@ CREATE TABLE IF NOT EXISTS fts.outbox_event (
 );
 
 -- Indexes
+CREATE UNIQUE INDEX IF NOT EXISTS user_email_key 
+    ON fts.user(email);
+
 CREATE UNIQUE INDEX IF NOT EXISTS suggestion_name_key 
     ON fts.suggestion(name);
 
 CREATE UNIQUE INDEX IF NOT EXISTS keyword_name_key 
     ON fts.keyword(name);
+
+CREATE UNIQUE INDEX IF NOT EXISTS document_suggestion_document_id_suggestion_id_key 
+    ON fts.document_suggestion(document_id, suggestion_id);
+
+CREATE UNIQUE INDEX IF NOT EXISTS document_keyword_document_id_keyword_id_key 
+    ON fts.document_keyword(document_id, keyword_id);
 
 END;
 $$ LANGUAGE plpgsql;

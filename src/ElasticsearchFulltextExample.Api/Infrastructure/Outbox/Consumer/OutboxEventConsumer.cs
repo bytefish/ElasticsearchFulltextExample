@@ -1,6 +1,5 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using ElasticsearchFulltextExample.Api.Infrastructure.Outbox;
 using ElasticsearchFulltextExample.Api.Infrastructure.Outbox.Messages;
 using ElasticsearchFulltextExample.Api.Services;
 using ElasticsearchFulltextExample.Database.Model;
