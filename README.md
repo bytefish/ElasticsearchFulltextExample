@@ -4,7 +4,7 @@ This repository implements a Fulltext Search Engine using ASP.NET Core, PostgreS
 use it to index documents, such as PDF, Microsoft Word, Markdown or HTML. It comes with a Blazor Frontend built 
 upon the FluentUI Component library.
 
-If you are looking for the old Angular version, use the tag [angular](https://github.com/bytefish/ElasticsearchFulltextExample/tags).
+If you are looking for the old Angular version, use the [angular](https://github.com/bytefish/ElasticsearchFulltextExample/tags) tag.
 
 ## What's included ##
 
