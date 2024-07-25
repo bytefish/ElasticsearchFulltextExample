@@ -43,8 +43,6 @@ namespace ElasticsearchFulltextExample.Api.Infrastructure.Outbox.Consumer
                 return;
             }
 
-            await Task.Delay(10);
-
             // Now handle the given payload ...
             switch (payload)
             {
