@@ -7,7 +7,6 @@ using Elastic.Clients.Elasticsearch.Cluster;
 using Elastic.Clients.Elasticsearch.Core.Search;
 using Elastic.Transport;
 using Microsoft.Extensions.Options;
-using ElasticsearchCodeSearch.Shared.Elasticsearch;
 using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Models;
 using Elastic.Clients.Elasticsearch.Ingest;
 using ElasticsearchFulltextExample.Shared.Infrastructure;

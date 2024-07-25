@@ -3,7 +3,7 @@
 using ElasticsearchFulltextExample.Database.Model;
 using System.Text.Json;
 
-namespace GitClub.Infrastructure.Outbox
+namespace ElasticsearchFulltextExample.Api.Infrastructure.Outbox
 {
     /// <summary>
     /// Static Methods to simplify working with a <see cref="OutboxEvent"/>.
@@ -49,10 +49,9 @@ namespace GitClub.Infrastructure.Outbox
                 return false;
             }
 
-            result = JsonSerializer.Deserialize(outboxEvent.Payload, type);
+            result = outboxEvent.Payload.Deserialize(type);
 
             return true;
         }
-
     }
 }

@@ -1,6 +1,6 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace GitClub.Infrastructure.Outbox.Postgres
+namespace ElasticsearchFulltextExample.Api.Infrastructure.Outbox.Postgres
 {
     /// <summary>
     /// Options to configure the <see cref="PostgresNotificationProcessor"/>.

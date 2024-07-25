@@ -1,17 +1,17 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using ElasticsearchFulltextExample.Api.Infrastructure.Outbox.Consumer;
+using ElasticsearchFulltextExample.Api.Infrastructure.Outbox;
 using ElasticsearchFulltextExample.Api.Infrastructure.Outbox.Messages;
 using ElasticsearchFulltextExample.Api.Services;
 using ElasticsearchFulltextExample.Database.Model;
 using ElasticsearchFulltextExample.Shared.Infrastructure;
 
-namespace GitClub.Infrastructure.Outbox.Consumer
+namespace ElasticsearchFulltextExample.Api.Infrastructure.Outbox.Consumer
 {
     public class OutboxEventConsumer : IOutboxEventConsumer
     {
         private readonly ILogger<OutboxEventConsumer> _logger;
-        
+
         private readonly ElasticsearchService _elasticsearchService;
 
         public OutboxEventConsumer(ILogger<OutboxEventConsumer> logger, ElasticsearchService elasticsearchService)

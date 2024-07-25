@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using NodaTime.Serialization.SystemTextJson;
 using NodaTime;
 using Microsoft.AspNetCore.Authentication;
-using GitClub.Infrastructure.Outbox.Consumer;
 using ElasticsearchFulltextExample.Api.Constants;
 using ElasticsearchFulltextExample.Api.Infrastructure.Mvc;
 using ElasticsearchFulltextExample.Database.Model;
@@ -23,7 +22,7 @@ using ElasticsearchFulltextExample.Api.Configuration;
 using ElasticsearchFulltextExample.Database;
 using ElasticsearchFulltextExample.Api.Services;
 using ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch;
-using ElasticsearchCodeSearch.Shared.Elasticsearch;
+using ElasticsearchFulltextExample.Api.Infrastructure.Outbox.Consumer;
 
 // We will log to %LocalAppData%/GitClub to store the Logs, so it doesn't need to be configured 
 // to a different path, when you run it on your machine.

@@ -1,9 +1,9 @@
 ﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using ElasticsearchFulltextExample.Api.Configuration;
+using ElasticsearchFulltextExample.Api.Infrastructure.Outbox.Consumer;
+using ElasticsearchFulltextExample.Api.Infrastructure.Outbox.Postgres;
 using ElasticsearchFulltextExample.Shared.Infrastructure;
-using GitClub.Infrastructure.Outbox.Consumer;
-using GitClub.Infrastructure.Outbox.Postgres;
 using Microsoft.Extensions.Options;
 
 namespace ElasticsearchFulltextExample.Api.Hosting

@@ -2,10 +2,10 @@
 
 using ElasticsearchFulltextExample.Api.Configuration;
 using ElasticsearchFulltextExample.Api.Infrastructure.Exceptions;
+using ElasticsearchFulltextExample.Api.Infrastructure.Outbox;
 using ElasticsearchFulltextExample.Api.Infrastructure.Outbox.Messages;
 using ElasticsearchFulltextExample.Database;
 using ElasticsearchFulltextExample.Database.Model;
-using GitClub.Infrastructure.Outbox;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;

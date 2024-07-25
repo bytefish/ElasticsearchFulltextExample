@@ -11,7 +11,7 @@ using NodaTime;
 using ElasticsearchFulltextExample.Database.Model;
 using ElasticsearchFulltextExample.Shared.Infrastructure;
 
-namespace GitClub.Infrastructure.Outbox.Postgres
+namespace ElasticsearchFulltextExample.Api.Infrastructure.Outbox.Postgres
 {
     public class PostgresOutboxSubscriber
     {

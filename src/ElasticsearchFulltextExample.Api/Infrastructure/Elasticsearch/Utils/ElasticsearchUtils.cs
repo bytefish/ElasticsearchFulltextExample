@@ -3,7 +3,7 @@
 using ElasticsearchFulltextExample.Api.Models;
 using System.Text.RegularExpressions;
 
-namespace ElasticsearchCodeSearch.Shared.Elasticsearch.Utils
+namespace ElasticsearchFulltextExample.Api.Infrastructure.Elasticsearch.Utils
 {
     /// <summary>
     /// Auxillary methods to simplify working with Elasticsearch.
