@@ -10,6 +10,8 @@ namespace ElasticsearchFulltextExample.Database
         public ApplicationDbContext(DbContextOptions options)
             : base(options) { }
 
+        public DbSet<OutboxEvent> OutboxEvents { get; set; }
+
         public DbSet<User> Users { get; set; }
         
         public DbSet<Document> Documents { get; set; }

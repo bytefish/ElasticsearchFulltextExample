@@ -10,32 +10,32 @@ namespace ElasticsearchFulltextExample.Database.Model
     public class OutboxEvent : Entity
     {
         /// <summary>
-        /// A Correlation ID.
+        /// Gets or sets an optional Correlation ID.
         /// </summary>
         public string? CorrelationId1 { get; set; }
 
         /// <summary>
-        /// A Correlation ID.
+        /// Gets or sets an optional Correlation ID.
         /// </summary>
         public string? CorrelationId2 { get; set; }
 
         /// <summary>
-        /// A Correlation ID.
+        /// Gets or sets an optional Correlation ID.
         /// </summary>
         public string? CorrelationId3 { get; set; }
 
         /// <summary>
-        /// A Correlation ID.
+        /// Gets or sets an optional Correlation ID.
         /// </summary>
         public string? CorrelationId4 { get; set; }
 
         /// <summary> 
-        /// The type of the event that occurred. 
+        /// Gets or sets the type Event. 
         /// </summary>
         public required string EventType { get; set; }
 
         /// <summary> 
-        /// The source the event occurred from. 
+        /// Gets or sets the source of the event. 
         /// </summary>
         public string EventSource { get; set; } = "FTS";
 
@@ -45,7 +45,7 @@ namespace ElasticsearchFulltextExample.Database.Model
         public DateTimeOffset EventTime { get; set; } = DateTimeOffset.UtcNow;
 
         /// <summary>
-        /// The Payload the Outbox event has.
+        /// Gets or sets the Events Payload.
         /// </summary>
         public required JsonDocument Payload { get; set; }
     }
